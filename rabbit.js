@@ -17,21 +17,17 @@ function initRabbits() {
   }
 }
 
-function collisionWithRabbit (rabbit, g) {
-  if (rabbit.x < g.x + g.w &&
-      rabbit.x + rabbit.w > g.x &&
-      rabbit.y < g.y + g.h &&
-      rabbit.y + rabbit.h > g.y) {
+function collisionWithRabbit (a, b) {
+  if (a.x <= b.x + b.w &&
+      a.x + a.w > b.x &&
+      a.y <= b.y + b.h &&
+      a.y + a.h > b.y) {
     return true;
   }
   return false;
 }
-
-  for (let i = rabbits.length - 1; i >= 0; i -= 1) {
-    const rabbit = rabbits[i];
-    if (rabbit.x < 0 || rabbit.x > WIDTH || rabbit.y < 0 || rabbit.y > HEIGHT) {
-      rabbits.splice(i, 1);
-    }
+  if (collisionWithRabbit == true) { // Fix overlap so the rabbits don't enter each other
+    return true;
   }
  
 
