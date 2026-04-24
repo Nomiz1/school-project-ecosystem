@@ -3,10 +3,15 @@
 ## To-Do List
 
 ### Core Simulation
-- [x] Växter växer
+- [ ] Växter växer
 - [ ] Ett djur dör om den inte äter tillräckligt mycket
 - [ ] Organismer blir större när den äter -> organismen blir långsammare
 - [ ] Energinivå (för att springa)
+- [ ] Ålder 
+- [ ] Förökning
+- [ ] Kön
+- [ ] Sjukdomar (ärftligt)
+
 
 ### Food Chain
 - [ ] Köttätare som äter växtätare

@@ -1,0 +1,70 @@
+:root {
+  --bg: #d6c9a8;
+  --panel: #f2e8d8;
+  --text: #2f241f;
+  --soil: #964b00;
+  --grass: #22c55e;
+  --rabbit: #ffffff;
+  --border: #8a755a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 20% 20%, #efe4cd, var(--bg));
+  color: var(--text);
+  font-family: "Trebuchet MS", Verdana, sans-serif;
+}
+
+.app {
+  width: min(92vw, 860px);
+  padding: 1rem;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 14%);
+}
+
+h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.6rem;
+}
+
+.subtitle {
+  margin: 0 0 0.8rem;
+  opacity: 0.8;
+}
+
+canvas {
+  width: 100%;
+  height: auto;
+  border: 2px solid var(--border);
+  display: block;
+  background: var(--soil);
+}
+
+.meta {
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+button {
+  border: 1px solid var(--border);
+  background: #fff7e8;
+  color: var(--text);
+  border-radius: 8px;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #fff2d6;
+}
