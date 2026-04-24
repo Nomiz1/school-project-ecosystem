@@ -2,6 +2,7 @@ const INITIAL_RABBITS = 10;
 
 let rabbits = [];
 
+
 function initRabbits() {
   rabbits = [];
   for (let i = 0; i < INITIAL_RABBITS; i += 1) {
@@ -15,6 +16,24 @@ function initRabbits() {
     });
   }
 }
+
+function collisionWithRabbit (rabbit, g) {
+  if (rabbit.x < g.x + g.w &&
+      rabbit.x + rabbit.w > g.x &&
+      rabbit.y < g.y + g.h &&
+      rabbit.y + rabbit.h > g.y) {
+    return true;
+  }
+  return false;
+}
+
+  for (let i = rabbits.length - 1; i >= 0; i -= 1) {
+    const rabbit = rabbits[i];
+    if (rabbit.x < 0 || rabbit.x > WIDTH || rabbit.y < 0 || rabbit.y > HEIGHT) {
+      rabbits.splice(i, 1);
+    }
+  }
+ 
 
 function moveRabbits() {
   const grownGrass = grass.filter((g) => g.grown);
@@ -52,7 +71,7 @@ function rabbitsEatGrass() {
   for (const rabbit of rabbits) {
     for (let i = 0; i < grass.length; i += 1) {
       const g = grass[i];
-      if (g.grown && Math.abs(rabbit.x - g.x) < 5 && Math.abs(rabbit.y - g.y) < 5) {
+      if (g.grown && collisionWithRabbit(rabbit, g)) {
         grass[i] = { x: g.x, y: g.y, w: g.w, h: g.maxH, maxH: g.maxH, currentH: 2, grown: false };
         break;
       }
