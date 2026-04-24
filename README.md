@@ -3,7 +3,7 @@
 ## To-Do List
 
 ### Core Simulation
-- [ ] Växter växer
+- [x] Växter växer
 - [ ] Ett djur dör om den inte äter tillräckligt mycket
 - [ ] Organismer blir större när den äter -> organismen blir långsammare
 - [ ] Energinivå (för att springa)
