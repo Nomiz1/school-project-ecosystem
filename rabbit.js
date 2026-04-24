@@ -26,9 +26,7 @@ function collisionWithRabbit (a, b) {
   }
   return false;
 }
-  if (collisionWithRabbit == true) { // Fix overlap so the rabbits don't enter each other
-    return true;
-  }
+
  
 
 function moveRabbits() {
