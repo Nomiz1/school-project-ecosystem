@@ -40,3 +40,74 @@
 
 ### Goal
 Mitt mål med det här projektet är att skapa en bra simulering som simulerar ett ekosystem basert på olika faktorer. Resultaten kommer användas till att undersöka hur ett ekosystem fungerar. 
+
+## Function Relationship Diagram
+
+Diagrammet nedan visar hur funktionerna i de aktiva skripten hänger ihop. Det är baserat på filerna som laddas av index.html: utils.js, grass.js, rabbit.js och app.js.
+
+```mermaid
+flowchart TD
+	subgraph Startup
+		Start[Page loads]
+		Reset[Reset button click]
+	end
+
+	subgraph app_js[app.js]
+		initWorld[initWorld]
+		initBackground[initBackground]
+		drawWorld[drawWorld]
+		tick[tick]
+	end
+
+	subgraph grass_js[grass.js]
+		initGrass[initGrass]
+		createGrassPatch[createGrassPatch]
+		grassOverlaps[grassOverlaps]
+		growGrass[growGrass]
+		drawGrass[drawGrass]
+	end
+
+	subgraph rabbit_js[rabbit.js]
+		initRabbit[initRabbit]
+		createRabbit[createRabbit]
+		rabbitOverlaps[rabbitOverlaps]
+		drawRabbits[drawRabbits]
+	end
+
+	subgraph utils_js[utils.js]
+		randomInt[randomInt]
+	end
+
+	Start --> initWorld
+	Start --> drawWorld
+	Start --> tick
+	Reset --> initWorld
+
+	initWorld --> initGrass
+	initWorld --> initBackground
+	initWorld --> initRabbit
+
+	initBackground --> randomInt
+
+	drawWorld --> drawGrass
+	drawWorld --> drawRabbits
+
+	tick --> growGrass
+	tick --> drawWorld
+	tick --> tick
+
+	initGrass --> createGrassPatch
+	initGrass --> grassOverlaps
+	createGrassPatch --> randomInt
+
+	initRabbit --> createRabbit
+	initRabbit --> rabbitOverlaps
+	createRabbit --> randomInt
+```
+
+Kort förklaring:
+
+- initWorld startar om världen genom att skapa gräs, bakgrund och kaniner.
+- tick är huvudloopen som låter gräset växa och ritar om världen varje bildruta.
+- randomInt i utils.js används av både gräs, kaniner och bakgrund för slumpmässiga värden.
+- Diagrammet visar bara de skript som faktiskt används av sidan just nu.
