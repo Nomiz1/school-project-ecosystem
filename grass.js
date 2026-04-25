@@ -1,15 +1,15 @@
-const INITIAL_GRASS = 500;
+const INITIAL_GRASS = 1700;
 
 
 let grass = [];
 
 function createGrassPatch() {
-  const maxHeight = 15;
+  const maxHeight = randomInt(20, 40);
   const width = randomInt(3, 4);
 
   return {
-    x: randomInt(0, WIDTH - Border - 2 * width),
-    y: randomInt(0, HEIGHT - Border - 2 * maxHeight),
+    x: randomInt(0, WIDTH - width),
+    y: randomInt(0, HEIGHT - maxHeight),
     w: width,
     h: maxHeight,
     currentH: 1,
@@ -52,7 +52,7 @@ function growGrass() {
     const g = grass[i];
     
     if (!g.grown) {
-      g.currentH = Math.min(g.currentH + 0.05, g.h);
+      g.currentH = Math.min(g.currentH + 0.1, g.h);
       if (g.currentH >= g.h) {
         g.grown = true;
       }
