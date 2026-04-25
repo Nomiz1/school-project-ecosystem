@@ -37,3 +37,6 @@
 
 ### Expansion
 - [ ] Invasiva arter
+
+### Goal
+Mitt mål med det här projektet är att skapa en bra simulering som simulerar ett ekosystem basert på olika faktorer. Resultaten kommer användas till att undersöka hur ett ekosystem fungerar. 

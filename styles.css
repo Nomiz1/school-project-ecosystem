@@ -8,6 +8,8 @@
   --border: #8a755a;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 * {
   box-sizing: border-box;
 }
@@ -19,7 +21,7 @@ body {
   place-items: center;
   background: radial-gradient(circle at 20% 20%, #efe4cd, var(--bg));
   color: var(--text);
-  font-family: "Trebuchet MS", Verdana, sans-serif;
+  font-family: 'Press Start 2P', monospace;
 }
 
 .app {
