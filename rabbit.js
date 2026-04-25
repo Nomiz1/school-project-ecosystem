@@ -14,3 +14,31 @@ function createRabbit() {
     speed: speed,
     };
 }
+
+function rabbitOverlaps(rabbit) {
+    const gap = 2;
+
+    for (const r of Rabbit) {
+        if (rabbit.x < r.x + r.w + gap &&
+            rabbit.x + rabbit.w + gap > r.x &&
+            rabbit.y < r.y + r.h + gap &&
+            rabbit.y + rabbit.h + gap > r.y) {
+            return true;
+        }
+    }
+
+    return false;
+}
+ function initRabbit() {
+    Rabbit = [];
+    let attempts = 0;
+    const maxAttempts = INITIAL_RABBIT * 20;
+    
+    while (Rabbit.length < INITIAL_RABBIT && attempts < maxAttempts) {
+        attempts += 1;
+        const rabbit = createRabbit();
+        if (!rabbitOverlaps(rabbit)) {
+            Rabbit.push(rabbit);
+        }
+    }
+}
