@@ -1,6 +1,7 @@
 const canvas = document.getElementById("world");
 const ctx = canvas.getContext("2d");
 const grassCountEl = document.getElementById("grassCount");
+const rabbitCountEl = document.getElementById("rabbitCount");
 const resetBtn = document.getElementById("resetBtn");
 
 const BG_COLORS = [
@@ -46,6 +47,7 @@ function drawWorld() {
   drawRabbits();
 
   grassCountEl.textContent = `Grass: ${grass.length}`;
+  rabbitCountEl.textContent = `Rabbits: ${Rabbits.length}`;
 }
 
 function tick() {

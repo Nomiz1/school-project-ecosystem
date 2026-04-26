@@ -8,8 +8,6 @@
   --border: #8a755a;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
 * {
   box-sizing: border-box;
 }
@@ -21,7 +19,7 @@ body {
   place-items: center;
   background: radial-gradient(circle at 20% 20%, #efe4cd, var(--bg));
   color: var(--text);
-  font-family: 'Press Start 2P', monospace;
+  font-family: monospace;
 }
 
 .app {
@@ -58,13 +56,25 @@ canvas {
   justify-content: space-between;
 }
 
+.counts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.counts span {
+  font-size: 1.15rem;
+}
+
 button {
   border: 1px solid var(--border);
   background: #fff7e8;
   color: var(--text);
+  font-size: 1.15rem;
   border-radius: 8px;
   padding: 0.45rem 0.8rem;
   cursor: pointer;
+  
 }
 
 button:hover {
