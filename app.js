@@ -53,6 +53,8 @@ function drawWorld() {
 function tick() {
   growGrass();
   drawWorld();
+  rabbitNormalWalk();
+  rabbitEatGrass();
   window.requestAnimationFrame(tick);
 }
 

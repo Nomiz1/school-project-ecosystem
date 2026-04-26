@@ -22,6 +22,8 @@ function createRabbit() {
     const maxHeight = randomInt(15, 20);
     const width = randomInt(5, 10);
     const speed = randomInt(1, 3);
+    const jumpChance = 0.05; 
+    const jumpPower = randomInt(2, 5); 
 
     return {
         x: randomInt(0, WIDTH - width),
@@ -29,6 +31,11 @@ function createRabbit() {
         w: width,
         h: maxHeight,
         speed: speed,
+        angle: randomInt(0, 359),
+        jumpChance: jumpChance,
+        jumpPower: jumpPower,
+        jumpVx: 0,
+        jumpVy: 0,
     };
 }
 
@@ -52,13 +59,56 @@ function rabbitOverlaps(newRabbit) {
     return false;
 }
 
-/*
-function moveRabbits() {
+
+function rabbitNormalWalk() {
     for (const rabbit of Rabbits) {
-        rabbit.y += rabbit.speed;
+        // Slightly nudge the angle each frame for smooth wandering
+        rabbit.angle += randomInt(-90, 90) * 0.35; // Adjust the multiplier for more or less erratic movement
+
+        const radians = rabbit.angle * (Math.PI / 180);
+        rabbit.x += Math.cos(radians) * rabbit.speed;
+        rabbit.y += Math.sin(radians) * rabbit.speed;
+
+        // Keep rabbit within canvas bounds
+        rabbit.x = Math.max(0, Math.min(WIDTH - rabbit.w, rabbit.x));
+        rabbit.y = Math.max(0, Math.min(HEIGHT - rabbit.h, rabbit.y));
+
+        // Apply ongoing jump velocity
+        rabbit.x += rabbit.jumpVx;
+        rabbit.y += rabbit.jumpVy;
+        rabbit.jumpVx *= 0.85;
+        rabbit.jumpVy *= 0.85;
+
+        // Trigger a new jump in the current angle direction
+        if (Math.random() < rabbit.jumpChance) {
+            const jumpRadians = rabbit.angle * (Math.PI / 180);
+            rabbit.jumpVx = Math.cos(jumpRadians) * rabbit.jumpPower;
+            rabbit.jumpVy = Math.sin(jumpRadians) * rabbit.jumpPower;
+        }
+
+        // Keep rabbit within canvas bounds after jump movement
+        rabbit.x = Math.max(0, Math.min(WIDTH - rabbit.w, rabbit.x));
+        rabbit.y = Math.max(0, Math.min(HEIGHT - rabbit.h, rabbit.y));
     }
 }
-*/
+
+function rabbitEatGrass() {
+    for (const rabbit of Rabbits) {
+        for (let i = grass.length - 1; i >= 0; i--) {
+            const patch = grass[i];
+            const rabbitEatGrassChance = 1.0; 
+
+            if (Math.random() < rabbitEatGrassChance &&
+                rabbit.x < patch.x + patch.w &&
+                rabbit.x + rabbit.w > patch.x &&
+                rabbit.y < patch.y + patch.currentH &&
+                rabbit.y + rabbit.h > patch.y) {
+                grass.splice(i, 1);
+            }
+        }
+    }
+}
+
 // Draw rabbits as white rectangles
 function drawRabbits() {
     for (const rabbit of Rabbits) {
@@ -66,3 +116,7 @@ function drawRabbits() {
         ctx.fillRect(rabbit.x, rabbit.y, rabbit.w, rabbit.h);
     }
 }
+
+// If 500 grass or more exist then rabbits eat with randomly 
+// If 500 or less grass exist then the rabbits will look for grass and eat it if they find it
+//Next step: When a rabbit eats a grassstraw, the grass will become half its size and start regrowing. 
