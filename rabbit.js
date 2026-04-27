@@ -2,7 +2,9 @@ const INITIAL_RABBIT = 10;
 
 let Rabbits = [];
 
-// Initialize rabbits without overlapping existing rabbits
+// --- Setup / spawning ---
+
+// Initialize rabbits without overlapping existing rabbits.
 function initRabbit() {
     Rabbits = [];
     let attempts = 0;
@@ -17,13 +19,13 @@ function initRabbit() {
     }
 }
 
-// Create a new rabbit with random position, size, and speed
+// Create a new rabbit with random position, size, and movement traits.
 function createRabbit() {
     const maxHeight = randomInt(15, 20);
     const width = randomInt(5, 10);
     const speed = randomInt(1, 3);
-    const jumpChance = 0.05; 
-    const jumpPower = randomInt(2, 5); 
+    const jumpChance = 0.05;
+    const jumpPower = randomInt(2, 5);
 
     return {
         x: randomInt(0, WIDTH - width),
@@ -39,7 +41,7 @@ function createRabbit() {
     };
 }
 
-// Check if the new rabbit overlaps with any existing rabbits
+// Check if a new rabbit overlaps with any existing rabbit.
 function rabbitOverlaps(newRabbit) {
     const gap = 2;
 
@@ -59,6 +61,7 @@ function rabbitOverlaps(newRabbit) {
     return false;
 }
 
+// --- Movement ---
 
 function rabbitNormalWalk() {
     for (const rabbit of Rabbits) {
@@ -92,47 +95,59 @@ function rabbitNormalWalk() {
     }
 }
 
-function getRabbitCollisionCircle(rabbit) {
-    return {
-        x: rabbit.x + rabbit.w / 2,
-        y: rabbit.y + rabbit.h / 2,
-        r: Math.min(rabbit.w, rabbit.h) / 2,
-    };
-}
-
-function getGrassVisibleCollisionCircle(patch) {
-    const baseRadius = Math.min(patch.w, patch.h) / 2;
-    const growthRatio = patch.currentH / patch.h;
-    const radius = Math.max(1, baseRadius * growthRatio);
-
-    return {
-        x: patch.x + patch.w / 2,
-        y: patch.y + patch.h / 2,
-        r: radius,
-    };
-}
+// --- Eating / collision ---
 
 function rabbitEatGrass() {
     for (const rabbit of Rabbits) {
-        const rabbitCircle = getRabbitCollisionCircle(rabbit);
+        const rabbitBox = getRabbitCollisionBox(rabbit);
 
-        for (let i = grass.length - 1; i >= 0; i--) {
-            const patch = grass[i];
-            const rabbitEatGrassChance = 1.0; 
-            const patchCircle = getGrassVisibleCollisionCircle(patch);
-            const dx = rabbitCircle.x - patchCircle.x;
-            const dy = rabbitCircle.y - patchCircle.y;
-            const radii = rabbitCircle.r + patchCircle.r;
-            const overlaps = dx * dx + dy * dy < radii * radii;
+        for (let patchIndex = grass.length - 1; patchIndex >= 0; patchIndex--) {
+            const patch = grass[patchIndex];
+            const rabbitEatGrassChance = 1.0;
+            const patchBox = getGrassVisibleCollisionBox(patch);
+            const overlaps = boxesOverlap(rabbitBox, patchBox);
 
-            if (Math.random() < rabbitEatGrassChance &&
-                overlaps && patch.grown) {
-                patch.currentH = Math.max(1, patch.h *0.1);
+            if (Math.random() < rabbitEatGrassChance && overlaps && patch.grown) {
+                patch.currentH = Math.max(1, patch.h * 0.1);
                 patch.grown = false;
             }
         }
     }
 }
+
+function getRabbitCollisionBox(rabbit) {
+    return {
+        x: rabbit.x,
+        y: rabbit.y,
+        w: rabbit.w,
+        h: rabbit.h,
+    };
+}
+
+function getGrassVisibleCollisionBox(patch) {
+    const baseRadius = Math.min(patch.w, patch.h) / 2;
+    const growthRatio = patch.currentH / patch.h;
+    const radius = Math.max(1, baseRadius * growthRatio);
+    const size = radius * 2;
+
+    return {
+        x: patch.x + patch.w / 2 - radius,
+        y: patch.y + patch.h / 2 - radius,
+        w: size,
+        h: size,
+    };
+}
+
+function boxesOverlap(firstBox, secondBox) {
+    return (
+        firstBox.x < secondBox.x + secondBox.w &&
+        firstBox.x + firstBox.w > secondBox.x &&
+        firstBox.y < secondBox.y + secondBox.h &&
+        firstBox.y + firstBox.h > secondBox.y
+    );
+}
+
+// --- Rendering ---
 
 // Draw rabbits as white rectangles
 function drawRabbits() {
