@@ -92,18 +92,42 @@ function rabbitNormalWalk() {
     }
 }
 
+function getRabbitCollisionCircle(rabbit) {
+    return {
+        x: rabbit.x + rabbit.w / 2,
+        y: rabbit.y + rabbit.h / 2,
+        r: Math.min(rabbit.w, rabbit.h) / 2,
+    };
+}
+
+function getGrassVisibleCollisionCircle(patch) {
+    const baseRadius = Math.min(patch.w, patch.h) / 2;
+    const growthRatio = patch.currentH / patch.h;
+    const radius = Math.max(1, baseRadius * growthRatio);
+
+    return {
+        x: patch.x + patch.w / 2,
+        y: patch.y + patch.h / 2,
+        r: radius,
+    };
+}
+
 function rabbitEatGrass() {
     for (const rabbit of Rabbits) {
+        const rabbitCircle = getRabbitCollisionCircle(rabbit);
+
         for (let i = grass.length - 1; i >= 0; i--) {
             const patch = grass[i];
             const rabbitEatGrassChance = 1.0; 
+            const patchCircle = getGrassVisibleCollisionCircle(patch);
+            const dx = rabbitCircle.x - patchCircle.x;
+            const dy = rabbitCircle.y - patchCircle.y;
+            const radii = rabbitCircle.r + patchCircle.r;
+            const overlaps = dx * dx + dy * dy < radii * radii;
 
             if (Math.random() < rabbitEatGrassChance &&
-                rabbit.x < patch.x + patch.w &&
-                rabbit.x + rabbit.w > patch.x &&
-                rabbit.y < patch.y + patch.currentH &&
-                rabbit.y + rabbit.h > patch.y && patch.grown) {
-                patch.currentH = Math.max(1, patch.h *0.5);
+                overlaps && patch.grown) {
+                patch.currentH = Math.max(1, patch.h *0.1);
                 patch.grown = false;
             }
         }
