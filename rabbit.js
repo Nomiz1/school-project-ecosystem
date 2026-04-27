@@ -102,8 +102,9 @@ function rabbitEatGrass() {
                 rabbit.x < patch.x + patch.w &&
                 rabbit.x + rabbit.w > patch.x &&
                 rabbit.y < patch.y + patch.currentH &&
-                rabbit.y + rabbit.h > patch.y) {
-                grass.splice(i, 1);
+                rabbit.y + rabbit.h > patch.y && patch.grown) {
+                patch.currentH = Math.max(1, patch.h *0.5);
+                patch.grown = false;
             }
         }
     }
