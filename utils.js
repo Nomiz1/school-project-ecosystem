@@ -1,6 +1,6 @@
-const WIDTH = 800;
-const HEIGHT = 600;
-const Border = 10;
+const WIDTH = SIM.world.width;
+const HEIGHT = SIM.world.height;
+const BORDER = SIM.world.border;
 
 /*Why this is important in the project:
 

@@ -1,31 +1,37 @@
-const INITIAL_RABBIT = 10;
+const INITIAL_RABBITS = SIM.rabbits.initialCount;
 
-let Rabbits = [];
+
+
+let rabbits = [];
 
 // --- Setup / spawning ---
 
 // Initialize rabbits without overlapping existing rabbits.
-function initRabbit() {
-    Rabbits = [];
+function initRabbits() {
+    rabbits = [];
     let attempts = 0;
-    const maxAttempts = INITIAL_RABBIT * 20;
+    const maxAttempts = INITIAL_RABBITS * 20;
 
-    while (Rabbits.length < INITIAL_RABBIT && attempts < maxAttempts) {
+    while (rabbits.length < INITIAL_RABBITS && attempts < maxAttempts) {
         attempts += 1;
         const rabbit = createRabbit();
-        if (!rabbitOverlaps(rabbit)) {
-            Rabbits.push(rabbit);
+        if (!isNewRabbitOverlapping(rabbit)) {
+            rabbits.push(rabbit);
         }
     }
 }
 
+function getRabbitCount() {
+    return rabbits.length;
+}
+
 // Create a new rabbit with random position, size, and movement traits.
 function createRabbit() {
-    const maxHeight = randomInt(15, 20);
-    const width = randomInt(5, 10);
-    const speed = randomInt(1, 3);
-    const jumpChance = 0.05;
-    const jumpPower = randomInt(2, 5);
+    const maxHeight = randomInt(SIM.rabbits.heightMin, SIM.rabbits.heightMax);
+    const width = randomInt(SIM.rabbits.widthMin, SIM.rabbits.widthMax);
+    const speed = randomInt(SIM.rabbits.speedMin, SIM.rabbits.speedMax);
+    const jumpChance = SIM.rabbits.jumpChance;
+    const jumpPower = randomInt(SIM.rabbits.jumpPowerMin, SIM.rabbits.jumpPowerMax);
 
     return {
         x: randomInt(0, WIDTH - width),
@@ -42,17 +48,14 @@ function createRabbit() {
 }
 
 // Check if a new rabbit overlaps with any existing rabbit.
-function rabbitOverlaps(newRabbit) {
+function isNewRabbitOverlapping(newRabbit) {
     const gap = 2;
 
-    for (const existingRabbit of Rabbits) {
+    for (const existingRabbit of rabbits) {
         if (newRabbit.x < existingRabbit.x + existingRabbit.w + gap &&
             newRabbit.x + newRabbit.w + gap > existingRabbit.x &&
             newRabbit.y < existingRabbit.y + existingRabbit.h + gap &&
             newRabbit.y + newRabbit.h + gap > existingRabbit.y) {
-            console.log(
-                `Overlap detected -> new: (x=${newRabbit.x}, y=${newRabbit.y}, w=${newRabbit.w}, h=${newRabbit.h}), existing: (x=${existingRabbit.x}, y=${existingRabbit.y}, w=${existingRabbit.w}, h=${existingRabbit.h})`
-            );
 
             return true;
         }
@@ -64,7 +67,7 @@ function rabbitOverlaps(newRabbit) {
 // --- Movement ---
 
 function rabbitNormalWalk() {
-    for (const rabbit of Rabbits) {
+    for (const rabbit of rabbits) {
         // Slightly nudge the angle each frame for smooth wandering
         rabbit.angle += randomInt(-90, 90) * 0.35; // Adjust the multiplier for more or less erratic movement
 
@@ -98,17 +101,17 @@ function rabbitNormalWalk() {
 // --- Eating / collision ---
 
 function rabbitEatGrass() {
-    for (const rabbit of Rabbits) {
+    for (const rabbit of rabbits) {
         const rabbitBox = getRabbitCollisionBox(rabbit);
 
         for (let patchIndex = grass.length - 1; patchIndex >= 0; patchIndex--) {
             const patch = grass[patchIndex];
-            const rabbitEatGrassChance = 1.0;
+            const rabbitEatGrassChance = SIM.rabbits.eatChance;
             const patchBox = getGrassVisibleCollisionBox(patch);
-            const overlaps = boxesOverlap(rabbitBox, patchBox);
+            const overlaps = areBoxesOverlapping(rabbitBox, patchBox);
 
             if (Math.random() < rabbitEatGrassChance && overlaps && patch.grown) {
-                patch.currentH = Math.max(1, patch.h * 0.1);
+                patch.currentH = Math.max(SIM.grass.minEatenHeight, patch.h * SIM.grass.eatenHeightFactor);
                 patch.grown = false;
             }
         }
@@ -138,7 +141,7 @@ function getGrassVisibleCollisionBox(patch) {
     };
 }
 
-function boxesOverlap(firstBox, secondBox) {
+function areBoxesOverlapping(firstBox, secondBox) {
     return (
         firstBox.x < secondBox.x + secondBox.w &&
         firstBox.x + firstBox.w > secondBox.x &&
@@ -151,12 +154,12 @@ function boxesOverlap(firstBox, secondBox) {
 
 // Draw rabbits as white rectangles
 function drawRabbits() {
-    for (const rabbit of Rabbits) {
+    for (const rabbit of rabbits) {
         ctx.fillStyle = 'white';
         ctx.fillRect(rabbit.x, rabbit.y, rabbit.w, rabbit.h);
     }
 }
-
+// For the future:
 // If 500 grass or more exist then rabbits eat with randomly 
 // If 500 or less grass exist then the rabbits will look for grass and eat it if they find it
 //Next step: When a rabbit eats a grassstraw, the grass will become half its size and start regrowing. 

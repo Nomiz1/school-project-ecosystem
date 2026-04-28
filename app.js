@@ -4,12 +4,8 @@ const grassCountEl = document.getElementById("grassCount");
 const rabbitCountEl = document.getElementById("rabbitCount");
 const resetBtn = document.getElementById("resetBtn");
 
-const BG_COLORS = [
-  [38, 7, 1],
-  [47, 14, 7],
-  [56, 22, 13],
-];
-const BG_PIXEL_SIZE = 2;
+const BG_COLORS = SIM.background.colors;
+const BG_PIXEL_SIZE = SIM.background.pixelSize;
 
 let backgroundImageData = null;
 
@@ -38,7 +34,7 @@ function initBackground() {
 function initWorld() {
   initGrass();
   initBackground();
-  initRabbit();
+  initRabbits();
 }
 
 function drawWorld() {
@@ -46,16 +42,16 @@ function drawWorld() {
   drawGrass(ctx);
   drawRabbits();
 
-  grassCountEl.textContent = `Grass: ${grass.length}`;
-  rabbitCountEl.textContent = `Rabbits: ${Rabbits.length}`;
+  grassCountEl.textContent = `Grass: ${getGrassCount()}`;
+  rabbitCountEl.textContent = `Rabbits: ${getRabbitCount()}`;
 }
 
-function tick() {
+function updateSimulation() {
   rabbitNormalWalk();
   rabbitEatGrass();
   growGrass();
   drawWorld();
-  window.requestAnimationFrame(tick);
+  window.requestAnimationFrame(updateSimulation);
 }
 
 resetBtn.addEventListener("click", () => {
@@ -64,4 +60,4 @@ resetBtn.addEventListener("click", () => {
 
 initWorld();
 drawWorld();
-window.requestAnimationFrame(tick);
+window.requestAnimationFrame(updateSimulation);

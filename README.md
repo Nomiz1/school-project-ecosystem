@@ -63,6 +63,7 @@ flowchart TD
 		initGrass[initGrass]
 		createGrassPatch[createGrassPatch]
 		grassOverlaps[grassOverlaps]
+		getGrassCollisionCircle[getGrassCollisionCircle]
 		growGrass[growGrass]
 		drawGrass[drawGrass]
 	end
@@ -71,6 +72,11 @@ flowchart TD
 		initRabbit[initRabbit]
 		createRabbit[createRabbit]
 		rabbitOverlaps[rabbitOverlaps]
+		rabbitNormalWalk[rabbitNormalWalk]
+		rabbitEatGrass[rabbitEatGrass]
+		getRabbitCollisionBox[getRabbitCollisionBox]
+		getGrassVisibleCollisionBox[getGrassVisibleCollisionBox]
+		boxesOverlap[boxesOverlap]
 		drawRabbits[drawRabbits]
 	end
 
@@ -92,6 +98,8 @@ flowchart TD
 	drawWorld --> drawGrass
 	drawWorld --> drawRabbits
 
+	tick --> rabbitNormalWalk
+	tick --> rabbitEatGrass
 	tick --> growGrass
 	tick --> drawWorld
 	tick --> tick
@@ -99,15 +107,21 @@ flowchart TD
 	initGrass --> createGrassPatch
 	initGrass --> grassOverlaps
 	createGrassPatch --> randomInt
+	grassOverlaps --> getGrassCollisionCircle
 
 	initRabbit --> createRabbit
 	initRabbit --> rabbitOverlaps
 	createRabbit --> randomInt
+	rabbitNormalWalk --> randomInt
+	rabbitEatGrass --> getRabbitCollisionBox
+	rabbitEatGrass --> getGrassVisibleCollisionBox
+	rabbitEatGrass --> boxesOverlap
 ```
 
 Kort förklaring:
 
 - initWorld startar om världen genom att skapa gräs, bakgrund och kaniner.
-- tick är huvudloopen som låter gräset växa och ritar om världen varje bildruta.
-- randomInt i utils.js används av både gräs, kaniner och bakgrund för slumpmässiga värden.
+- tick är huvudloopen som flyttar kaniner, låter dem äta gräs, växer gräs och ritar om världen varje bildruta.
+- rabbitEatGrass använder hjälpfunktioner för kollisionskontroll mellan kaniner och synlig gräsyta.
+- randomInt i utils.js används av gräs, kaniner och bakgrund för slumpmässiga värden.
 - Diagrammet visar bara de skript som faktiskt används av sidan just nu.

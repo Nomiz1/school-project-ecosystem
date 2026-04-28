@@ -1,4 +1,11 @@
-const INITIAL_GRASS = 810;
+const INITIAL_GRASS = SIM.grass.initialCount;
+const GRASS_GROWTH_PER_TICK = SIM.grass.growthPerTick;
+const MIN_EATEN_GRASS_HEIGHT = SIM.grass.minEatenHeight;
+
+const GRASS_HEIGHT_MIN = SIM.grass.heightMin;
+const GRASS_HEIGHT_MAX = SIM.grass.heightMax;
+const GRASS_WIDTH_MIN = SIM.grass.widthMin;
+const GRASS_WIDTH_MAX = SIM.grass.widthMax;
 
 let grass = [];
 
@@ -13,27 +20,31 @@ function initGrass() {
     attempts += 1;
     const patch = createGrassPatch();
 
-    if (!grassOverlaps(patch)) {
+    if (!isGrassOverlapping(patch)) {
       grass.push(patch);
     }
   }
 }
 
+function getGrassCount() {
+  return grass.length;
+}
+
 function createGrassPatch() {
-  const maxHeight = randomInt(30, 40);
-  const width = randomInt(15, 20);
+  const maxHeight = randomInt(GRASS_HEIGHT_MIN, GRASS_HEIGHT_MAX);
+  const width = randomInt(GRASS_WIDTH_MIN, GRASS_WIDTH_MAX);
 
   return {
     x: randomInt(0, WIDTH - width),
     y: randomInt(0, HEIGHT - maxHeight),
     w: width,
     h: maxHeight,
-    currentH: 1,
+    currentH: MIN_EATEN_GRASS_HEIGHT,
     grown: false,
   };
 }
 
-function grassOverlaps(patch) {
+function isGrassOverlapping(patch) {
   const gap = 2;
   const candidatePatchCircle = getGrassCollisionCircle(patch);
 
@@ -68,7 +79,7 @@ function growGrass() {
     const patch = grass[patchIndex];
     
     if (!patch.grown) {
-      patch.currentH = Math.min(patch.currentH + 0.1, patch.h);
+      patch.currentH = Math.min(patch.currentH + GRASS_GROWTH_PER_TICK, patch.h);
       if (patch.currentH >= patch.h) {
         patch.grown = true;
       }
