@@ -29,6 +29,7 @@ node_modules/.vite/
 
 # OS/editor
 .DS_Store
+**/.DS_Store
 .vscode/
 .cursorignore
 .cursorindexingignore
