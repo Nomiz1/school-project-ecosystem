@@ -100,23 +100,29 @@ function rabbitNormalWalk() {
 
 // --- Eating / collision ---
 
+
+function isRabbitOverlappingGrass(rabbit, patch) {
+    const rabbitBox = getRabbitCollisionBox(rabbit);
+    const patchBox = getGrassVisibleCollisionBox(patch);
+
+    return areBoxesOverlapping(rabbitBox, patchBox);
+}
+
 function rabbitEatGrass() {
     for (const rabbit of rabbits) {
-        const rabbitBox = getRabbitCollisionBox(rabbit);
-
         for (let patchIndex = grass.length - 1; patchIndex >= 0; patchIndex--) {
             const patch = grass[patchIndex];
             const rabbitEatGrassChance = SIM.rabbits.eatChance;
-            const patchBox = getGrassVisibleCollisionBox(patch);
-            const overlaps = areBoxesOverlapping(rabbitBox, patchBox);
 
-            if (Math.random() < rabbitEatGrassChance && overlaps && patch.grown) {
+            if (Math.random() < rabbitEatGrassChance && isRabbitOverlappingGrass(rabbit, patch) && patch.grown) {
                 patch.currentH = Math.max(SIM.grass.minEatenHeight, patch.h * SIM.grass.eatenHeightFactor);
                 patch.grown = false;
             }
+
         }
     }
 }
+
 
 function getRabbitCollisionBox(rabbit) {
     return {
