@@ -1,0 +1,4 @@
+{
+  "jestrunner.jestCommand": "npx vitest run",
+  "jestrunner.enableCodeLens": true
+}
