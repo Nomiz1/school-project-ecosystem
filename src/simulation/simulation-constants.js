@@ -4,6 +4,10 @@ const SIM = {
         height: 600,
         border: 10,
     },
+    render: {
+        targetFps: 30,
+        countersUpdateMs: 250,
+    },
     grass: {
         initialCount: 810,
         growthPerTick: 0.1,

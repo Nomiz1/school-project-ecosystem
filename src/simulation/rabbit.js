@@ -168,9 +168,9 @@ function areBoxesOverlapping(firstBox, secondBox) {
 // Draw rabbits as white rectangles
 function drawRabbits() {
     const ctx = globalThis.ctx;
+    ctx.fillStyle = 'white';
 
     for (const rabbit of rabbits) {
-        ctx.fillStyle = 'white';
         ctx.fillRect(rabbit.x, rabbit.y, rabbit.w, rabbit.h);
     }
 }

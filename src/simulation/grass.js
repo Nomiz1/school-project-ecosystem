@@ -98,6 +98,8 @@ function growGrass() {
 
 function drawGrass(ctx) {
   ctx.fillStyle = "rgba(68, 155, 46, 0.63)";
+  ctx.beginPath();
+
   for (const patch of grass) {
     const baseRadius = Math.min(patch.w, patch.h) / 2;
     const growthRatio = patch.currentH / patch.h;
@@ -105,10 +107,10 @@ function drawGrass(ctx) {
     const centerX = patch.x + patch.w / 2;
     const centerY = patch.y + patch.h / 2;
 
-    ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-    ctx.fill();
   }
+
+  ctx.fill();
 }
 
 Object.assign(globalThis, {

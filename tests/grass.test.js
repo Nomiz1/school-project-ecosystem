@@ -83,7 +83,7 @@ test("drawGrass draws one circle per patch", () => {
 
   api.drawGrass(harness.canvasContext);
 
-  assert.equal(harness.canvasContext.calls.beginPath, 2);
+  assert.equal(harness.canvasContext.calls.beginPath, 1);
   assert.equal(harness.canvasContext.calls.arc.length, 2);
-  assert.equal(harness.canvasContext.calls.fill, 2);
+  assert.equal(harness.canvasContext.calls.fill, 1);
 });
