@@ -43,7 +43,7 @@ Mitt mål med det här projektet är att skapa en bra simulering som simulerar e
 
 ## Function Relationship Diagram
 
-Diagrammet nedan visar hur funktionerna i de aktiva skripten hänger ihop. Det är baserat på filerna som laddas av index.html: utils.js, grass.js, rabbit.js och app.js.
+Diagrammet nedan visar hur funktionerna i de aktiva skripten hänger ihop. index.html laddar src/main.js som i sin tur laddar skripten i src/simulation.
 
 ```mermaid
 flowchart TD
@@ -52,14 +52,14 @@ flowchart TD
 		Reset[Reset button click]
 	end
 
-	subgraph app_js[app.js]
+	subgraph app_js[src/simulation/app.js]
 		initWorld[initWorld]
 		initBackground[initBackground]
 		drawWorld[drawWorld]
 		tick[tick]
 	end
 
-	subgraph grass_js[grass.js]
+	subgraph grass_js[src/simulation/grass.js]
 		initGrass[initGrass]
 		createGrassPatch[createGrassPatch]
 		grassOverlaps[grassOverlaps]
@@ -68,7 +68,7 @@ flowchart TD
 		drawGrass[drawGrass]
 	end
 
-	subgraph rabbit_js[rabbit.js]
+	subgraph rabbit_js[src/simulation/rabbit.js]
 		initRabbit[initRabbit]
 		createRabbit[createRabbit]
 		rabbitOverlaps[rabbitOverlaps]
@@ -80,7 +80,7 @@ flowchart TD
 		drawRabbits[drawRabbits]
 	end
 
-	subgraph utils_js[utils.js]
+	subgraph utils_js[src/simulation/utils.js]
 		randomInt[randomInt]
 	end
 
@@ -123,5 +123,5 @@ Kort förklaring:
 - initWorld startar om världen genom att skapa gräs, bakgrund och kaniner.
 - tick är huvudloopen som flyttar kaniner, låter dem äta gräs, växer gräs och ritar om världen varje bildruta.
 - rabbitEatGrass använder hjälpfunktioner för kollisionskontroll mellan kaniner och synlig gräsyta.
-- randomInt i utils.js används av gräs, kaniner och bakgrund för slumpmässiga värden.
+- randomInt i src/simulation/utils.js används av gräs, kaniner och bakgrund för slumpmässiga värden.
 - Diagrammet visar bara de skript som faktiskt används av sidan just nu.

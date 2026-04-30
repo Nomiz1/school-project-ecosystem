@@ -92,7 +92,7 @@ function createHarness(options = {}) {
 
   const vmContext = vm.createContext(context);
 
-  loadScript(vmContext, "simulation-constants.js");
+  loadScript(vmContext, "src/simulation/simulation-constants.js");
 
   vmContext.__simOverrides = simOverrides;
   vm.runInContext(
@@ -125,7 +125,7 @@ delete globalThis.__simOverrides;
     vmContext
   );
 
-  loadScript(vmContext, "utils.js");
+  loadScript(vmContext, "src/simulation/utils.js");
 
   return {
     context: vmContext,

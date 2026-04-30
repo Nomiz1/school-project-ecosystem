@@ -4,11 +4,11 @@ import { createHarness } from "./helpers/sim-test-harness.js";
 
 function loadAppHarness() {
   const harness = createHarness();
-  harness.loadScript("grass.js");
-  harness.loadScript("rabbit.js");
+  harness.loadScript("src/simulation/grass.js");
+  harness.loadScript("src/simulation/rabbit.js");
 
   harness.loadScript(
-    "app.js",
+    "src/simulation/app.js",
     `
 globalThis.__appApi = {
   initBackground,
@@ -26,11 +26,11 @@ globalThis.__appApi = {
 
 test("initBackground creates image data for world size", () => {
   const harness = createHarness();
-  harness.loadScript("grass.js");
-  harness.loadScript("rabbit.js");
+  harness.loadScript("src/simulation/grass.js");
+  harness.loadScript("src/simulation/rabbit.js");
 
   harness.loadScript(
-    "app.js",
+    "src/simulation/app.js",
     `
 globalThis.__appApi = {
   initBackground,
@@ -49,11 +49,11 @@ globalThis.__appApi = {
 
 test("initWorld calls all init steps", () => {
   const harness = createHarness();
-  harness.loadScript("grass.js");
-  harness.loadScript("rabbit.js");
+  harness.loadScript("src/simulation/grass.js");
+  harness.loadScript("src/simulation/rabbit.js");
 
   harness.loadScript(
-    "app.js",
+    "src/simulation/app.js",
     `
 globalThis.__calls = { initGrass: 0, initRabbits: 0 };
 const originalInitGrass = initGrass;

@@ -4,8 +4,8 @@ import { createHarness } from "./helpers/sim-test-harness.js";
 
 function loadRabbitHarness(simOverrides = {}) {
   const harness = createHarness({ simOverrides });
-  harness.loadScript("grass.js");
-  harness.loadScript("rabbit.js");
+  harness.loadScript("src/simulation/grass.js");
+  harness.loadScript("src/simulation/rabbit.js");
 
   const api = harness.expose(`({
     initRabbits,

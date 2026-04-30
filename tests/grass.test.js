@@ -4,7 +4,7 @@ import { createHarness } from "./helpers/sim-test-harness.js";
 
 function loadGrassHarness(simOverrides = {}) {
   const harness = createHarness({ simOverrides });
-  harness.loadScript("grass.js");
+  harness.loadScript("src/simulation/grass.js");
   const api = harness.expose(`({
     initGrass,
     getGrassCount,
