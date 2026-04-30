@@ -84,7 +84,7 @@ function getGrassCollisionCircle(patch) {
 function growGrass() {
   for (let patchIndex = grass.length - 1; patchIndex >= 0; patchIndex -= 1) {
     const patch = grass[patchIndex];
-    
+
     if (!patch.grown) {
       patch.currentH = Math.min(patch.currentH + GRASS_GROWTH_PER_TICK, patch.h);
       if (patch.currentH >= patch.h) {

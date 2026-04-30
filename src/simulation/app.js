@@ -20,7 +20,7 @@ function initBackground() {
       for (let py = 0; py < BG_PIXEL_SIZE && blockY + py < globalThis.HEIGHT; py += 1) {
         for (let px = 0; px < BG_PIXEL_SIZE && blockX + px < globalThis.WIDTH; px += 1) {
           const index = ((blockY + py) * globalThis.WIDTH + (blockX + px)) * 4;
-          imageData.data[index]     = r;
+          imageData.data[index] = r;
           imageData.data[index + 1] = g;
           imageData.data[index + 2] = b;
           imageData.data[index + 3] = 255;
