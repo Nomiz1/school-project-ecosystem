@@ -90,7 +90,7 @@ function createHarness(options = {}) {
 
   const vmContext = vm.createContext(context);
 
-  loadScript(vmContext, "simulation-constants.js");
+  loadScript(vmContext, "public/simulation-constants.js");
 
   vmContext.__simOverrides = simOverrides;
   vm.runInContext(
