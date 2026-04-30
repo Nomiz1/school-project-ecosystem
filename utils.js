@@ -1,6 +1,6 @@
-const WIDTH = SIM.world.width;
-const HEIGHT = SIM.world.height;
-const BORDER = SIM.world.border;
+const WIDTH = globalThis.SIM.world.width;
+const HEIGHT = globalThis.SIM.world.height;
+const BORDER = globalThis.SIM.world.border;
 
 /*Why this is important in the project:
 
@@ -12,3 +12,10 @@ Without it, everything would appear in the same place with the same values every
 function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+Object.assign(globalThis, {
+  WIDTH,
+  HEIGHT,
+  BORDER,
+  randomInt,
+});

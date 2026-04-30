@@ -1,18 +1,25 @@
-const INITIAL_GRASS = SIM.grass.initialCount;
-const GRASS_GROWTH_PER_TICK = SIM.grass.growthPerTick;
-const MIN_EATEN_GRASS_HEIGHT = SIM.grass.minEatenHeight;
+const grassSimConfig = globalThis.SIM;
+const grassRandomBetween = globalThis.randomInt;
+const grassWorldWidth = globalThis.WIDTH;
+const grassWorldHeight = globalThis.HEIGHT;
 
-const GRASS_HEIGHT_MIN = SIM.grass.heightMin;
-const GRASS_HEIGHT_MAX = SIM.grass.heightMax;
-const GRASS_WIDTH_MIN = SIM.grass.widthMin;
-const GRASS_WIDTH_MAX = SIM.grass.widthMax;
+const INITIAL_GRASS = grassSimConfig.grass.initialCount;
+const GRASS_GROWTH_PER_TICK = grassSimConfig.grass.growthPerTick;
+const MIN_EATEN_GRASS_HEIGHT = grassSimConfig.grass.minEatenHeight;
+
+const GRASS_HEIGHT_MIN = grassSimConfig.grass.heightMin;
+const GRASS_HEIGHT_MAX = grassSimConfig.grass.heightMax;
+const GRASS_WIDTH_MIN = grassSimConfig.grass.widthMin;
+const GRASS_WIDTH_MAX = grassSimConfig.grass.widthMax;
 
 let grass = [];
+globalThis.grass = grass;
 
 // --- Setup / spawning ---
 
 function initGrass() {
   grass = [];
+  globalThis.grass = grass;
   let attempts = 0;
   const maxAttempts = INITIAL_GRASS * 20;
 
@@ -31,12 +38,12 @@ function getGrassCount() {
 }
 
 function createGrassPatch() {
-  const maxHeight = randomInt(GRASS_HEIGHT_MIN, GRASS_HEIGHT_MAX);
-  const width = randomInt(GRASS_WIDTH_MIN, GRASS_WIDTH_MAX);
+  const maxHeight = grassRandomBetween(GRASS_HEIGHT_MIN, GRASS_HEIGHT_MAX);
+  const width = grassRandomBetween(GRASS_WIDTH_MIN, GRASS_WIDTH_MAX);
 
   return {
-    x: randomInt(0, WIDTH - width),
-    y: randomInt(0, HEIGHT - maxHeight),
+    x: grassRandomBetween(0, grassWorldWidth - width),
+    y: grassRandomBetween(0, grassWorldHeight - maxHeight),
     w: width,
     h: maxHeight,
     currentH: MIN_EATEN_GRASS_HEIGHT,
@@ -103,6 +110,16 @@ function drawGrass(ctx) {
     ctx.fill();
   }
 }
+
+Object.assign(globalThis, {
+  initGrass,
+  getGrassCount,
+  createGrassPatch,
+  isGrassOverlapping,
+  getGrassCollisionCircle,
+  growGrass,
+  drawGrass,
+});
 
 //For planing what to do next (quick notes):
 // - Add a "biomass" property to grass that determines how much energy it gives to rabbits when eaten. This could be based on the current height of the grass.

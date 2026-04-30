@@ -1,4 +1,9 @@
-const INITIAL_RABBITS = SIM.rabbits.initialCount;
+const rabbitSimConfig = globalThis.SIM;
+const rabbitRandomBetween = globalThis.randomInt;
+const rabbitWorldWidth = globalThis.WIDTH;
+const rabbitWorldHeight = globalThis.HEIGHT;
+
+const INITIAL_RABBITS = rabbitSimConfig.rabbits.initialCount;
 
 
 
@@ -27,19 +32,19 @@ function getRabbitCount() {
 
 // Create a new rabbit with random position, size, and movement traits.
 function createRabbit() {
-    const maxHeight = randomInt(SIM.rabbits.heightMin, SIM.rabbits.heightMax);
-    const width = randomInt(SIM.rabbits.widthMin, SIM.rabbits.widthMax);
-    const speed = randomInt(SIM.rabbits.speedMin, SIM.rabbits.speedMax);
-    const jumpChance = SIM.rabbits.jumpChance;
-    const jumpPower = randomInt(SIM.rabbits.jumpPowerMin, SIM.rabbits.jumpPowerMax);
+    const maxHeight = rabbitRandomBetween(rabbitSimConfig.rabbits.heightMin, rabbitSimConfig.rabbits.heightMax);
+    const width = rabbitRandomBetween(rabbitSimConfig.rabbits.widthMin, rabbitSimConfig.rabbits.widthMax);
+    const speed = rabbitRandomBetween(rabbitSimConfig.rabbits.speedMin, rabbitSimConfig.rabbits.speedMax);
+    const jumpChance = rabbitSimConfig.rabbits.jumpChance;
+    const jumpPower = rabbitRandomBetween(rabbitSimConfig.rabbits.jumpPowerMin, rabbitSimConfig.rabbits.jumpPowerMax);
 
     return {
-        x: randomInt(0, WIDTH - width),
-        y: randomInt(0, HEIGHT - maxHeight),
+        x: rabbitRandomBetween(0, rabbitWorldWidth - width),
+        y: rabbitRandomBetween(0, rabbitWorldHeight - maxHeight),
         w: width,
         h: maxHeight,
         speed: speed,
-        angle: randomInt(0, 359),
+        angle: rabbitRandomBetween(0, 359),
         jumpChance: jumpChance,
         jumpPower: jumpPower,
         jumpVx: 0,
@@ -69,15 +74,15 @@ function isNewRabbitOverlapping(newRabbit) {
 function rabbitNormalWalk() {
     for (const rabbit of rabbits) {
         // Slightly nudge the angle each frame for smooth wandering
-        rabbit.angle += randomInt(-90, 90) * 0.35; // Adjust the multiplier for more or less erratic movement
+        rabbit.angle += rabbitRandomBetween(-90, 90) * 0.35; // Adjust the multiplier for more or less erratic movement
 
         const radians = rabbit.angle * (Math.PI / 180);
         rabbit.x += Math.cos(radians) * rabbit.speed;
         rabbit.y += Math.sin(radians) * rabbit.speed;
 
         // Keep rabbit within canvas bounds
-        rabbit.x = Math.max(0, Math.min(WIDTH - rabbit.w, rabbit.x));
-        rabbit.y = Math.max(0, Math.min(HEIGHT - rabbit.h, rabbit.y));
+        rabbit.x = Math.max(0, Math.min(rabbitWorldWidth - rabbit.w, rabbit.x));
+        rabbit.y = Math.max(0, Math.min(rabbitWorldHeight - rabbit.h, rabbit.y));
 
         // Apply ongoing jump velocity
         rabbit.x += rabbit.jumpVx;
@@ -93,8 +98,8 @@ function rabbitNormalWalk() {
         }
 
         // Keep rabbit within canvas bounds after jump movement
-        rabbit.x = Math.max(0, Math.min(WIDTH - rabbit.w, rabbit.x));
-        rabbit.y = Math.max(0, Math.min(HEIGHT - rabbit.h, rabbit.y));
+        rabbit.x = Math.max(0, Math.min(rabbitWorldWidth - rabbit.w, rabbit.x));
+        rabbit.y = Math.max(0, Math.min(rabbitWorldHeight - rabbit.h, rabbit.y));
     }
 }
 
@@ -109,13 +114,15 @@ function isRabbitOverlappingGrass(rabbit, patch) {
 }
 
 function rabbitEatGrass() {
+    const activeGrass = typeof grass !== "undefined" ? grass : (globalThis.grass || []);
+
     for (const rabbit of rabbits) {
-        for (let patchIndex = grass.length - 1; patchIndex >= 0; patchIndex--) {
-            const patch = grass[patchIndex];
-            const rabbitEatGrassChance = SIM.rabbits.eatChance;
+        for (let patchIndex = activeGrass.length - 1; patchIndex >= 0; patchIndex--) {
+            const patch = activeGrass[patchIndex];
+            const rabbitEatGrassChance = rabbitSimConfig.rabbits.eatChance;
 
             if (Math.random() < rabbitEatGrassChance && isRabbitOverlappingGrass(rabbit, patch) && patch.grown) {
-                patch.currentH = Math.max(SIM.grass.minEatenHeight, patch.h * SIM.grass.eatenHeightFactor);
+                patch.currentH = Math.max(rabbitSimConfig.grass.minEatenHeight, patch.h * rabbitSimConfig.grass.eatenHeightFactor);
                 patch.grown = false;
             }
 
@@ -160,11 +167,27 @@ function areBoxesOverlapping(firstBox, secondBox) {
 
 // Draw rabbits as white rectangles
 function drawRabbits() {
+    const ctx = globalThis.ctx;
+
     for (const rabbit of rabbits) {
         ctx.fillStyle = 'white';
         ctx.fillRect(rabbit.x, rabbit.y, rabbit.w, rabbit.h);
     }
 }
+
+Object.assign(globalThis, {
+    initRabbits,
+    getRabbitCount,
+    createRabbit,
+    isNewRabbitOverlapping,
+    rabbitNormalWalk,
+    isRabbitOverlappingGrass,
+    rabbitEatGrass,
+    getRabbitCollisionBox,
+    getGrassVisibleCollisionBox,
+    areBoxesOverlapping,
+    drawRabbits,
+});
 // For the future:
 // If 500 grass or more exist then rabbits eat with randomly 
 // If 500 or less grass exist then the rabbits will look for grass and eat it if they find it
