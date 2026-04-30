@@ -5,7 +5,7 @@ const SIM = {
         border: 10,
     },
     render: {
-        targetFps: 30,
+        targetFps: 60,
         countersUpdateMs: 250,
     },
     grass: {

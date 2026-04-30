@@ -17,6 +17,26 @@ let lastCountersUpdateTime = 0;
 let lastGrassCount = -1;
 let lastRabbitCount = -1;
 
+function applyBackgroundTexture() {
+  if (!backgroundImageData) {
+    return;
+  }
+
+  const textureCanvas = document.createElement("canvas");
+  textureCanvas.width = globalThis.WIDTH;
+  textureCanvas.height = globalThis.HEIGHT;
+
+  const textureCtx = textureCanvas.getContext("2d");
+  if (!textureCtx) {
+    return;
+  }
+
+  textureCtx.putImageData(backgroundImageData, 0, 0);
+  canvas.style.backgroundImage = `url("${textureCanvas.toDataURL()}")`;
+  canvas.style.backgroundSize = "cover";
+  canvas.style.backgroundRepeat = "no-repeat";
+}
+
 function initBackground() {
   const imageData = ctx.createImageData(globalThis.WIDTH, globalThis.HEIGHT);
 
@@ -37,6 +57,7 @@ function initBackground() {
   }
 
   backgroundImageData = imageData;
+  applyBackgroundTexture();
 }
 
 function initWorld() {
@@ -50,7 +71,7 @@ function initWorld() {
 }
 
 function drawWorld(now) {
-  ctx.putImageData(backgroundImageData, 0, 0);
+  ctx.clearRect(0, 0, globalThis.WIDTH, globalThis.HEIGHT);
   globalThis.drawGrass(ctx);
   globalThis.drawRabbits();
 

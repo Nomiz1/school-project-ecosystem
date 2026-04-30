@@ -9,6 +9,7 @@ const ROOT = path.resolve(__dirname, "..", "..");
 function createMockCanvasContext() {
   const calls = {
     putImageData: [],
+    clearRect: [],
     beginPath: 0,
     arc: [],
     fill: 0,
@@ -28,8 +29,14 @@ function createMockCanvasContext() {
     putImageData(imageData, x, y) {
       calls.putImageData.push({ imageData, x, y });
     },
+    clearRect(...args) {
+      calls.clearRect.push(args);
+    },
     beginPath() {
       calls.beginPath += 1;
+    },
+    moveTo() {
+      // Included for path batching support in rendering tests.
     },
     arc(...args) {
       calls.arc.push(args);
@@ -57,6 +64,7 @@ function createHarness(options = {}) {
 
   const elements = {
     world: {
+      style: {},
       getContext() {
         return ctx;
       },
@@ -78,6 +86,23 @@ function createHarness(options = {}) {
     document: {
       getElementById(id) {
         return elements[id];
+      },
+      createElement(tagName) {
+        if (tagName !== "canvas") {
+          return {};
+        }
+
+        const offscreenCtx = createMockCanvasContext();
+        return {
+          width: 0,
+          height: 0,
+          getContext() {
+            return offscreenCtx;
+          },
+          toDataURL() {
+            return "data:image/png;base64,mock";
+          },
+        };
       },
     },
     window: {

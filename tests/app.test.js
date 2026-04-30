@@ -45,6 +45,7 @@ globalThis.__appApi = {
   assert.equal(imageData.width, 800);
   assert.equal(imageData.height, 600);
   assert.equal(imageData.data.length, 800 * 600 * 4);
+  assert.equal(harness.elements.world.style.backgroundImage.startsWith("url(\"data:image/png"), true);
 });
 
 test("initWorld calls all init steps", () => {
@@ -94,7 +95,19 @@ test("drawWorld updates counters and draws world", () => {
   assert.equal(Number.isInteger(rabbitCount), true);
   assert.equal(grassCount >= 0 && grassCount <= 810, true);
   assert.equal(rabbitCount >= 0 && rabbitCount <= 10, true);
-  assert.equal(harness.canvasContext.calls.putImageData.length >= 1, true);
+  assert.equal(harness.canvasContext.calls.putImageData.length, 0);
+});
+
+test("updateSimulation does not repaint background each frame", () => {
+  const harness = loadAppHarness();
+
+  const putImageDataBefore = harness.canvasContext.calls.putImageData.length;
+
+  harness.context.__appApi.updateSimulation(1000);
+  harness.context.__appApi.updateSimulation(2000);
+  harness.context.__appApi.updateSimulation(3000);
+
+  assert.equal(harness.canvasContext.calls.putImageData.length, putImageDataBefore);
 });
 
 test("updateSimulation runs one update step and schedules next frame", () => {

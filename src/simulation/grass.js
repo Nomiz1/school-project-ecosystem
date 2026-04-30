@@ -107,6 +107,7 @@ function drawGrass(ctx) {
     const centerX = patch.x + patch.w / 2;
     const centerY = patch.y + patch.h / 2;
 
+    ctx.moveTo(centerX + radius, centerY);
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
   }
 
