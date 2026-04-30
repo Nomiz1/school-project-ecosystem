@@ -1,7 +1,9 @@
-const fs = require("fs");
-const path = require("path");
-const vm = require("vm");
+import fs from "node:fs";
+import path from "node:path";
+import vm from "node:vm";
+import { fileURLToPath } from "node:url";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..", "..");
 
 function createMockCanvasContext() {
@@ -139,6 +141,4 @@ delete globalThis.__simOverrides;
   };
 }
 
-module.exports = {
-  createHarness,
-};
+export { createHarness };

@@ -1,6 +1,6 @@
-const assert = require("node:assert/strict");
+import assert from "node:assert/strict";
 
-const { createHarness } = require("./helpers/sim-test-harness");
+import { createHarness } from "./helpers/sim-test-harness.js";
 
 test("randomInt is inclusive for both min and max", () => {
   const harness = createHarness();

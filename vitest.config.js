@@ -1,5 +1,5 @@
 /** @type {import('vitest/config').UserConfig} */
-module.exports = {
+export default {
   test: {
     globals: true,
     include: ["tests/**/*.test.js"],
