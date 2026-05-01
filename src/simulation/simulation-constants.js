@@ -2,7 +2,6 @@ const SIM = {
     world: {
         width: 800,
         height: 608,
-        border: 10,
     },
     render: {
         targetFps: 60,
@@ -11,12 +10,8 @@ const SIM = {
     grass: {
         initialCount: 400,
         growthPerTick: 0.10,
-        eatenHeightFactor: 0.8,
+        rabbitEatGrassPart: 1,
         minEatenHeight: 1,
-        heightMin: 30,
-        heightMax: 40,
-        widthMin: 20,
-        widthMax: 20,
     },
     rabbits: {
         initialCount: 10,

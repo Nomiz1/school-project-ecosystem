@@ -15,9 +15,8 @@ test("randomInt is inclusive for both min and max", () => {
 
 test("world constants are loaded from SIM", () => {
   const harness = createHarness();
-  const constants = harness.expose("({ WIDTH, HEIGHT, BORDER })");
+  const constants = harness.expose("({ WIDTH, HEIGHT })");
 
   assert.equal(constants.WIDTH, 800);
   assert.equal(constants.HEIGHT, 608);
-  assert.equal(constants.BORDER, 10);
 });

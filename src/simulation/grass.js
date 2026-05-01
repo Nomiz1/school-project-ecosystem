@@ -34,6 +34,11 @@ function getGrassCount() {
   return grass.length;
 }
 
+function checkBiomassLevel(patch) {
+  const bioMass = patch.currentH;
+  return bioMass;
+}
+
 function createGrassPatch() {
   const cols = Math.floor(grassWorldWidth / GRID_SIZE);
   const rows = Math.floor(grassWorldHeight / GRID_SIZE);
@@ -47,7 +52,10 @@ function createGrassPatch() {
     h: GRID_SIZE,
     currentH: MIN_EATEN_GRASS_HEIGHT,
     grown: false,
-  };
+    checkBiomassLevel() {
+      return this.currentH;
+  },
+};
 }
 
 function isGrassOverlapping(patch) {
@@ -62,7 +70,7 @@ function isGrassOverlapping(patch) {
 
 // --- Growth ---
 
-function growGrass() {
+function growGrass(patch) {
   for (let patchIndex = grass.length - 1; patchIndex >= 0; patchIndex -= 1) {
     const patch = grass[patchIndex];
 
@@ -97,5 +105,4 @@ Object.assign(globalThis, {
 
 //For planing what to do next (quick notes):
 // - Add a "biomass" property to grass that determines how much energy it gives to rabbits when eaten. This could be based on the current height of the grass.
-// - Make the grass straws into grass patches (same propeties as grass straws but each patch takes up a larger area)
 // - Make rabbits have a choice to switch to a different grass patch if the current one hs low biomass. 

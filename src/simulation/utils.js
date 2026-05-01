@@ -1,6 +1,5 @@
 const WIDTH = globalThis.SIM.world.width;
 const HEIGHT = globalThis.SIM.world.height;
-const BORDER = globalThis.SIM.world.border;
 
 /*Why this is important in the project:
 
@@ -16,6 +15,5 @@ function randomInt(min, max) {
 Object.assign(globalThis, {
   WIDTH,
   HEIGHT,
-  BORDER,
   randomInt,
 });

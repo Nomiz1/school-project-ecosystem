@@ -80,28 +80,28 @@ flowchart TD
 	subgraph app_js[src/simulation/app.js]
 		initWorld[initWorld]
 		initBackground[initBackground]
+		drawGrid[drawGrid]
 		drawWorld[drawWorld]
-		tick[tick]
+		updateSimulation[updateSimulation]
 	end
 
 	subgraph grass_js[src/simulation/grass.js]
 		initGrass[initGrass]
 		createGrassPatch[createGrassPatch]
-		grassOverlaps[grassOverlaps]
-		getGrassCollisionCircle[getGrassCollisionCircle]
+		isGrassOverlapping[isGrassOverlapping]
 		growGrass[growGrass]
 		drawGrass[drawGrass]
 	end
 
 	subgraph rabbit_js[src/simulation/rabbit.js]
-		initRabbit[initRabbit]
+		initRabbits[initRabbits]
 		createRabbit[createRabbit]
-		rabbitOverlaps[rabbitOverlaps]
+		isNewRabbitOverlapping[isNewRabbitOverlapping]
 		rabbitNormalWalk[rabbitNormalWalk]
 		rabbitEatGrass[rabbitEatGrass]
 		getRabbitCollisionBox[getRabbitCollisionBox]
 		getGrassVisibleCollisionBox[getGrassVisibleCollisionBox]
-		boxesOverlap[boxesOverlap]
+		areBoxesOverlapping[areBoxesOverlapping]
 		drawRabbits[drawRabbits]
 	end
 
@@ -111,42 +111,44 @@ flowchart TD
 
 	Start --> initWorld
 	Start --> drawWorld
-	Start --> tick
+	Start --> updateSimulation
 	Reset --> initWorld
 
 	initWorld --> initGrass
 	initWorld --> initBackground
-	initWorld --> initRabbit
+	initWorld --> initRabbits
 
 	initBackground --> randomInt
 
+	drawWorld --> drawGrid
 	drawWorld --> drawGrass
 	drawWorld --> drawRabbits
 
-	tick --> rabbitNormalWalk
-	tick --> rabbitEatGrass
-	tick --> growGrass
-	tick --> drawWorld
-	tick --> tick
+	updateSimulation --> rabbitNormalWalk
+	updateSimulation --> rabbitEatGrass
+	updateSimulation --> growGrass
+	updateSimulation --> drawWorld
+	updateSimulation --> updateSimulation
 
 	initGrass --> createGrassPatch
-	initGrass --> grassOverlaps
+	initGrass --> isGrassOverlapping
 	createGrassPatch --> randomInt
-	grassOverlaps --> getGrassCollisionCircle
+	createGrassPatch --> checkBiomassLevel[patch.checkBiomassLevel]
 
-	initRabbit --> createRabbit
-	initRabbit --> rabbitOverlaps
+	initRabbits --> createRabbit
+	initRabbits --> isNewRabbitOverlapping
 	createRabbit --> randomInt
 	rabbitNormalWalk --> randomInt
+	rabbitEatGrass --> checkBiomassLevel
 	rabbitEatGrass --> getRabbitCollisionBox
 	rabbitEatGrass --> getGrassVisibleCollisionBox
-	rabbitEatGrass --> boxesOverlap
+	rabbitEatGrass --> areBoxesOverlapping
 ```
 
 Kort förklaring:
 
 - initWorld startar om världen genom att skapa gräs, bakgrund och kaniner.
-- tick är huvudloopen som flyttar kaniner, låter dem äta gräs, växer gräs och ritar om världen varje bildruta.
-- rabbitEatGrass använder hjälpfunktioner för kollisionskontroll mellan kaniner och synlig gräsyta.
+- updateSimulation är huvudloopen som flyttar kaniner, låter dem äta gräs, växer gräs och ritar om världen varje bildruta.
+- rabbitEatGrass använder biomass från patch.checkBiomassLevel (med fallback till currentH) samt hjälpfunktioner för kollisionskontroll.
 - randomInt i src/simulation/utils.js används av gräs, kaniner och bakgrund för slumpmässiga värden.
 - Diagrammet visar bara de skript som faktiskt används av sidan just nu.

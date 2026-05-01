@@ -116,7 +116,7 @@ test("isRabbitOverlappingGrass returns true when boxes overlap", () => {
   assert.equal(api.isRabbitOverlappingGrass(rabbit, patch), true);
 });
 
-test("rabbitEatGrass eats only grown overlapping grass", () => {
+test("rabbitEatGrass eats overlapping patches with enough biomass", () => {
   const { harness, api } = loadRabbitHarness({
     rabbits: { eatChance: 1 },
     grass: { eatenHeightFactor: 0.1, minEatenHeight: 1 },
@@ -129,17 +129,20 @@ test("rabbitEatGrass eats only grown overlapping grass", () => {
     { x: 10, y: 10, w: 20, h: 20, currentH: 20, grown: true },
     { x: 200, y: 200, w: 20, h: 20, currentH: 20, grown: true },
     { x: 10, y: 10, w: 20, h: 20, currentH: 20, grown: false },
+    { x: 10, y: 10, w: 20, h: 20, currentH: 2, grown: true },
   ]);
 
   api.rabbitEatGrass();
 
-  const [first, second, third] = api.getGrass();
-  assert.equal(first.currentH, 2);
+  const [first, second, third, fourth] = api.getGrass();
+  assert.equal(first.currentH, 19);
   assert.equal(first.grown, false);
   assert.equal(second.currentH, 20);
   assert.equal(second.grown, true);
-  assert.equal(third.currentH, 20);
+  assert.equal(third.currentH, 19);
   assert.equal(third.grown, false);
+  assert.equal(fourth.currentH, 2);
+  assert.equal(fourth.grown, true);
 });
 
 test("drawRabbits draws one rectangle per rabbit", () => {
