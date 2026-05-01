@@ -47,6 +47,11 @@ function createMockCanvasContext() {
     fillRect(...args) {
       calls.fillRect.push(args);
     },
+    save() {},
+    restore() {},
+    lineTo() {},
+    stroke() {},
+    drawImage() {},
   };
 }
 

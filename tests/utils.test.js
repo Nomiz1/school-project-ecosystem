@@ -18,6 +18,6 @@ test("world constants are loaded from SIM", () => {
   const constants = harness.expose("({ WIDTH, HEIGHT, BORDER })");
 
   assert.equal(constants.WIDTH, 800);
-  assert.equal(constants.HEIGHT, 600);
+  assert.equal(constants.HEIGHT, 608);
   assert.equal(constants.BORDER, 10);
 });

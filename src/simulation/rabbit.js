@@ -121,7 +121,7 @@ function rabbitEatGrass() {
             const patch = activeGrass[patchIndex];
             const rabbitEatGrassChance = rabbitSimConfig.rabbits.eatChance;
 
-            if (Math.random() < rabbitEatGrassChance && isRabbitOverlappingGrass(rabbit, patch)) {
+            if (Math.random() < rabbitEatGrassChance && patch.grown && isRabbitOverlappingGrass(rabbit, patch)) {
                 patch.currentH = Math.max(rabbitSimConfig.grass.minEatenHeight, patch.currentH * rabbitSimConfig.grass.eatenHeightFactor);
                 patch.grown = false;
             }
@@ -141,16 +141,11 @@ function getRabbitCollisionBox(rabbit) {
 }
 
 function getGrassVisibleCollisionBox(patch) {
-    const baseRadius = Math.min(patch.w, patch.h) / 2;
-    const growthRatio = patch.currentH / patch.h;
-    const radius = Math.max(1, baseRadius * growthRatio);
-    const size = radius * 2;
-
     return {
-        x: patch.x + patch.w / 2 - radius,
-        y: patch.y + patch.h / 2 - radius,
-        w: size,
-        h: size,
+        x: patch.x,
+        y: patch.y,
+        w: patch.w,
+        h: patch.h,
     };
 }
 

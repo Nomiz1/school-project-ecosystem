@@ -1,7 +1,7 @@
 const SIM = {
     world: {
         width: 800,
-        height: 600,
+        height: 608,
         border: 10,
     },
     render: {
@@ -32,7 +32,7 @@ const SIM = {
         eatChance: 0.5,
     },
     background: {
-        pixelSize: 2,
+        pixelSize: 16,
         colors: [
             [38, 7, 1],
             [47, 14, 7],

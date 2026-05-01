@@ -12,6 +12,8 @@ const GRASS_HEIGHT_MAX = grassSimConfig.grass.heightMax;
 const GRASS_WIDTH_MIN = grassSimConfig.grass.widthMin;
 const GRASS_WIDTH_MAX = grassSimConfig.grass.widthMax;
 
+const GRID_SIZE = 16;
+
 let grass = [];
 globalThis.grass = grass;
 
@@ -38,30 +40,24 @@ function getGrassCount() {
 }
 
 function createGrassPatch() {
-  const maxHeight = grassRandomBetween(GRASS_HEIGHT_MIN, GRASS_HEIGHT_MAX);
-  const width = grassRandomBetween(GRASS_WIDTH_MIN, GRASS_WIDTH_MAX);
+  const cols = Math.floor(grassWorldWidth / GRID_SIZE);
+  const rows = Math.floor(grassWorldHeight / GRID_SIZE);
+  const col = grassRandomBetween(0, cols - 1);
+  const row = grassRandomBetween(0, rows - 1);
 
   return {
-    x: grassRandomBetween(0, grassWorldWidth - width),
-    y: grassRandomBetween(0, grassWorldHeight - maxHeight),
-    w: width,
-    h: maxHeight,
+    x: col * GRID_SIZE,
+    y: row * GRID_SIZE,
+    w: GRID_SIZE,
+    h: GRID_SIZE,
     currentH: MIN_EATEN_GRASS_HEIGHT,
     grown: false,
   };
 }
 
 function isGrassOverlapping(patch) {
-  const gap = 2;
-  const candidatePatchCircle = getGrassCollisionCircle(patch);
-
   for (const existingPatch of grass) {
-    const existingPatchCircle = getGrassCollisionCircle(existingPatch);
-    const deltaX = candidatePatchCircle.x - existingPatchCircle.x;
-    const deltaY = candidatePatchCircle.y - existingPatchCircle.y;
-    const minDistance = candidatePatchCircle.r + existingPatchCircle.r + gap;
-
-    if (deltaX * deltaX + deltaY * deltaY < minDistance * minDistance) {
+    if (patch.x === existingPatch.x && patch.y === existingPatch.y) {
       return true;
     }
   }
@@ -97,21 +93,12 @@ function growGrass() {
 // --- Rendering ---
 
 function drawGrass(ctx) {
-  ctx.fillStyle = "rgba(68, 155, 46, 0.63)";
-  ctx.beginPath();
-
   for (const patch of grass) {
-    const baseRadius = Math.min(patch.w, patch.h) / 2;
     const growthRatio = patch.currentH / patch.h;
-    const radius = Math.max(1, baseRadius * growthRatio);
-    const centerX = patch.x + patch.w / 2;
-    const centerY = patch.y + patch.h / 2;
-
-    ctx.moveTo(centerX + radius, centerY);
-    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    const alpha = (0.3 + growthRatio * 0.7).toFixed(2);
+    ctx.fillStyle = `rgba(68, 155, 46, ${alpha})`;
+    ctx.fillRect(patch.x, patch.y, patch.w, patch.h);
   }
-
-  ctx.fill();
 }
 
 Object.assign(globalThis, {

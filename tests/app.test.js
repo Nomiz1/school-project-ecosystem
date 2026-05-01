@@ -15,8 +15,8 @@ globalThis.__appApi = {
   initWorld,
   drawWorld,
   updateSimulation,
-  getBackgroundImageData: () => backgroundImageData,
-  setBackgroundImageData: (next) => { backgroundImageData = next; }
+  getBackgroundCanvas: () => backgroundCanvas,
+  setBackgroundCanvas: (next) => { backgroundCanvas = next; }
 };
 `
   );
@@ -34,18 +34,17 @@ test("initBackground creates image data for world size", () => {
     `
 globalThis.__appApi = {
   initBackground,
-  getBackgroundImageData: () => backgroundImageData
+  getBackgroundCanvas: () => backgroundCanvas
 };
 `
   );
 
   harness.context.__appApi.initBackground();
-  const imageData = harness.context.__appApi.getBackgroundImageData();
+  const bg = harness.context.__appApi.getBackgroundCanvas();
 
-  assert.equal(imageData.width, 800);
-  assert.equal(imageData.height, 600);
-  assert.equal(imageData.data.length, 800 * 600 * 4);
-  assert.equal(harness.elements.world.style.backgroundImage.startsWith("url(\"data:image/png"), true);
+  assert.equal(bg.width, 800);
+  assert.equal(bg.height, 608);
+  assert.equal(harness.elements.world.style.backgroundImage, "none");
 });
 
 test("initWorld calls all init steps", () => {
@@ -82,8 +81,8 @@ globalThis.__appApi = { initWorld };
 test("drawWorld updates counters and draws world", () => {
   const harness = loadAppHarness();
 
-  harness.context.__appApi.setBackgroundImageData(
-    harness.canvasContext.createImageData(800, 600)
+  harness.context.__appApi.setBackgroundCanvas(
+    harness.context.document.createElement("canvas")
   );
 
   harness.context.__appApi.drawWorld();

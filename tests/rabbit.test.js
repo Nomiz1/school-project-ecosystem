@@ -36,7 +36,7 @@ test("createRabbit creates a valid rabbit", () => {
   assert.ok(rabbit.h >= 15 && rabbit.h <= 20);
   assert.ok(rabbit.speed >= 1 && rabbit.speed <= 3);
   assert.ok(rabbit.x >= 0 && rabbit.x <= 800 - rabbit.w);
-  assert.ok(rabbit.y >= 0 && rabbit.y <= 600 - rabbit.h);
+  assert.ok(rabbit.y >= 0 && rabbit.y <= 608 - rabbit.h);
   assert.equal(rabbit.jumpVx, 0);
   assert.equal(rabbit.jumpVy, 0);
 });
@@ -80,7 +80,7 @@ test("rabbitNormalWalk moves rabbit and clamps to bounds", () => {
 
   const rabbit = api.getRabbits()[0];
   assert.equal(rabbit.x, 790);
-  assert.equal(rabbit.y, 590);
+  assert.equal(rabbit.y, 598);
 });
 
 test("collision helper functions return expected values", () => {
@@ -93,10 +93,10 @@ test("collision helper functions return expected values", () => {
   assert.equal(rabbitBox.h, 4);
 
   const patchBox = api.getGrassVisibleCollisionBox({ x: 10, y: 20, w: 20, h: 20, currentH: 10 });
-  assert.equal(patchBox.x, 15);
-  assert.equal(patchBox.y, 25);
-  assert.equal(patchBox.w, 10);
-  assert.equal(patchBox.h, 10);
+  assert.equal(patchBox.x, 10);
+  assert.equal(patchBox.y, 20);
+  assert.equal(patchBox.w, 20);
+  assert.equal(patchBox.h, 20);
 
   assert.equal(
     api.areBoxesOverlapping({ x: 0, y: 0, w: 10, h: 10 }, { x: 5, y: 5, w: 10, h: 10 }),

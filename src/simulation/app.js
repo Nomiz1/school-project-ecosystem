@@ -11,53 +11,28 @@ const TARGET_FPS = globalThis.SIM.render.targetFps;
 const FRAME_MS = 1000 / TARGET_FPS;
 const COUNTERS_UPDATE_MS = globalThis.SIM.render.countersUpdateMs;
 
-let backgroundImageData = null;
+let backgroundCanvas = null;
 let lastUpdateTime = 0;
 let lastCountersUpdateTime = 0;
 let lastGrassCount = -1;
 let lastRabbitCount = -1;
 
-function applyBackgroundTexture() {
-  if (!backgroundImageData) {
-    return;
-  }
-
-  const textureCanvas = document.createElement("canvas");
-  textureCanvas.width = globalThis.WIDTH;
-  textureCanvas.height = globalThis.HEIGHT;
-
-  const textureCtx = textureCanvas.getContext("2d");
-  if (!textureCtx) {
-    return;
-  }
-
-  textureCtx.putImageData(backgroundImageData, 0, 0);
-  canvas.style.backgroundImage = `url("${textureCanvas.toDataURL()}")`;
-  canvas.style.backgroundSize = "cover";
-  canvas.style.backgroundRepeat = "no-repeat";
-}
-
 function initBackground() {
-  const imageData = ctx.createImageData(globalThis.WIDTH, globalThis.HEIGHT);
+  const offscreen = document.createElement("canvas");
+  offscreen.width = globalThis.WIDTH;
+  offscreen.height = globalThis.HEIGHT;
+  const offCtx = offscreen.getContext("2d");
 
   for (let blockY = 0; blockY < globalThis.HEIGHT; blockY += BG_PIXEL_SIZE) {
     for (let blockX = 0; blockX < globalThis.WIDTH; blockX += BG_PIXEL_SIZE) {
       const [r, g, b] = BG_COLORS[globalThis.randomInt(0, BG_COLORS.length - 1)];
-
-      for (let py = 0; py < BG_PIXEL_SIZE && blockY + py < globalThis.HEIGHT; py += 1) {
-        for (let px = 0; px < BG_PIXEL_SIZE && blockX + px < globalThis.WIDTH; px += 1) {
-          const index = ((blockY + py) * globalThis.WIDTH + (blockX + px)) * 4;
-          imageData.data[index] = r;
-          imageData.data[index + 1] = g;
-          imageData.data[index + 2] = b;
-          imageData.data[index + 3] = 255;
-        }
-      }
+      offCtx.fillStyle = `rgb(${r},${g},${b})`;
+      offCtx.fillRect(blockX, blockY, BG_PIXEL_SIZE, BG_PIXEL_SIZE);
     }
   }
 
-  backgroundImageData = imageData;
-  applyBackgroundTexture();
+  backgroundCanvas = offscreen;
+  canvas.style.backgroundImage = "none";
 }
 
 function initWorld() {
@@ -70,10 +45,32 @@ function initWorld() {
   lastRabbitCount = -1;
 }
 
+function drawGrid() {
+  const GRID_SIZE = 16;
+  ctx.save();
+  ctx.strokeStyle = "rgba(0, 0, 0, 0.0)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let x = GRID_SIZE; x < globalThis.WIDTH; x += GRID_SIZE) {
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, globalThis.HEIGHT);
+  }
+  for (let y = GRID_SIZE; y < globalThis.HEIGHT; y += GRID_SIZE) {
+    ctx.moveTo(0, y);
+    ctx.lineTo(globalThis.WIDTH, y);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
 function drawWorld(now) {
   ctx.clearRect(0, 0, globalThis.WIDTH, globalThis.HEIGHT);
+  if (backgroundCanvas) {
+    ctx.drawImage(backgroundCanvas, 0, 0);
+  }
   globalThis.drawGrass(ctx);
   globalThis.drawRabbits();
+  drawGrid();
 
   const shouldSyncCounters = now - lastCountersUpdateTime >= COUNTERS_UPDATE_MS;
   if (shouldSyncCounters) {

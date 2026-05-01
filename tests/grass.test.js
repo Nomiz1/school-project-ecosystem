@@ -24,10 +24,10 @@ test("createGrassPatch creates a valid patch", () => {
   const { api } = loadGrassHarness();
   const patch = api.createGrassPatch();
 
-  assert.ok(patch.w >= 15 && patch.w <= 20);
-  assert.ok(patch.h >= 30 && patch.h <= 40);
-  assert.ok(patch.x >= 0 && patch.x <= 800 - patch.w);
-  assert.ok(patch.y >= 0 && patch.y <= 600 - patch.h);
+  assert.equal(patch.w, 16);
+  assert.equal(patch.h, 16);
+  assert.ok(patch.x >= 0 && patch.x % 16 === 0 && patch.x <= 800 - 16);
+  assert.ok(patch.y >= 0 && patch.y % 16 === 0 && patch.y <= 608 - 16);
   assert.equal(patch.currentH, 1);
   assert.equal(patch.grown, false);
 });
@@ -44,10 +44,10 @@ test("getGrassCollisionCircle uses center point and min radius", () => {
 
 test("isGrassOverlapping returns true only for colliding patches", () => {
   const { api } = loadGrassHarness();
-  api.setGrass([{ x: 100, y: 100, w: 20, h: 20 }]);
+  api.setGrass([{ x: 96, y: 96, w: 16, h: 16 }]);
 
-  assert.equal(api.isGrassOverlapping({ x: 110, y: 110, w: 20, h: 20 }), true);
-  assert.equal(api.isGrassOverlapping({ x: 300, y: 300, w: 20, h: 20 }), false);
+  assert.equal(api.isGrassOverlapping({ x: 96, y: 96, w: 16, h: 16 }), true);
+  assert.equal(api.isGrassOverlapping({ x: 112, y: 96, w: 16, h: 16 }), false);
 });
 
 test("growGrass increases current height until grown", () => {
@@ -74,16 +74,16 @@ test("initGrass fills up to initialCount and getGrassCount matches", () => {
   assert.equal(api.getGrassCount(), 12);
 });
 
-test("drawGrass draws one circle per patch", () => {
+test("drawGrass draws one filled rectangle per patch", () => {
   const { harness, api } = loadGrassHarness();
   api.setGrass([
-    { x: 10, y: 10, w: 20, h: 40, currentH: 20, grown: false },
-    { x: 40, y: 40, w: 16, h: 16, currentH: 16, grown: true },
+    { x: 10, y: 10, w: 16, h: 16, currentH: 8, grown: false },
+    { x: 32, y: 32, w: 16, h: 16, currentH: 16, grown: true },
   ]);
 
   api.drawGrass(harness.canvasContext);
 
-  assert.equal(harness.canvasContext.calls.beginPath, 1);
-  assert.equal(harness.canvasContext.calls.arc.length, 2);
-  assert.equal(harness.canvasContext.calls.fill, 1);
+  assert.equal(harness.canvasContext.calls.fillRect.length, 2);
+  assert.deepEqual(harness.canvasContext.calls.fillRect[0], [10, 10, 16, 16]);
+  assert.deepEqual(harness.canvasContext.calls.fillRect[1], [32, 32, 16, 16]);
 });
