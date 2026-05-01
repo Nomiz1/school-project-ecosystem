@@ -10,7 +10,6 @@ function loadGrassHarness(simOverrides = {}) {
     getGrassCount,
     createGrassPatch,
     isGrassOverlapping,
-    getGrassCollisionCircle,
     growGrass,
     drawGrass,
     setGrass: (next) => { grass = next; },
@@ -30,16 +29,6 @@ test("createGrassPatch creates a valid patch", () => {
   assert.ok(patch.y >= 0 && patch.y % 16 === 0 && patch.y <= 608 - 16);
   assert.equal(patch.currentH, 1);
   assert.equal(patch.grown, false);
-});
-
-test("getGrassCollisionCircle uses center point and min radius", () => {
-  const { api } = loadGrassHarness();
-  const patch = { x: 10, y: 20, w: 8, h: 20 };
-  const circle = api.getGrassCollisionCircle(patch);
-
-  assert.equal(circle.x, 14);
-  assert.equal(circle.y, 30);
-  assert.equal(circle.r, 4);
 });
 
 test("isGrassOverlapping returns true only for colliding patches", () => {

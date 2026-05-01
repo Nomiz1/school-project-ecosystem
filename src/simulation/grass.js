@@ -7,11 +7,6 @@ const INITIAL_GRASS = grassSimConfig.grass.initialCount;
 const GRASS_GROWTH_PER_TICK = grassSimConfig.grass.growthPerTick;
 const MIN_EATEN_GRASS_HEIGHT = grassSimConfig.grass.minEatenHeight;
 
-const GRASS_HEIGHT_MIN = grassSimConfig.grass.heightMin;
-const GRASS_HEIGHT_MAX = grassSimConfig.grass.heightMax;
-const GRASS_WIDTH_MIN = grassSimConfig.grass.widthMin;
-const GRASS_WIDTH_MAX = grassSimConfig.grass.widthMax;
-
 const GRID_SIZE = 16;
 
 let grass = [];
@@ -65,16 +60,6 @@ function isGrassOverlapping(patch) {
   return false;
 }
 
-function getGrassCollisionCircle(patch) {
-  const radius = Math.min(patch.w, patch.h) / 2;
-
-  return {
-    x: patch.x + patch.w / 2,
-    y: patch.y + patch.h / 2,
-    r: radius,
-  };
-}
-
 // --- Growth ---
 
 function growGrass() {
@@ -106,7 +91,6 @@ Object.assign(globalThis, {
   getGrassCount,
   createGrassPatch,
   isGrassOverlapping,
-  getGrassCollisionCircle,
   growGrass,
   drawGrass,
 });
