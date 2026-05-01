@@ -9,13 +9,13 @@ const SIM = {
         countersUpdateMs: 250,
     },
     grass: {
-        initialCount: 810,
-        growthPerTick: 0.1,
-        eatenHeightFactor: 0.1,
+        initialCount: 400,
+        growthPerTick: 0.10,
+        eatenHeightFactor: 0.8,
         minEatenHeight: 1,
         heightMin: 30,
         heightMax: 40,
-        widthMin: 15,
+        widthMin: 20,
         widthMax: 20,
     },
     rabbits: {

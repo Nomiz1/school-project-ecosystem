@@ -121,8 +121,8 @@ function rabbitEatGrass() {
             const patch = activeGrass[patchIndex];
             const rabbitEatGrassChance = rabbitSimConfig.rabbits.eatChance;
 
-            if (Math.random() < rabbitEatGrassChance && isRabbitOverlappingGrass(rabbit, patch) && patch.grown) {
-                patch.currentH = Math.max(rabbitSimConfig.grass.minEatenHeight, patch.h * rabbitSimConfig.grass.eatenHeightFactor);
+            if (Math.random() < rabbitEatGrassChance && isRabbitOverlappingGrass(rabbit, patch)) {
+                patch.currentH = Math.max(rabbitSimConfig.grass.minEatenHeight, patch.currentH * rabbitSimConfig.grass.eatenHeightFactor);
                 patch.grown = false;
             }
 
