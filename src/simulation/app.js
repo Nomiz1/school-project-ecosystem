@@ -46,7 +46,7 @@ function initWorld() {
 }
 
 function drawGrid() {
-  const GRID_SIZE = 16;
+  const GRID_SIZE = BG_PIXEL_SIZE;
   ctx.save();
   ctx.strokeStyle = "rgba(0, 0, 0, 0.0)";
   ctx.lineWidth = 1;

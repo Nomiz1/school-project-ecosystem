@@ -4,6 +4,7 @@ const rabbitWorldWidth = globalThis.WIDTH;
 const rabbitWorldHeight = globalThis.HEIGHT;
 
 const INITIAL_RABBITS = rabbitSimConfig.rabbits.initialCount;
+const maxEnergyLevel = rabbitSimConfig.rabbits.energyMax;
 
 
 
@@ -30,6 +31,10 @@ function getRabbitCount() {
     return rabbits.length;
 }
 
+    function checkRabbitEnergyLevel(rabbit) {
+        return rabbit.energy > 0;
+    }
+
 // Create a new rabbit with random position, size, and movement traits.
 function createRabbit() {
     const maxHeight = rabbitRandomBetween(rabbitSimConfig.rabbits.heightMin, rabbitSimConfig.rabbits.heightMax);
@@ -49,6 +54,7 @@ function createRabbit() {
         jumpPower: jumpPower,
         jumpVx: 0,
         jumpVy: 0,
+        energy: maxEnergyLevel,
     };
 }
 
@@ -121,7 +127,7 @@ function rabbitEatGrass() {
             const patch = activeGrass[patchIndex];
             const rabbitEatGrassChance = rabbitSimConfig.rabbits.eatChance;
 
-            if (Math.random() < rabbitEatGrassChance && patch.checkBiomassLevel() >= 3 && isRabbitOverlappingGrass(rabbit, patch)) {
+            if (Math.random() < rabbitEatGrassChance && checkBiomassLevel(patch) >= 3 && isRabbitOverlappingGrass(rabbit, patch)) {
                 patch.currentH = Math.max(rabbitSimConfig.grass.minEatenHeight, patch.currentH - rabbitSimConfig.grass.rabbitEatGrassPart );
                 patch.grown = false;
             }

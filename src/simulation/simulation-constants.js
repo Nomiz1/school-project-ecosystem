@@ -1,7 +1,7 @@
 const SIM = {
     world: {
         width: 800,
-        height: 608,
+        height: 800,
     },
     render: {
         targetFps: 60,
@@ -25,9 +25,16 @@ const SIM = {
         jumpPowerMin: 2,
         jumpPowerMax: 5,
         eatChance: 0.5,
+        energyMax: 100,
+    },
+    dayNightCycle: {
+        framesPerDay: 10800, // 3 minutes at 60 FPS
+        nightGrassGrowthMultiplier: 0.5,
+        nightRabbitSpeedMultiplier: 0.2,
+        maxDarkness: 0.5, // Max darkness level (0 to 1)
     },
     background: {
-        pixelSize: 16,
+        pixelSize: 8,
         colors: [
             [38, 7, 1],
             [47, 14, 7],

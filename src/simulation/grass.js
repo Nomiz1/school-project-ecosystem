@@ -7,7 +7,7 @@ const INITIAL_GRASS = grassSimConfig.grass.initialCount;
 const GRASS_GROWTH_PER_TICK = grassSimConfig.grass.growthPerTick;
 const MIN_EATEN_GRASS_HEIGHT = grassSimConfig.grass.minEatenHeight;
 
-const GRID_SIZE = 16;
+const GRID_SIZE = grassSimConfig.background.pixelSize;
 
 let grass = [];
 globalThis.grass = grass;
@@ -101,6 +101,7 @@ Object.assign(globalThis, {
   isGrassOverlapping,
   growGrass,
   drawGrass,
+  checkBiomassLevel,
 });
 
 //For planing what to do next (quick notes):

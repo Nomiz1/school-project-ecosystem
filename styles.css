@@ -23,7 +23,7 @@ body {
 }
 
 .app {
-  width: calc(70vw + 2rem);
+  width: calc(round(down, min(70vw, 70vh), 8px) + 2rem);
   padding: 1rem;
   border: 2px solid var(--border);
   border-radius: 12px;
@@ -43,8 +43,8 @@ h1 {
 }
 
 canvas {
-  width: 70vw;
-  height: 52.5vh;
+  width: round(down, min(70vw, 70vh), 8px);
+  height: round(down, min(70vw, 70vh), 8px);
   border: 2px solid var(--border);
   display: block;
   background: var(--soil);
