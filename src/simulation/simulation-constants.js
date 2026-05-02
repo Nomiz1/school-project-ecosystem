@@ -28,7 +28,7 @@ const SIM = {
         energyMax: 100,
     },
     dayNightCycle: {
-        framesPerDay: 10800, // 3 minutes at 60 FPS
+        framesPerDay: 48, 
         nightGrassGrowthMultiplier: 0.5,
         nightRabbitSpeedMultiplier: 0.2,
         maxDarkness: 0.5, // Max darkness level (0 to 1)

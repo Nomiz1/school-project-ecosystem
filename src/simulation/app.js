@@ -4,6 +4,7 @@ globalThis.ctx = ctx;
 const grassCountEl = document.getElementById("grassCount");
 const rabbitCountEl = document.getElementById("rabbitCount");
 const timeOfDayEl = document.getElementById("timeOfDay");
+const dayOfYearEl = document.getElementById("dayOfYear");
 const resetBtn = document.getElementById("resetBtn");
 
 const BG_COLORS = globalThis.SIM.background.colors;
@@ -91,6 +92,7 @@ function drawWorld(now) {
     }
 
     timeOfDayEl.textContent = `Time: ${globalThis.getClockString()}`;
+    dayOfYearEl.textContent = `Day: ${globalThis.getDayOfYearString()}`;
 
     lastCountersUpdateTime = now;
   }

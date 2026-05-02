@@ -26,6 +26,25 @@ function getClockString() {
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
+const MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+function getDayOfYear() {
+    return Math.floor(tick / SIM.dayNightCycle.framesPerDay);
+}
+
+function getDayOfYearString() {
+    const dayIndex = getDayOfYear() % 365;
+    let remaining = dayIndex;
+    for (let i = 0; i < MONTH_DAYS.length; i++) {
+        if (remaining < MONTH_DAYS[i]) {
+            return `${remaining + 1} ${MONTH_NAMES[i]}`;
+        }
+        remaining -= MONTH_DAYS[i];
+    }
+    return `1 Jan`;
+}
+
  function drawDayNightOverlay(ctx) {
     const { darknessLevel } = getDayNightModifiers();
     ctx.save();
@@ -44,5 +63,7 @@ function getClockString() {
     getTimeOfDay,
     getDayNightModifiers,
     getClockString,
+    getDayOfYear,
+    getDayOfYearString,
     drawDayNightOverlay,
 });
