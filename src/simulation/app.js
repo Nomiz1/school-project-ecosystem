@@ -37,7 +37,7 @@ function initBackground() {
   canvas.style.backgroundImage = "none";
 }
 
-function initWorld() {
+export function initWorld() {
   globalThis.resetTime();
   globalThis.initGrass();
   initBackground();
@@ -98,7 +98,7 @@ function drawWorld(now) {
   }
 }
 
-function updateSimulation(timestamp = Date.now()) {
+export function updateSimulation(timestamp = Date.now()) {
   if (lastUpdateTime === 0) {
     lastUpdateTime = timestamp;
   }
