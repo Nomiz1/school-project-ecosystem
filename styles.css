@@ -81,3 +81,8 @@ button {
 button:hover {
   background: #fff2d6;
 }
+
+#timeOfDay {
+  font-size: 1.15rem;
+  opacity: 0.9;
+}

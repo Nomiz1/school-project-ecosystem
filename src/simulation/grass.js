@@ -4,7 +4,7 @@ const grassWorldWidth = globalThis.WIDTH;
 const grassWorldHeight = globalThis.HEIGHT;
 
 const INITIAL_GRASS = grassSimConfig.grass.initialCount;
-const GRASS_GROWTH_PER_TICK = grassSimConfig.grass.growthPerTick;
+const GRASS_GROWTH_PER_TICK = grassSimConfig.grass.growthPerTick * globalThis.SIM.dayNightCycle.nightGrassGrowthMultiplier; // Base growth per tick, modified by day/night cycle
 const MIN_EATEN_GRASS_HEIGHT = grassSimConfig.grass.minEatenHeight;
 
 const GRID_SIZE = grassSimConfig.background.pixelSize;

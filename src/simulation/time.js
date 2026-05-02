@@ -34,8 +34,13 @@ function getClockString() {
     ctx.restore();
 }
 
+ function resetTime() {
+    tick = 0;
+}
+
  Object.assign(globalThis, {
     tickTime,
+    resetTime,
     getTimeOfDay,
     getDayNightModifiers,
     getClockString,

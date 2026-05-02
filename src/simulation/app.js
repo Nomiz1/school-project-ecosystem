@@ -3,6 +3,7 @@ const ctx = canvas.getContext("2d");
 globalThis.ctx = ctx;
 const grassCountEl = document.getElementById("grassCount");
 const rabbitCountEl = document.getElementById("rabbitCount");
+const timeOfDayEl = document.getElementById("timeOfDay");
 const resetBtn = document.getElementById("resetBtn");
 
 const BG_COLORS = globalThis.SIM.background.colors;
@@ -36,6 +37,7 @@ function initBackground() {
 }
 
 function initWorld() {
+  globalThis.resetTime();
   globalThis.initGrass();
   initBackground();
   globalThis.initRabbits();
@@ -68,6 +70,7 @@ function drawWorld(now) {
   if (backgroundCanvas) {
     ctx.drawImage(backgroundCanvas, 0, 0);
   }
+  globalThis.drawDayNightOverlay(ctx);
   globalThis.drawGrass(ctx);
   globalThis.drawRabbits();
   drawGrid();
@@ -87,6 +90,8 @@ function drawWorld(now) {
       lastRabbitCount = rabbitCount;
     }
 
+    timeOfDayEl.textContent = `Time: ${globalThis.getClockString()}`;
+
     lastCountersUpdateTime = now;
   }
 }
@@ -99,6 +104,7 @@ function updateSimulation(timestamp = Date.now()) {
   const elapsed = timestamp - lastUpdateTime;
 
   if (elapsed >= FRAME_MS) {
+    globalThis.tickTime();
     globalThis.rabbitNormalWalk();
     globalThis.rabbitEatGrass();
     globalThis.growGrass();
@@ -114,5 +120,4 @@ resetBtn.addEventListener("click", () => {
 });
 
 initWorld();
-drawWorld(Date.now());
 window.requestAnimationFrame(updateSimulation);

@@ -40,8 +40,6 @@ function createRabbit() {
     const maxHeight = rabbitRandomBetween(rabbitSimConfig.rabbits.heightMin, rabbitSimConfig.rabbits.heightMax);
     const width = rabbitRandomBetween(rabbitSimConfig.rabbits.widthMin, rabbitSimConfig.rabbits.widthMax);
     const speed = rabbitRandomBetween(rabbitSimConfig.rabbits.speedMin, rabbitSimConfig.rabbits.speedMax);
-    const jumpChance = rabbitSimConfig.rabbits.jumpChance;
-    const jumpPower = rabbitRandomBetween(rabbitSimConfig.rabbits.jumpPowerMin, rabbitSimConfig.rabbits.jumpPowerMax);
 
     return {
         x: rabbitRandomBetween(0, rabbitWorldWidth - width),
@@ -50,10 +48,6 @@ function createRabbit() {
         h: maxHeight,
         speed: speed,
         angle: rabbitRandomBetween(0, 359),
-        jumpChance: jumpChance,
-        jumpPower: jumpPower,
-        jumpVx: 0,
-        jumpVy: 0,
         energy: maxEnergyLevel,
     };
 }
@@ -78,32 +72,16 @@ function isNewRabbitOverlapping(newRabbit) {
 // --- Movement ---
 
 function rabbitNormalWalk() {
+    const { rabbitSpeedModifier } = globalThis.getDayNightModifiers();
+
     for (const rabbit of rabbits) {
-        // Slightly nudge the angle each frame for smooth wandering
         rabbit.angle += rabbitRandomBetween(-90, 90) * 0.35; // Adjust the multiplier for more or less erratic movement
 
         const radians = rabbit.angle * (Math.PI / 180);
-        rabbit.x += Math.cos(radians) * rabbit.speed;
-        rabbit.y += Math.sin(radians) * rabbit.speed;
+        rabbit.x += Math.cos(radians) * rabbit.speed * rabbitSpeedModifier;
+        rabbit.y += Math.sin(radians) * rabbit.speed * rabbitSpeedModifier;
 
         // Keep rabbit within canvas bounds
-        rabbit.x = Math.max(0, Math.min(rabbitWorldWidth - rabbit.w, rabbit.x));
-        rabbit.y = Math.max(0, Math.min(rabbitWorldHeight - rabbit.h, rabbit.y));
-
-        // Apply ongoing jump velocity
-        rabbit.x += rabbit.jumpVx;
-        rabbit.y += rabbit.jumpVy;
-        rabbit.jumpVx *= 0.85;
-        rabbit.jumpVy *= 0.85;
-
-        // Trigger a new jump in the current angle direction
-        if (Math.random() < rabbit.jumpChance) {
-            const jumpRadians = rabbit.angle * (Math.PI / 180);
-            rabbit.jumpVx = Math.cos(jumpRadians) * rabbit.jumpPower;
-            rabbit.jumpVy = Math.sin(jumpRadians) * rabbit.jumpPower;
-        }
-
-        // Keep rabbit within canvas bounds after jump movement
         rabbit.x = Math.max(0, Math.min(rabbitWorldWidth - rabbit.w, rabbit.x));
         rabbit.y = Math.max(0, Math.min(rabbitWorldHeight - rabbit.h, rabbit.y));
     }
