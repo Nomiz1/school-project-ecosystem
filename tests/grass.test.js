@@ -33,11 +33,11 @@ test("createGrassPatch should return a valid grass patch object", () => {
     expect(patch).toHaveProperty("y");
     expect(patch).toHaveProperty("w");
     expect(patch).toHaveProperty("h");
-    expect(patch).toHaveProperty("currentH");
-    expect(patch).toHaveProperty("grown");
+    expect(patch).toHaveProperty("currentLevel");
+    expect(patch).toHaveProperty("rawGrowth");
     expect(typeof patch.checkBiomassLevel).toBe("function");
-    expect(patch.currentH).toBe(globalThis.SIM.grass.minEatenHeight);
-    expect(patch.grown).toBe(false);
+    expect(patch.currentLevel).toBe(globalThis.SIM.grass.minGrassLevel);
+    expect(patch.rawGrowth).toBe(0);
     expect(patch.x).toBeGreaterThanOrEqual(0); // Check within bounds
     expect(patch.y).toBeGreaterThanOrEqual(0);
 });

@@ -10,7 +10,6 @@ const SIM = {
     grass: {
         initialCount: 5000,
         growthPerTick: 1/24, // Grows from minGrassLevel to full height in about 16 sim-days with current day/night modifier
-        rabbitEatGrassLevel: 1,
         maxGrassLevel: 16,
         minGrassLevel: 0,
         sproutChance: 0.05,
@@ -30,9 +29,6 @@ const SIM = {
         heightMax: 20,
         speedMin: 1,
         speedMax: 3,
-        jumpChance: 0.05,
-        jumpPowerMin: 2,
-        jumpPowerMax: 5,
         eatChance: 0.5,
         energyMax: 100,
     },
