@@ -4,8 +4,8 @@ const grassWorldWidth = globalThis.WIDTH;
 const grassWorldHeight = globalThis.HEIGHT;
 
 const INITIAL_GRASS = grassSimConfig.grass.initialCount;
-const GRASS_GROWTH_PER_TICK = grassSimConfig.grass.growthPerTick * globalThis.SIM.dayNightCycle.nightGrassGrowthMultiplier; // Base growth per tick, modified by day/night cycle
-const MIN_EATEN_GRASS_HEIGHT = grassSimConfig.grass.minEatenHeight;
+const GRASS_GROWTH_PER_TICK = grassSimConfig.grass.growthPerTick; // Base growth per tick, modified by day/night cycle
+const MIN_GRASS_LEVEL = grassSimConfig.grass.minGrassLevel; 
 
 const GRID_SIZE = grassSimConfig.background.pixelSize;
 
@@ -35,7 +35,7 @@ function getGrassCount() {
 }
 
 function checkBiomassLevel(patch) {
-  const bioMass = patch.currentH;
+  const bioMass = patch.currentLevel;
   return bioMass;
 }
 
@@ -50,10 +50,10 @@ function createGrassPatch() {
     y: row * GRID_SIZE,
     w: GRID_SIZE,
     h: GRID_SIZE,
-    currentH: MIN_EATEN_GRASS_HEIGHT,
+    currentLevel: MIN_GRASS_LEVEL,
     grown: false,
     checkBiomassLevel() {
-      return this.currentH;
+      return this.currentLevel;
   },
 };
 }
@@ -71,12 +71,15 @@ function isGrassOverlapping(patch) {
 // --- Growth ---
 
 function growGrass(patch) {
+  const { grassGrowthModifier } = globalThis.getDayNightModifiers();
+  const growthThisTick = GRASS_GROWTH_PER_TICK * grassGrowthModifier;
+
   for (let patchIndex = grass.length - 1; patchIndex >= 0; patchIndex -= 1) {
     const patch = grass[patchIndex];
 
     if (!patch.grown) {
-      patch.currentH = Math.min(patch.currentH + GRASS_GROWTH_PER_TICK, patch.h);
-      if (patch.currentH >= patch.h) {
+      patch.currentLevel = Math.min(patch.currentLevel + growthThisTick, patch.h);
+      if (patch.currentLevel >= patch.h) {
         patch.grown = true;
       }
     }
@@ -87,10 +90,6 @@ function growGrass(patch) {
 
 function drawGrass(ctx) {
   for (const patch of grass) {
-    const level = Math.floor(patch.currentH); 
-    const growthRation = (level - MIN_EATEN_GRASS_HEIGHT) / (patch.h - MIN_EATEN_GRASS_HEIGHT);
-    const colorValue = Math.round(80 + growthRation * 120); // From dark to bright green based on growth
-    ctx.fillStyle = `rgb(68, ${colorValue}, 46)`;
     ctx.fillRect(patch.x, patch.y, patch.w, patch.h);
   }
 }
@@ -106,5 +105,5 @@ Object.assign(globalThis, {
 });
 
 //For planing what to do next (quick notes):
-// - Add a "biomass" property to grass that determines how much energy it gives to rabbits when eaten. This could be based on the current height of the grass.
-// - Make rabbits have a choice to switch to a different grass patch if the current one hs low biomass. 
+// - Add a "biomass" property to grass that determines how much energy it gives to rabbits when eaten. This could be based on the current level of the grass.
+// - Make rabbits have a choice to switch to a different grass patch if the current one has low biomass. 

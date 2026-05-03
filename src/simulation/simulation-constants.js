@@ -9,9 +9,15 @@ const SIM = {
     },
     grass: {
         initialCount: 400,
-        growthPerTick: 0.10,
-        rabbitEatGrassPart: 1,
-        minEatenHeight: 1,
+        growthPerTick: 7/384, // Grows from minGrassLevel to full height in about 16 sim-days with current day/night modifier
+        rabbitEatGrassLevel: 1,
+        minGrassLevel: 1,
+        colors: [
+            rgb(60, 179, 60),
+            rgb(46, 139, 46),
+            rgb(24, 120, 24),
+            rgb(34, 102, 34)
+        ]
     },
     rabbits: {
         initialCount: 10,
@@ -29,17 +35,17 @@ const SIM = {
     },
     dayNightCycle: {
         framesPerDay: 48, 
-        nightGrassGrowthMultiplier: 0.5,
+        nightGrassGrowthMultiplier: 0,
         nightRabbitSpeedMultiplier: 0.2,
         maxDarkness: 0.5, // Max darkness level (0 to 1)
     },
     background: {
         pixelSize: 8,
-        colors: [
-            [38, 7, 1],
-            [47, 14, 7],
-            [56, 22, 13],
-        ],
+        colors: [ 
+            rgb(38, 7, 1),
+            rgb(47, 14, 7),
+            rgb(56, 22, 13)
+        ]
     },
 };
 
