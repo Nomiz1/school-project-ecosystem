@@ -87,9 +87,10 @@ function growGrass(patch) {
 
 function drawGrass(ctx) {
   for (const patch of grass) {
-    const growthRatio = patch.currentH / patch.h;
-    const alpha = (0.3 + growthRatio * 0.7).toFixed(2);
-    ctx.fillStyle = `rgba(68, 155, 46, ${alpha})`;
+    const level = Math.floor(patch.currentH); 
+    const growthRation = (level - MIN_EATEN_GRASS_HEIGHT) / (patch.h - MIN_EATEN_GRASS_HEIGHT);
+    const colorValue = Math.round(80 + growthRation * 120); // From dark to bright green based on growth
+    ctx.fillStyle = `rgb(68, ${colorValue}, 46)`;
     ctx.fillRect(patch.x, patch.y, patch.w, patch.h);
   }
 }
