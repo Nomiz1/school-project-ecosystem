@@ -5,7 +5,8 @@ const grassWorldHeight = globalThis.HEIGHT;
 
 const INITIAL_GRASS = grassSimConfig.grass.initialCount;
 const GRASS_GROWTH_PER_TICK = grassSimConfig.grass.growthPerTick; // Base growth per tick, modified by day/night cycle
-const MIN_GRASS_LEVEL = grassSimConfig.grass.minGrassLevel; 
+const MIN_GRASS_LEVEL = grassSimConfig.grass.minGrassLevel;
+const MAX_GRASS_LEVEL = grassSimConfig.grass.maxGrassLevel;
 
 const GRID_SIZE = grassSimConfig.background.pixelSize;
 
@@ -51,11 +52,12 @@ function createGrassPatch() {
     w: GRID_SIZE,
     h: GRID_SIZE,
     currentLevel: MIN_GRASS_LEVEL,
-    grown: false,
+    rawGrowth: 0,
+    pixels: Array.from({ length: 8 }, () => Array(8).fill(-1)), // Skapar en 8x8 matris för att spåra tillväxten av varje pixel i gräspatchen, -1 betyder att det är jord.
     checkBiomassLevel() {
       return this.currentLevel;
-  },
-};
+    },
+  };
 }
 
 function isGrassOverlapping(patch) {
@@ -77,32 +79,60 @@ function growGrass(patch) {
   for (let patchIndex = grass.length - 1; patchIndex >= 0; patchIndex -= 1) {
     const patch = grass[patchIndex];
 
-    if (!patch.grown) {
-      patch.currentLevel = Math.min(patch.currentLevel + growthThisTick, patch.h);
-      if (patch.currentLevel >= patch.h) {
-        patch.grown = true;
+    const oldLevel = Math.floor(patch.rawGrowth);
+
+    if (patch.currentLevel < MAX_GRASS_LEVEL) {
+      patch.rawGrowth = Math.min(patch.rawGrowth + growthThisTick, MAX_GRASS_LEVEL);
+      const newLevel = Math.floor(patch.rawGrowth);
+      patch.currentLevel = newLevel;
+      if (newLevel > oldLevel) {
+        for (let row = 0; row < GRID_SIZE; row += 1) {
+          for (let col = 0; col < GRID_SIZE; col += 1) {
+            const pixel = patch.pixels[row][col];
+            if (pixel === -1) {
+              if (Math.random() < grassSimConfig.grass.sproutChance) {
+                patch.pixels[row][col] = 0; // Starta tillväxten av denna pixel
+              }
+            } else if (pixel < grassSimConfig.grass.colors.length - 1 ) {
+              if (Math.random() < grassSimConfig.grass.darkenChance) {
+                patch.pixels[row][col] = pixel + 1; // Öka tillväxten av denna pixel
+              }
+            }
+          }
+        }
+        if (patch.currentLevel >= MAX_GRASS_LEVEL) {
+          patch.grown = true;
+        }
       }
     }
   }
 }
 
-// --- Rendering ---
+  // --- Rendering ---
 
-function drawGrass(ctx) {
-  for (const patch of grass) {
-    ctx.fillRect(patch.x, patch.y, patch.w, patch.h);
+  function drawGrass(ctx) {
+    for (const patch of grass) {
+      for (let row = 0; row < GRID_SIZE; row += 1) {
+        for (let col = 0; col < GRID_SIZE; col += 1) {
+          const pixelLevel = patch.pixels[row][col];
+          if (pixelLevel >= 0) {
+            ctx.fillStyle = grassSimConfig.grass.colors[pixelLevel];
+            ctx.fillRect(patch.x + col, patch.y + row, 1, 1);
+          }
+        }
+      }
+    }
   }
-}
 
-Object.assign(globalThis, {
-  initGrass,
-  getGrassCount,
-  createGrassPatch,
-  isGrassOverlapping,
-  growGrass,
-  drawGrass,
-  checkBiomassLevel,
-});
+  Object.assign(globalThis, {
+    initGrass,
+    getGrassCount,
+    createGrassPatch,
+    isGrassOverlapping,
+    growGrass,
+    drawGrass,
+    checkBiomassLevel,
+  });
 
 //For planing what to do next (quick notes):
 // - Add a "biomass" property to grass that determines how much energy it gives to rabbits when eaten. This could be based on the current level of the grass.
