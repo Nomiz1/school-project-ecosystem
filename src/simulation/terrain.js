@@ -30,10 +30,11 @@ function drawHeightMap(ctx, heightMap) {
     const width = heightMap[0].length;
 
     const biomes = [
-        { max: 0.30, from: [0, 0, 100],    to: [30, 80, 200]   }, // djupt → grunt vatten
-        { max: 0.35, from: [210, 195, 130], to: [240, 220, 100] }, // mörk → ljus sand
-        { max: 0.70, from: [34, 100, 34],   to: [80, 180, 60]   }, // mörkt → ljust gräs
-        { max: 1.00, from: [100, 70, 40],   to: [180, 160, 140] }, // jord → sten
+        { max: 0.30, from: [0, 0, 100],     to: [30, 80, 200]    }, // djupt → grunt vatten
+        { max: 0.35, from: [210, 195, 130], to: [240, 220, 100]  }, // mörk → ljus sand
+        { max: 0.55, from: [55, 24, 10],    to: [125, 82, 48]    }, // mörk → varm jord
+        { max: 0.75, from: [125, 82, 48],   to: [145, 118, 92]   }, // jord → torr jord
+        { max: 1.00, from: [120, 123, 128], to: [215, 218, 222]  }, // kallare gråa berg
     ];
 
     function lerpColor(from, to, t) {
