@@ -3,6 +3,10 @@ const SIM = {
         width: 800,
         height: 800,
     },
+    terrain: {
+        zoomfactor: 100, // Controls the scale of the Perlin noise for terrain generation
+        testMode: true,
+    },
     render: {
         targetFps: 60,
         countersUpdateMs: 250,

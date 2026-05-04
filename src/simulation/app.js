@@ -40,6 +40,9 @@ function initBackground() {
 export function initWorld() {
   globalThis.resetTime();
   globalThis.initGrass();
+  if (typeof globalThis.initTerrain === "function") {
+    globalThis.initTerrain();
+  }
   initBackground();
   globalThis.initRabbits();
   lastUpdateTime = 0;
@@ -68,6 +71,11 @@ function drawGrid() {
 
 function drawWorld(now) {
   ctx.clearRect(0, 0, globalThis.WIDTH, globalThis.HEIGHT);
+  if (globalThis.SIM.terrain?.testMode) {
+    globalThis.drawHeightMap?.(ctx, globalThis.heightMap);
+    return;
+  }
+
   if (backgroundCanvas) {
     ctx.drawImage(backgroundCanvas, 0, 0);
   }
