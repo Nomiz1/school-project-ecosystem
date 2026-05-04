@@ -28,14 +28,9 @@ function drawHeightMap(ctx, heightMap) {
 
     const height = heightMap.length;
     const width = heightMap[0].length;
-
-    const biomes = [
-        { max: 0.30, from: [0, 0, 100],     to: [30, 80, 200]    }, // djupt → grunt vatten
-        { max: 0.35, from: [210, 195, 130], to: [240, 220, 100]  }, // mörk → ljus sand
-        { max: 0.55, from: [55, 24, 10],    to: [125, 82, 48]    }, // mörk → varm jord
-        { max: 0.75, from: [125, 82, 48],   to: [145, 118, 92]   }, // jord → torr jord
-        { max: 1.00, from: [120, 123, 128], to: [215, 218, 222]  }, // kallare gråa berg
-    ];
+    const WATER_MAX = globalThis.SIM.terrain.waterMax;
+    const STEPS = globalThis.SIM.terrain.steps;
+    const landBiomes = globalThis.SIM.terrain.landBiomes;
 
     function lerpColor(from, to, t) {
         const r = Math.round(from[0] + (to[0] - from[0]) * t);
@@ -46,19 +41,25 @@ function drawHeightMap(ctx, heightMap) {
 
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
-            const noiseValue = heightMap[y][x];
+            const raw = heightMap[y][x];
 
-            let color = "rgb(0,0,0)";
-            let prevMax = 0;
-            for (const biome of biomes) {
-                 if (noiseValue <= biome.max) {
-                    const t = (noiseValue - prevMax) / (biome.max - prevMax);
-                    color = lerpColor(biome.from, biome.to, t);
-                    break;
+            if (raw <= WATER_MAX) {
+                const t = Math.round((raw / WATER_MAX) * 6) / 6;
+                ctx.fillStyle = lerpColor([8, 32, 85], [50, 105, 160], t);
+            } else {
+                const noiseValue = Math.round(raw * STEPS) / STEPS;
+                let color = "rgb(0,0,0)";
+                let prevMax = WATER_MAX;
+                for (const biome of landBiomes) {
+                    if (noiseValue <= biome.max) {
+                        const t = (noiseValue - prevMax) / (biome.max - prevMax);
+                        color = lerpColor(biome.from, biome.to, t);
+                        break;
+                    }
+                    prevMax = biome.max;
                 }
-                prevMax = biome.max;
-                }
-            ctx.fillStyle = color;
+                ctx.fillStyle = color;
+            }
             ctx.fillRect(x, y, 1, 1);
         }
     }

@@ -1,7 +1,31 @@
 const canvas = document.getElementById("world");
 const ctx = canvas.getContext("2d");
 globalThis.ctx = ctx;
+const mouseCoordsEl = document.getElementById("mouseCoords");
 const grassCountEl = document.getElementById("grassCount");
+
+function getTerrainType(x, y) {
+  const hm = globalThis.heightMap;
+  if (!hm || !hm[y] || hm[y][x] === undefined) return "?";
+  const v = hm[y][x];
+  if (v <= 0.30) return "Vatten";
+  if (v <= 0.55) return "Gräs";
+  return "Torrt gräs";
+}
+
+canvas.addEventListener("mousemove", (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const x = Math.floor((e.clientX - rect.left) * scaleX);
+  const y = Math.floor((e.clientY - rect.top) * scaleY);
+  const terrain = getTerrainType(x, y);
+  mouseCoordsEl.textContent = `X: ${x} Y: ${y} — ${terrain}`;
+});
+
+canvas.addEventListener("mouseleave", () => {
+  mouseCoordsEl.textContent = "X: - Y: -";
+});
 const rabbitCountEl = document.getElementById("rabbitCount");
 const timeOfDayEl = document.getElementById("timeOfDay");
 const dayOfYearEl = document.getElementById("dayOfYear");
