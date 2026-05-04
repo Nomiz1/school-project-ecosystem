@@ -60,7 +60,6 @@ function drawWorld(now) {
   }
   if (globalThis.terrainCanvas) ctx.drawImage(globalThis.terrainCanvas, 0, 0);
 
-  globalThis.drawDayNightOverlay(ctx);
   globalThis.drawRabbits();
 
   const shouldSyncCounters = now - lastCountersUpdateTime >= COUNTERS_UPDATE_MS;

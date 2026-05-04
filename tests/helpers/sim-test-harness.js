@@ -41,7 +41,7 @@ global.document = {
 globalThis.resetTime = () => { };
 globalThis.initGrass = () => { };
 globalThis.initRabbits = () => { };
-globalThis.drawDayNightOverlay = () => { };
+
 globalThis.drawGrass = () => { };
 globalThis.drawRabbits = () => { };
 globalThis.getGrassCount = () => 0;

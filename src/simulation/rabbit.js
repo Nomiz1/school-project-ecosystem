@@ -77,14 +77,12 @@ function isNewRabbitOverlapping(newRabbit) {
 // --- Movement ---
 
 function rabbitNormalWalk() {
-    const { rabbitSpeedModifier } = globalThis.getDayNightModifiers();
-
     for (const rabbit of rabbits) {
         rabbit.angle += rabbitRandomBetween(-90, 90) * 0.35; // Adjust the multiplier for more or less erratic movement
 
         const radians = rabbit.angle * (Math.PI / 180);
-        rabbit.x += Math.cos(radians) * rabbit.speed * rabbitSpeedModifier;
-        rabbit.y += Math.sin(radians) * rabbit.speed * rabbitSpeedModifier;
+        rabbit.x += Math.cos(radians) * rabbit.speed;
+        rabbit.y += Math.sin(radians) * rabbit.speed;
 
         // Keep rabbit within canvas bounds
         rabbit.x = Math.max(0, Math.min(rabbitWorldWidth - rabbit.w, rabbit.x));

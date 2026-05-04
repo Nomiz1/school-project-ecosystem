@@ -30,6 +30,9 @@ const SIM = {
             "rgb(34, 102, 34)"
         ]
     },
+    time: {
+        framesPerDay: 48,
+    },
     rabbits: {
         initialCount: 100,
         width: 2,
@@ -38,12 +41,6 @@ const SIM = {
         speedMax: 3,
         eatChance: 0.5,
         energyMax: 100,
-    },
-    dayNightCycle: {
-        framesPerDay: 48, 
-        nightGrassGrowthMultiplier: 0,
-        nightRabbitSpeedMultiplier: 0.2,
-        maxDarkness: 0.5, // Max darkness level (0 to 1)
     },
     background: {
         pixelSize: 8,
