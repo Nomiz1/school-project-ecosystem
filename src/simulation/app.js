@@ -2,7 +2,6 @@ const canvas = document.getElementById("world");
 const ctx = canvas.getContext("2d");
 globalThis.ctx = ctx;
 const mouseCoordsEl = document.getElementById("mouseCoords");
-const grassCountEl = document.getElementById("grassCount");
 
 function getTerrainType(x, y) {
   const hm = globalThis.heightMap;
@@ -40,7 +39,6 @@ const COUNTERS_UPDATE_MS = globalThis.SIM.render.countersUpdateMs;
 let backgroundCanvas = null;
 let lastUpdateTime = 0;
 let lastCountersUpdateTime = 0;
-let lastGrassCount = -1;
 let lastRabbitCount = -1;
 
 function initBackground() {
@@ -63,7 +61,6 @@ function initBackground() {
 
 export function initWorld() {
   globalThis.resetTime();
-  globalThis.initGrass();
   if (typeof globalThis.initTerrain === "function") {
     globalThis.initTerrain();
   }
@@ -71,7 +68,6 @@ export function initWorld() {
   globalThis.initRabbits();
   lastUpdateTime = 0;
   lastCountersUpdateTime = 0;
-  lastGrassCount = -1;
   lastRabbitCount = -1;
 }
 
@@ -99,24 +95,15 @@ function drawWorld(now) {
     globalThis.drawHeightMap?.(ctx, globalThis.heightMap);
     return;
   }
-
-  if (backgroundCanvas) {
-    ctx.drawImage(backgroundCanvas, 0, 0);
-  }
+  globalThis.drawHeightMap?.(ctx, globalThis.heightMap);
+  
   globalThis.drawDayNightOverlay(ctx);
-  globalThis.drawGrass(ctx);
   globalThis.drawRabbits();
   drawGrid();
 
   const shouldSyncCounters = now - lastCountersUpdateTime >= COUNTERS_UPDATE_MS;
   if (shouldSyncCounters) {
-    const grassCount = globalThis.getGrassCount();
     const rabbitCount = globalThis.getRabbitCount();
-
-    if (grassCount !== lastGrassCount) {
-      grassCountEl.textContent = `Grass: ${grassCount}`;
-      lastGrassCount = grassCount;
-    }
 
     if (rabbitCount !== lastRabbitCount) {
       rabbitCountEl.textContent = `Rabbits: ${rabbitCount}`;
@@ -140,8 +127,6 @@ export function updateSimulation(timestamp = Date.now()) {
   if (elapsed >= FRAME_MS) {
     globalThis.tickTime();
     globalThis.rabbitNormalWalk();
-    globalThis.rabbitEatGrass();
-    globalThis.growGrass();
     drawWorld(timestamp);
     lastUpdateTime = timestamp;
   }

@@ -21,7 +21,12 @@ function initRabbits() {
     while (rabbits.length < INITIAL_RABBITS && attempts < maxAttempts) {
         attempts += 1;
         const rabbit = createRabbit();
-        if (!isNewRabbitOverlapping(rabbit)) {
+        const cx = Math.floor(rabbit.x + rabbit.w / 2);
+        const cy = Math.floor(rabbit.y + rabbit.h / 2);
+        const heightValue = globalThis.heightMap?.[cy]?.[cx];
+        const isOnLand = heightValue !== undefined && heightValue > globalThis.SIM.terrain.waterMax;
+
+        if (isOnLand && !isNewRabbitOverlapping(rabbit)) {
             rabbits.push(rabbit);
         }
     }
@@ -37,15 +42,15 @@ function getRabbitCount() {
 
 // Create a new rabbit with random position, size, and movement traits.
 function createRabbit() {
-    const maxHeight = rabbitRandomBetween(rabbitSimConfig.rabbits.heightMin, rabbitSimConfig.rabbits.heightMax);
-    const width = rabbitRandomBetween(rabbitSimConfig.rabbits.widthMin, rabbitSimConfig.rabbits.widthMax);
+    const height = globalThis.SIM.rabbits.height;
+    const width = globalThis.SIM.rabbits.width;
     const speed = rabbitRandomBetween(rabbitSimConfig.rabbits.speedMin, rabbitSimConfig.rabbits.speedMax);
 
     return {
         x: rabbitRandomBetween(0, rabbitWorldWidth - width),
-        y: rabbitRandomBetween(0, rabbitWorldHeight - maxHeight),
+        y: rabbitRandomBetween(0, rabbitWorldHeight - height),
         w: width,
-        h: maxHeight,
+        h: height,
         speed: speed,
         angle: rabbitRandomBetween(0, 359),
         energy: maxEnergyLevel,
@@ -84,62 +89,14 @@ function rabbitNormalWalk() {
         // Keep rabbit within canvas bounds
         rabbit.x = Math.max(0, Math.min(rabbitWorldWidth - rabbit.w, rabbit.x));
         rabbit.y = Math.max(0, Math.min(rabbitWorldHeight - rabbit.h, rabbit.y));
-    }
-}
 
-// --- Eating / collision ---
-
-
-function isRabbitOverlappingGrass(rabbit, patch) {
-    const rabbitBox = getRabbitCollisionBox(rabbit);
-    const patchBox = getGrassVisibleCollisionBox(patch);
-
-    return areBoxesOverlapping(rabbitBox, patchBox);
-}
-
-function rabbitEatGrass() {
-    const activeGrass = typeof grass !== "undefined" ? grass : (globalThis.grass || []);
-
-    for (const rabbit of rabbits) {
-        for (let patchIndex = activeGrass.length - 1; patchIndex >= 0; patchIndex--) {
-            const patch = activeGrass[patchIndex];
-            const rabbitEatGrassChance = rabbitSimConfig.rabbits.eatChance;
-
-            if (Math.random() < rabbitEatGrassChance && checkBiomassLevel(patch) >= 3 && isRabbitOverlappingGrass(rabbit, patch)) {
-                patch.currentH = Math.max(rabbitSimConfig.grass.minEatenHeight, patch.currentH - rabbitSimConfig.grass.rabbitEatGrassPart );
-                patch.grown = false;
-            }
-
+        const cx = Math.floor(rabbit.x + rabbit.w / 2);
+        const cy = Math.floor(rabbit.y + rabbit.h / 2);
+        const heightValue = globalThis.heightMap?.[cy]?.[cx];
+        if (heightValue !== undefined && heightValue <= globalThis.SIM.terrain.waterMax) {
+            rabbit.angle += 180;
         }
     }
-}
-
-
-function getRabbitCollisionBox(rabbit) {
-    return {
-        x: rabbit.x,
-        y: rabbit.y,
-        w: rabbit.w,
-        h: rabbit.h,
-    };
-}
-
-function getGrassVisibleCollisionBox(patch) {
-    return {
-        x: patch.x,
-        y: patch.y,
-        w: patch.w,
-        h: patch.h,
-    };
-}
-
-function areBoxesOverlapping(firstBox, secondBox) {
-    return (
-        firstBox.x < secondBox.x + secondBox.w &&
-        firstBox.x + firstBox.w > secondBox.x &&
-        firstBox.y < secondBox.y + secondBox.h &&
-        firstBox.y + firstBox.h > secondBox.y
-    );
 }
 
 // --- Rendering ---
@@ -160,11 +117,6 @@ Object.assign(globalThis, {
     createRabbit,
     isNewRabbitOverlapping,
     rabbitNormalWalk,
-    isRabbitOverlappingGrass,
-    rabbitEatGrass,
-    getRabbitCollisionBox,
-    getGrassVisibleCollisionBox,
-    areBoxesOverlapping,
     drawRabbits,
 });
 // For the future:

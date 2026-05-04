@@ -4,8 +4,7 @@ const SIM = {
         height: 800,
     },
     terrain: {
-        zoomfactor: 150, // Controls the scale of the Perlin noise for terrain generation
-        testMode: true,
+        zoomfactor: 200, // Controls the scale of the Perlin noise for terrain generation
         waterMax: 0.30, 
         steps: 16,
         landBiomes: [
@@ -32,11 +31,9 @@ const SIM = {
         ]
     },
     rabbits: {
-        initialCount: 10,
-        widthMin: 5,
-        widthMax: 10,
-        heightMin: 15,
-        heightMax: 20,
+        initialCount: 100,
+        width: 2,
+        height: 2,
         speedMin: 1,
         speedMax: 3,
         eatChance: 0.5,
