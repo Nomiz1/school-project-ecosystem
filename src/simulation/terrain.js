@@ -29,21 +29,34 @@ function drawHeightMap(ctx, heightMap) {
     const height = heightMap.length;
     const width = heightMap[0].length;
 
+    const biomes = [
+        { max: 0.30, from: [0, 0, 100],    to: [30, 80, 200]   }, // djupt → grunt vatten
+        { max: 0.35, from: [210, 195, 130], to: [240, 220, 100] }, // mörk → ljus sand
+        { max: 0.70, from: [34, 100, 34],   to: [80, 180, 60]   }, // mörkt → ljust gräs
+        { max: 1.00, from: [100, 70, 40],   to: [180, 160, 140] }, // jord → sten
+    ];
+
+    function lerpColor(from, to, t) {
+        const r = Math.round(from[0] + (to[0] - from[0]) * t);
+        const g = Math.round(from[1] + (to[1] - from[1]) * t);
+        const b = Math.round(from[2] + (to[2] - from[2]) * t);
+        return `rgb(${r},${g},${b})`;
+    }
+
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
             const noiseValue = heightMap[y][x];
 
-            let color;
-            if (noiseValue < 0.3) {
-                color = "rgb(0, 0, 128)";
-            } else if (noiseValue < 0.35) {
-                color = "rgb(240, 240, 64)";
-            } else if (noiseValue < 0.7) {
-                color = "rgb(139, 69, 19)";
-            } else {
-                color = "rgb(122, 128, 122)";
-            }
-
+            let color = "rgb(0,0,0)";
+            let prevMax = 0;
+            for (const biome of biomes) {
+                 if (noiseValue <= biome.max) {
+                    const t = (noiseValue - prevMax) / (biome.max - prevMax);
+                    color = lerpColor(biome.from, biome.to, t);
+                    break;
+                }
+                prevMax = biome.max;
+                }
             ctx.fillStyle = color;
             ctx.fillRect(x, y, 1, 1);
         }
