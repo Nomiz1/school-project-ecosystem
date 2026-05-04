@@ -5,8 +5,15 @@ const p5Instance = new p5((p) => { p.setup = () => p.noCanvas(); });
 function initTerrain() {
     p5Instance.noiseSeed(Math.floor(Math.random() * 10000));
     globalThis.heightMap = generateHeightMap(globalThis.WIDTH, globalThis.HEIGHT);
+
+    // Render terrain once into an offscreen canvas so it can be drawn cheaply each frame.
+    const offscreen = document.createElement("canvas");
+    offscreen.width = globalThis.WIDTH;
+    offscreen.height = globalThis.HEIGHT;
+    drawHeightMap(offscreen.getContext("2d"), globalThis.heightMap);
+    globalThis.terrainCanvas = offscreen;
+
     globalThis.drawHeightMap = drawHeightMap;
-    
 }
 globalThis.initTerrain = initTerrain;
 
