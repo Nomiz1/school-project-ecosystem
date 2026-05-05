@@ -104,13 +104,20 @@ function findLandEscapeAngle(rabbit, fromX, fromY, fallbackAngle) {
 
     return fallbackAngle + rabbitRandomBetween(-45, 45);
 }
-function isRabbitOnGrass(rabbit) {
+function isRabbitOnDarkGrass(rabbit) {
     const cx = Math.floor(rabbit.x + rabbit.w / 2);
     const cy = Math.floor(rabbit.y + rabbit.h / 2);
     const heightValue = globalThis.heightMap?.[cy]?.[cx];
     return heightValue !== undefined && globalThis.SIM.terrain.waterMax < heightValue && heightValue <= globalThis.SIM.terrain.darkGrassMax;
 }
-
+function rabbitEatDarkGrass(rabbit) {
+    const cx = Math.floor(rabbit.x + rabbit.w / 2);
+    const cy = Math.floor(rabbit.y + rabbit.h / 2);
+    if (isRabbitOnDarkGrass(rabbit) && Math.random() < rabbitSimConfig.rabbits.eatChance) {
+        globalThis.heightMap[cy][cx] = Math.min(1.0, globalThis.heightMap[cy][cx] + 0.05);
+        globalThis.redrawTerrainPixel(cx, cy);
+    }
+}
 
 function rabbitNormalWalk() {
     for (const rabbit of rabbits) {
@@ -132,6 +139,8 @@ function rabbitNormalWalk() {
             rabbit.y = prevY;
             rabbit.angle = findLandEscapeAngle(rabbit, prevX, prevY, rabbit.angle + 180);
         }
+
+        rabbitEatDarkGrass(rabbit);
     }
 }
 
@@ -153,6 +162,7 @@ Object.assign(globalThis, {
     createRabbit,
     isNewRabbitOverlapping,
     rabbitNormalWalk,
+    rabbitEatDarkGrass,
     drawRabbits,
 });
 // For the future:
