@@ -104,6 +104,8 @@ function findLandEscapeAngle(rabbit, fromX, fromY, fallbackAngle) {
 
     return fallbackAngle + rabbitRandomBetween(-45, 45);
 }
+//function isRabbitOnGrass(rabbit) { 
+    
 
 function rabbitNormalWalk() {
     for (const rabbit of rabbits) {

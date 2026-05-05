@@ -16,20 +16,8 @@ const SIM = {
         targetFps: 60,
         countersUpdateMs: 250,
     },
-    grass: {
-        initialCount: 5000,
-        growthPerTick: 1/24, // Grows from minGrassLevel to full height in about 16 sim-days with current day/night modifier
-        maxGrassLevel: 16,
-        minGrassLevel: 0,
-        sproutChance: 0.05,
-        darkenChance: 0.02,
-        colors: [
-            "rgb(60, 179, 60)",
-            "rgb(46, 139, 46)",
-            "rgb(24, 120, 24)",
-            "rgb(34, 102, 34)"
-        ]
-    },
+    
+    
     time: {
         framesPerDay: 48,
     },
