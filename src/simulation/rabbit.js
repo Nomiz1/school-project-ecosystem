@@ -36,9 +36,9 @@ function getRabbitCount() {
     return rabbits.length;
 }
 
-    function checkRabbitEnergyLevel(rabbit) {
-        return rabbit.energy > 0;
-    }
+function checkRabbitEnergyLevel(rabbit) {
+    return rabbit.energy > 0;
+}
 
 // Create a new rabbit with random position, size, and movement traits.
 function createRabbit() {
@@ -104,8 +104,13 @@ function findLandEscapeAngle(rabbit, fromX, fromY, fallbackAngle) {
 
     return fallbackAngle + rabbitRandomBetween(-45, 45);
 }
-//function isRabbitOnGrass(rabbit) { 
-    
+function isRabbitOnGrass(rabbit) {
+    const cx = Math.floor(rabbit.x + rabbit.w / 2);
+    const cy = Math.floor(rabbit.y + rabbit.h / 2);
+    const heightValue = globalThis.heightMap?.[cy]?.[cx];
+    return heightValue !== undefined && globalThis.SIM.terrain.waterMax < heightValue && heightValue <= globalThis.SIM.terrain.darkGrassMax;
+}
+
 
 function rabbitNormalWalk() {
     for (const rabbit of rabbits) {

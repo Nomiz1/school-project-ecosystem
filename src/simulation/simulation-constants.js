@@ -5,12 +5,11 @@ const SIM = {
     },
     terrain: {
         zoomfactor: 200, // Controls the scale of the Perlin noise for terrain generation
-        waterMax: 0.30, 
+        waterMax: 0.30,
+        darkGrassMax: 0.55,
+        lightGrassMax: 1.00,
         steps: 16,
-        landBiomes: [
-            { max: 0.55, from: [32, 55, 33],   to: [76, 95, 55]   }, // mörkt → ljust gräs
-            { max: 1.00, from: [76, 100, 55],  to: [122, 110, 80]  }, // gräs → torrare gräs
-        ],  
+        
     },
     render: {
         targetFps: 60,

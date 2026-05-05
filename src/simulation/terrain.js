@@ -37,7 +37,8 @@ function drawHeightMap(ctx, heightMap) {
     const width = heightMap[0].length;
     const WATER_MAX = globalThis.SIM.terrain.waterMax;
     const STEPS = globalThis.SIM.terrain.steps;
-    const landBiomes = globalThis.SIM.terrain.landBiomes;
+    const DARK_GRASS_MAX = globalThis.SIM.terrain.darkGrassMax;
+    const LIGHT_GRASS_MAX = globalThis.SIM.terrain.lightGrassMax;
 
     function lerpColor(from, to, t) {
         const r = Math.round(from[0] + (to[0] - from[0]) * t);
@@ -56,14 +57,12 @@ function drawHeightMap(ctx, heightMap) {
             } else {
                 const noiseValue = Math.round(raw * STEPS) / STEPS;
                 let color = "rgb(0,0,0)";
-                let prevMax = WATER_MAX;
-                for (const biome of landBiomes) {
-                    if (noiseValue <= biome.max) {
-                        const t = (noiseValue - prevMax) / (biome.max - prevMax);
-                        color = lerpColor(biome.from, biome.to, t);
-                        break;
-                    }
-                    prevMax = biome.max;
+                if (noiseValue <= DARK_GRASS_MAX) {
+                    const t = (noiseValue - WATER_MAX) / (DARK_GRASS_MAX - WATER_MAX);
+                    color = lerpColor([32, 55, 33], [76, 95, 55], t);
+                } else if (noiseValue <= LIGHT_GRASS_MAX) {
+                    const t = (noiseValue - DARK_GRASS_MAX) / (LIGHT_GRASS_MAX - DARK_GRASS_MAX);
+                    color = lerpColor([76, 100, 55], [122, 110, 80], t);
                 }
                 ctx.fillStyle = color;
             }
