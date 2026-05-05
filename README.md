@@ -29,7 +29,7 @@
 - [ ] Vatten som djur kan dricka ur
 - [ ] Temperatur
 - [ ] Väder (regn, sol, dimma)
-- [ ] Dag- och nattcykel
+- [x] Tid 
 - [ ] Olika klimat (öken, regnskog, osv)
 - [ ] Årstider (långsam övergång mellan de)
 
