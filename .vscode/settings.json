@@ -1,4 +1,7 @@
 {
   "jestrunner.jestCommand": "npx vitest run",
-  "jestrunner.enableCodeLens": true
+  "jestrunner.enableCodeLens": true,
+  "chat.tools.terminal.autoApprove": {
+    "npm install": true
+  }
 }

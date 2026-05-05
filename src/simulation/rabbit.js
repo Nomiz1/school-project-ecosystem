@@ -76,8 +76,39 @@ function isNewRabbitOverlapping(newRabbit) {
 
 // --- Movement ---
 
+function isWaterAt(x, y, rabbit) {
+    const cx = Math.floor(x + rabbit.w / 2);
+    const cy = Math.floor(y + rabbit.h / 2);
+    const heightValue = globalThis.heightMap?.[cy]?.[cx];
+    return heightValue !== undefined && heightValue <= globalThis.SIM.terrain.waterMax;
+}
+
+function findLandEscapeAngle(rabbit, fromX, fromY, fallbackAngle) {
+    const scanDistance = Math.max(rabbit.speed * 1.5, 2);
+
+    for (let offset = 0; offset <= 180; offset += 20) {
+        const candidates = offset === 0
+            ? [fallbackAngle]
+            : [fallbackAngle + offset, fallbackAngle - offset];
+
+        for (const candidateAngle of candidates) {
+            const radians = candidateAngle * (Math.PI / 180);
+            const testX = Math.max(0, Math.min(rabbitWorldWidth - rabbit.w, fromX + Math.cos(radians) * scanDistance));
+            const testY = Math.max(0, Math.min(rabbitWorldHeight - rabbit.h, fromY + Math.sin(radians) * scanDistance));
+
+            if (!isWaterAt(testX, testY, rabbit)) {
+                return candidateAngle;
+            }
+        }
+    }
+
+    return fallbackAngle + rabbitRandomBetween(-45, 45);
+}
+
 function rabbitNormalWalk() {
     for (const rabbit of rabbits) {
+        const prevX = rabbit.x;
+        const prevY = rabbit.y;
         rabbit.angle += rabbitRandomBetween(-90, 90) * 0.35; // Adjust the multiplier for more or less erratic movement
 
         const radians = rabbit.angle * (Math.PI / 180);
@@ -88,11 +119,11 @@ function rabbitNormalWalk() {
         rabbit.x = Math.max(0, Math.min(rabbitWorldWidth - rabbit.w, rabbit.x));
         rabbit.y = Math.max(0, Math.min(rabbitWorldHeight - rabbit.h, rabbit.y));
 
-        const cx = Math.floor(rabbit.x + rabbit.w / 2);
-        const cy = Math.floor(rabbit.y + rabbit.h / 2);
-        const heightValue = globalThis.heightMap?.[cy]?.[cx];
-        if (heightValue !== undefined && heightValue <= globalThis.SIM.terrain.waterMax) {
-            rabbit.angle += 180;
+        if (isWaterAt(rabbit.x, rabbit.y, rabbit)) {
+            // Revert invalid movement so rabbits never settle on water pixels.
+            rabbit.x = prevX;
+            rabbit.y = prevY;
+            rabbit.angle = findLandEscapeAngle(rabbit, prevX, prevY, rabbit.angle + 180);
         }
     }
 }
