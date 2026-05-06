@@ -38,8 +38,6 @@ let lastUpdateTime = 0;
 let lastCountersUpdateTime = 0;
 let lastRabbitCount = -1;
 
-
-
 export function initWorld() {
   globalThis.resetTime();
   if (typeof globalThis.initTerrain === "function") {
@@ -50,7 +48,6 @@ export function initWorld() {
   lastCountersUpdateTime = 0;
   lastRabbitCount = -1;
 }
-
 
 function drawWorld(now) {
   ctx.clearRect(0, 0, globalThis.WIDTH, globalThis.HEIGHT);
@@ -81,6 +78,12 @@ function drawWorld(now) {
 export function updateSimulation(timestamp = Date.now()) {
   if (lastUpdateTime === 0) {
     lastUpdateTime = timestamp;
+  }
+  const SAMPLE_SIZE = globalThis.SIM.terrain.sampleSize;
+  for (let i = 0; i < SAMPLE_SIZE; i++) {
+    const x = Math.floor(Math.random() * globalThis.WIDTH);
+    const y = Math.floor(Math.random() * globalThis.HEIGHT);
+    globalThis.lightGrassBecomesDarkGrass(x, y);
   }
 
   const elapsed = timestamp - lastUpdateTime;

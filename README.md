@@ -79,18 +79,17 @@ flowchart TD
 
 	subgraph app_js[src/simulation/app.js]
 		initWorld[initWorld]
-		initBackground[initBackground]
-		drawGrid[drawGrid]
 		drawWorld[drawWorld]
 		updateSimulation[updateSimulation]
 	end
 
-	subgraph grass_js[src/simulation/grass.js]
-		initGrass[initGrass]
-		createGrassPatch[createGrassPatch]
-		isGrassOverlapping[isGrassOverlapping]
-		growGrass[growGrass]
-		drawGrass[drawGrass]
+	subgraph terrain_js[src/simulation/terrain.js]
+		initTerrain[initTerrain]
+		generateHeightMap[generateHeightMap]
+		drawHeightMap[drawHeightMap]
+		redrawTerrainPixel[redrawTerrainPixel]
+		isLightGrassNearWater[isLightGrassNearWater]
+		lightGrassBecomesDarkGrass[lightGrassBecomesDarkGrass]
 	end
 
 	subgraph rabbit_js[src/simulation/rabbit.js]
@@ -98,11 +97,16 @@ flowchart TD
 		createRabbit[createRabbit]
 		isNewRabbitOverlapping[isNewRabbitOverlapping]
 		rabbitNormalWalk[rabbitNormalWalk]
-		rabbitEatGrass[rabbitEatGrass]
-		getRabbitCollisionBox[getRabbitCollisionBox]
-		getGrassVisibleCollisionBox[getGrassVisibleCollisionBox]
-		areBoxesOverlapping[areBoxesOverlapping]
+		rabbitEatDarkGrass[rabbitEatDarkGrass]
+		isRabbitOnDarkGrass[isRabbitOnDarkGrass]
 		drawRabbits[drawRabbits]
+	end
+
+	subgraph time_js[src/simulation/time.js]
+		tickTime[tickTime]
+		getClockString[getClockString]
+		getDayOfYearString[getDayOfYearString]
+		resetTime[resetTime]
 	end
 
 	subgraph utils_js[src/simulation/utils.js]
@@ -110,45 +114,44 @@ flowchart TD
 	end
 
 	Start --> initWorld
-	Start --> drawWorld
 	Start --> updateSimulation
 	Reset --> initWorld
 
-	initWorld --> initGrass
-	initWorld --> initBackground
+	initWorld --> resetTime
+	initWorld --> initTerrain
 	initWorld --> initRabbits
 
-	initBackground --> randomInt
+	initTerrain --> generateHeightMap
+	initTerrain --> drawHeightMap
 
-	drawWorld --> drawGrid
-	drawWorld --> drawGrass
 	drawWorld --> drawRabbits
+	drawWorld --> getClockString
+	drawWorld --> getDayOfYearString
 
+	updateSimulation --> lightGrassBecomesDarkGrass
+	updateSimulation --> tickTime
 	updateSimulation --> rabbitNormalWalk
-	updateSimulation --> rabbitEatGrass
-	updateSimulation --> growGrass
 	updateSimulation --> drawWorld
 	updateSimulation --> updateSimulation
 
-	initGrass --> createGrassPatch
-	initGrass --> isGrassOverlapping
-	createGrassPatch --> randomInt
-	createGrassPatch --> checkBiomassLevel[patch.checkBiomassLevel]
+	lightGrassBecomesDarkGrass --> isLightGrassNearWater
+	lightGrassBecomesDarkGrass --> redrawTerrainPixel
+
+	rabbitNormalWalk --> rabbitEatDarkGrass
+	rabbitEatDarkGrass --> isRabbitOnDarkGrass
+	rabbitEatDarkGrass --> redrawTerrainPixel
 
 	initRabbits --> createRabbit
 	initRabbits --> isNewRabbitOverlapping
 	createRabbit --> randomInt
 	rabbitNormalWalk --> randomInt
-	rabbitEatGrass --> checkBiomassLevel
-	rabbitEatGrass --> getRabbitCollisionBox
-	rabbitEatGrass --> getGrassVisibleCollisionBox
-	rabbitEatGrass --> areBoxesOverlapping
 ```
 
 Kort förklaring:
 
-- initWorld startar om världen genom att skapa gräs, bakgrund och kaniner.
-- updateSimulation är huvudloopen som flyttar kaniner, låter dem äta gräs, växer gräs och ritar om världen varje bildruta.
-- rabbitEatGrass använder biomass från patch.checkBiomassLevel (med fallback till currentH) samt hjälpfunktioner för kollisionskontroll.
-- randomInt i src/simulation/utils.js används av gräs, kaniner och bakgrund för slumpmässiga värden.
+- `initWorld` startar om världen genom att återställa tid, generera terräng och skapa kaniner.
+- `updateSimulation` är huvudloopen som varje bildruta: kör gräsåterväxt via slumpmässig sampling, tickar tiden, flyttar kaniner och ritar om världen.
+- `lightGrassBecomesDarkGrass` körs på slumpmässiga pixlar varje bildruta — om pixeln är ljust gräs nära vatten växer den tillbaka till mörkt gräs.
+- `rabbitEatDarkGrass` låter kaniner äta mörkt gräs och höjer heightmap-värdet för den pixeln.
+- `randomInt` i src/simulation/utils.js används av kaniner för slumpmässiga värden.
 - Diagrammet visar bara de skript som faktiskt används av sidan just nu.

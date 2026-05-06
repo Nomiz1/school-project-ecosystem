@@ -9,14 +9,13 @@ const SIM = {
         darkGrassMax: 0.55,
         lightGrassMax: 1.00,
         steps: 16,
-        
+        grassNearWater: 20,
+        sampleSize: 100
     },
     render: {
         targetFps: 60,
         countersUpdateMs: 250,
     },
-    
-    
     time: {
         framesPerDay: 48,
     },

@@ -12,7 +12,6 @@ function initTerrain() {
     offscreen.height = globalThis.HEIGHT;
     drawHeightMap(offscreen.getContext("2d"), globalThis.heightMap);
     globalThis.terrainCanvas = offscreen;
-
     globalThis.drawHeightMap = drawHeightMap;
 }
 globalThis.initTerrain = initTerrain;
@@ -29,6 +28,41 @@ function generateHeightMap(width, height) {
     }
     return heightMap;
 }
+
+function isLightGrassNearWater(x, y) {
+    const heightMap = globalThis.heightMap;
+    const WATER_MAX = globalThis.SIM.terrain.waterMax;
+    const GRASS_NEAR_WATER = globalThis.SIM.terrain.grassNearWater;
+    for (let distanceY = -GRASS_NEAR_WATER; distanceY <= GRASS_NEAR_WATER; distanceY++) {
+        for (let distanceX = -GRASS_NEAR_WATER; distanceX <= GRASS_NEAR_WATER; distanceX++) {
+            const neighborX = x + distanceX;
+            const neighborY = y + distanceY;
+            if (neighborX >= 0 && neighborX < heightMap[0].length && neighborY >= 0 && neighborY < heightMap.length) {
+                if (heightMap[neighborY][neighborX] <= WATER_MAX) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+globalThis.isLightGrassNearWater = isLightGrassNearWater;
+
+function lightGrassBecomesDarkGrass(x, y) {
+    const heightMap = globalThis.heightMap;
+    const WATER_MAX = globalThis.SIM.terrain.waterMax;
+    const DARK_GRASS_MAX = globalThis.SIM.terrain.darkGrassMax;
+    const raw = heightMap[y][x];
+
+    if (raw > DARK_GRASS_MAX && isLightGrassNearWater(x, y)) {
+        heightMap[y][x] = DARK_GRASS_MAX - 0.01;
+        redrawTerrainPixel(x, y);
+        console.log(`Grass at (${x}, ${y}) regrew to dark grass`);
+    }
+}
+globalThis.lightGrassBecomesDarkGrass = lightGrassBecomesDarkGrass;
+
 
 function drawHeightMap(ctx, heightMap) {
     if (!heightMap || heightMap.length === 0) return;

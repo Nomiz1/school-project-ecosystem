@@ -110,6 +110,7 @@ function isRabbitOnDarkGrass(rabbit) {
     const heightValue = globalThis.heightMap?.[cy]?.[cx];
     return heightValue !== undefined && globalThis.SIM.terrain.waterMax < heightValue && heightValue <= globalThis.SIM.terrain.darkGrassMax;
 }
+
 function rabbitEatDarkGrass(rabbit) {
     const cx = Math.floor(rabbit.x + rabbit.w / 2);
     const cy = Math.floor(rabbit.y + rabbit.h / 2);
