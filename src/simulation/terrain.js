@@ -58,7 +58,6 @@ function lightGrassBecomesDarkGrass(x, y) {
     if (raw > DARK_GRASS_MAX && isLightGrassNearWater(x, y)) {
         heightMap[y][x] = DARK_GRASS_MAX - 0.01;
         redrawTerrainPixel(x, y);
-        console.log(`Grass at (${x}, ${y}) regrew to dark grass`);
     }
 }
 globalThis.lightGrassBecomesDarkGrass = lightGrassBecomesDarkGrass;

@@ -27,6 +27,7 @@ const SIM = {
         speedMax: 3,
         eatChance: 0.5,
         energyMax: 100,
+        eatEnergyGain: 20,
     },
     background: {
         pixelSize: 8,

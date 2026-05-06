@@ -116,9 +116,11 @@ function rabbitEatDarkGrass(rabbit) {
     const cy = Math.floor(rabbit.y + rabbit.h / 2);
     if (isRabbitOnDarkGrass(rabbit) && Math.random() < rabbitSimConfig.rabbits.eatChance) {
         globalThis.heightMap[cy][cx] = Math.min(1.0, globalThis.heightMap[cy][cx] + 0.05);
+        rabbit.energy = Math.min(maxEnergyLevel, rabbit.energy + rabbitSimConfig.rabbits.eatEnergyGain);
         globalThis.redrawTerrainPixel(cx, cy);
     }
 }
+
 
 function rabbitNormalWalk() {
     for (const rabbit of rabbits) {
