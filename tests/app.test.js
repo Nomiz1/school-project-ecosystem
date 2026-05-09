@@ -1,4 +1,4 @@
-import { beforeAll, test, expect, vi } from "vitest";
+import { beforeAll, test, expect, vi, beforeEach } from "vitest";
 
 import "../src/simulation/simulation-constants.js";
 import "../src/simulation/utils.js";
@@ -8,6 +8,7 @@ import "../src/simulation/terrain.js";
 let initWorld;
 let updateSimulation;
 let getTerrainType;
+
 
 beforeAll(async () => {
     const app = await import("../src/simulation/app.js");
@@ -35,6 +36,62 @@ test("initWorld should call all the necessary functions", () => {
     expect(worldEl.style.backgroundImage).toBe("none");
 });
 
+test("initWorld should initialize terrain if initTerrain is defined", () => {
+    globalThis.initTerrain = vi.fn();
+    globalThis.resetTime = vi.fn();
+    globalThis.initRabbits = vi.fn();
+
+    initWorld();
+
+    expect(globalThis.initTerrain).toHaveBeenCalledTimes(1);
+    expect(globalThis.resetTime).toHaveBeenCalledTimes(1);
+    expect(globalThis.initRabbits).toHaveBeenCalledTimes(1);
+});
+
+test("initWorld does not throw when initTerrain is missing", () => {
+    delete globalThis.initTerrain;
+    globalThis.resetTime = vi.fn();
+    globalThis.initRabbits = vi.fn();
+
+    expect(() => initWorld()).not.toThrow();
+    expect(globalThis.resetTime).toHaveBeenCalledTimes(1);
+    expect(globalThis.initRabbits).toHaveBeenCalledTimes(1);
+});
+
+test("initWorld resets simulation timing state", () => {
+    const tickTimeMock = vi.fn();
+    const requestAnimationFrameMock = vi.fn();
+    const rabbitNormalWalkMock = vi.fn();
+    const lightGrassBecomesDarkGrassMock = vi.fn();
+
+    globalThis.tickTime = tickTimeMock;
+    globalThis.rabbitNormalWalk = rabbitNormalWalkMock;
+    globalThis.lightGrassBecomesDarkGrass = lightGrassBecomesDarkGrassMock;
+    window.requestAnimationFrame = requestAnimationFrameMock;
+
+
+    updateSimulation(1000);
+    updateSimulation(2000);
+
+    initWorld();
+
+    tickTimeMock.mockClear();
+    rabbitNormalWalkMock.mockClear();
+    lightGrassBecomesDarkGrassMock.mockClear();
+    requestAnimationFrameMock.mockClear();
+
+    updateSimulation(3000);
+
+    expect(tickTimeMock).toHaveBeenCalledTimes(0);
+    expect(rabbitNormalWalkMock).toHaveBeenCalledTimes(0);
+    expect(lightGrassBecomesDarkGrassMock).toHaveBeenCalledTimes(globalThis.SIM.terrain.sampleSize);
+    expect(requestAnimationFrameMock).toHaveBeenCalledTimes(1);
+
+
+});
+
+
+
 test("updateSimulation should call all the necessary functions", () => {
     const tickTimeMock = vi.fn();
     const rabbitNormalWalkMock = vi.fn();
@@ -46,12 +103,14 @@ test("updateSimulation should call all the necessary functions", () => {
     globalThis.lightGrassBecomesDarkGrass = lightGrassBecomesDarkGrassMock;
     window.requestAnimationFrame = requestAnimationFrameMock;
 
+    initWorld();
+
     updateSimulation(1000);
     updateSimulation(2000);
 
     expect(tickTimeMock).toHaveBeenCalledTimes(1);
     expect(rabbitNormalWalkMock).toHaveBeenCalledTimes(1);
-    expect(lightGrassBecomesDarkGrassMock).toHaveBeenCalledTimes(200);
+    expect(lightGrassBecomesDarkGrassMock).toHaveBeenCalledTimes(globalThis.SIM.terrain.sampleSize * 2);
     expect(requestAnimationFrameMock).toHaveBeenCalledTimes(2);
 });
 test("getTerrainType should return correct terrain types", () => {
