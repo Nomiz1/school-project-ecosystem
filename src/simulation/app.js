@@ -3,7 +3,7 @@ const ctx = canvas.getContext("2d");
 globalThis.ctx = ctx;
 const mouseCoordsEl = document.getElementById("mouseCoords");
 
-function getTerrainType(x, y) {
+export function getTerrainType(x, y) {
   const hm = globalThis.heightMap;
   if (!hm || !hm[y] || hm[y][x] === undefined) return "?";
   const v = hm[y][x];

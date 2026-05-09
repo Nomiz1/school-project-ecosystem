@@ -54,6 +54,7 @@ function createRabbit() {
         speed: speed,
         angle: rabbitRandomBetween(0, 359),
         energy: maxEnergyLevel,
+        hunger: 0,
     };
 }
 
@@ -114,13 +115,16 @@ function isRabbitOnDarkGrass(rabbit) {
 function rabbitEatDarkGrass(rabbit) {
     const cx = Math.floor(rabbit.x + rabbit.w / 2);
     const cy = Math.floor(rabbit.y + rabbit.h / 2);
-    if (isRabbitOnDarkGrass(rabbit) && Math.random() < rabbitSimConfig.rabbits.eatChance) {
+    if (isRabbitOnDarkGrass(rabbit) && Math.random() < rabbitSimConfig.rabbits.eatChance && rabbit.hunger < rabbitSimConfig.rabbits.hungerMax) {
         globalThis.heightMap[cy][cx] = Math.min(1.0, globalThis.heightMap[cy][cx] + 0.05);
-        rabbit.energy = Math.min(maxEnergyLevel, rabbit.energy + rabbitSimConfig.rabbits.eatEnergyGain);
+        rabbit.hunger = Math.min(globalThis.SIM.rabbits.hungerMax, rabbit.hunger + globalThis.SIM.rabbits.eatHungerGain);
         globalThis.redrawTerrainPixel(cx, cy);
     }
 }
-
+function rabbitLosesHunger(rabbit) {
+    rabbit.hunger = Math.max(0, rabbit.hunger - globalThis.SIM.rabbits.hungerLossPerFrame);
+}
+globalThis.rabbitLosesHunger = rabbitLosesHunger;
 
 function rabbitNormalWalk() {
     for (const rabbit of rabbits) {
@@ -144,6 +148,7 @@ function rabbitNormalWalk() {
         }
 
         rabbitEatDarkGrass(rabbit);
+        rabbitLosesHunger(rabbit);
     }
 }
 

@@ -1,6 +1,8 @@
 import { vi } from "vitest";
 
 const worldCanvas = {
+  width: 900,
+  height: 500,
   getContext: vi.fn(() => ({
     clearRect: vi.fn(),
     drawImage: vi.fn(),
@@ -13,7 +15,14 @@ const worldCanvas = {
     stroke: vi.fn(),
     beginPath: vi.fn(),
   })),
-  style: {},
+  addEventListener: vi.fn(),
+  getBoundingClientRect: vi.fn(() => ({
+    left: 0,
+    top: 0,
+    width: 900,
+    height: 500,
+  })),
+  style: { backgroundImage: "none" },
 };
 
 // Mock DOM objects
@@ -52,3 +61,27 @@ globalThis.tickTime = () => { };
 globalThis.rabbitNormalWalk = () => { };
 globalThis.rabbitEatGrass = () => { };
 globalThis.growGrass = () => { };
+
+// Minimal p5 mock used by terrain.js in tests.
+globalThis.p5 = function p5Mock(sketch) {
+  const state = { seed: 1 };
+  const instance = {
+    noCanvas: vi.fn(),
+    noiseSeed: vi.fn((seed) => {
+      state.seed = seed || 1;
+    }),
+    noise: vi.fn((x = 0, y = 0) => {
+      const value = Math.sin((x + state.seed) * 12.9898 + (y + state.seed) * 78.233) * 43758.5453;
+      return value - Math.floor(value);
+    }),
+  };
+
+  if (typeof sketch === "function") {
+    sketch(instance);
+    if (typeof instance.setup === "function") {
+      instance.setup();
+    }
+  }
+
+  return instance;
+};
