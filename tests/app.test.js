@@ -8,6 +8,7 @@ import "../src/simulation/terrain.js";
 let initWorld;
 let updateSimulation;
 let getTerrainType;
+let resetButtonHandler;
 
 
 beforeAll(async () => {
@@ -15,6 +16,7 @@ beforeAll(async () => {
     initWorld = app.initWorld;
     updateSimulation = app.updateSimulation;
     getTerrainType = app.getTerrainType;
+    resetButtonHandler = app.resetButtonHandler;
 });
 
 test("initWorld should be callable", () => {
@@ -141,16 +143,27 @@ test ("getTerrainType should return '?' if heightMap is not defined", () => {
     expect(getTerrainType(0, 0)).toBe("?");
 });
 
-test ("", () => {
-    const initWorldMock = vi.fn();
-    const requestAnimationFrameMock = vi.fn();
+test("resetButtonHandler should call initWorld when reset button is clicked", () => {
+    const getElementByIdMock = document.getElementById;
+    const resetBtnCallIndex = getElementByIdMock.mock.calls.findIndex(([id]) => id === "resetBtn");
+    const resetBtn = getElementByIdMock.mock.results[resetBtnCallIndex]?.value;
 
-    globalThis.initWorld = initWorldMock;
-    window.requestAnimationFrame = requestAnimationFrameMock;
+    expect(resetBtn).toBeDefined();
 
-    const { resetSimulation } = require("../src/simulation/app.js");
-    resetSimulation();
+    globalThis.resetTime = vi.fn();
+    globalThis.initTerrain = vi.fn();
+    globalThis.initRabbits = vi.fn();
 
-    expect(initWorldMock).toHaveBeenCalledTimes(1);
-    expect(requestAnimationFrameMock).toHaveBeenCalledTimes(1);
+    resetBtn.addEventListener.mockClear();
+
+    resetButtonHandler();
+
+    expect(resetBtn.addEventListener).toHaveBeenCalledWith("click", expect.any(Function));
+
+    const clickHandler = resetBtn.addEventListener.mock.calls.at(-1)[1];
+    clickHandler();
+
+    expect(globalThis.resetTime).toHaveBeenCalledTimes(1);
+    expect(globalThis.initTerrain).toHaveBeenCalledTimes(1);
+    expect(globalThis.initRabbits).toHaveBeenCalledTimes(1);
 });

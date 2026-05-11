@@ -1,5 +1,4 @@
 import { vi } from "vitest";
-import { resetButtonHandler } from "../../src/simulation/app";
 
 const worldCanvas = {
   width: 900,
@@ -89,6 +88,4 @@ globalThis.p5 = function p5Mock(sketch) {
   return instance;
 };
 
-resetButtonHandlerMock = vi.fn();
-globalThis.resetButtonHandler = resetButtonHandlerMock;
 
