@@ -90,8 +90,6 @@ test("initWorld resets simulation timing state", () => {
 
 });
 
-
-
 test("updateSimulation should call all the necessary functions", () => {
     const tickTimeMock = vi.fn();
     const rabbitNormalWalkMock = vi.fn();
@@ -113,6 +111,7 @@ test("updateSimulation should call all the necessary functions", () => {
     expect(lightGrassBecomesDarkGrassMock).toHaveBeenCalledTimes(globalThis.SIM.terrain.sampleSize * 2);
     expect(requestAnimationFrameMock).toHaveBeenCalledTimes(2);
 });
+
 test("getTerrainType should return correct terrain types", () => {
     globalThis.heightMap = [
         [0.1, 0.2, 0.3],
@@ -124,6 +123,7 @@ test("getTerrainType should return correct terrain types", () => {
     expect(getTerrainType(0, 1)).toBe("Gräs");
     expect(getTerrainType(3, 1)).toBe("Torrt gräs");
 });
+
 test("getTerrainType should return '?' for out-of-bounds coordinates", () => {
     globalThis.heightMap = [
         [0.1, 0.2],
@@ -141,3 +141,16 @@ test ("getTerrainType should return '?' if heightMap is not defined", () => {
     expect(getTerrainType(0, 0)).toBe("?");
 });
 
+test ("", () => {
+    const initWorldMock = vi.fn();
+    const requestAnimationFrameMock = vi.fn();
+
+    globalThis.initWorld = initWorldMock;
+    window.requestAnimationFrame = requestAnimationFrameMock;
+
+    const { resetSimulation } = require("../src/simulation/app.js");
+    resetSimulation();
+
+    expect(initWorldMock).toHaveBeenCalledTimes(1);
+    expect(requestAnimationFrameMock).toHaveBeenCalledTimes(1);
+});

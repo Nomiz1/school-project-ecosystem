@@ -1,4 +1,5 @@
 import { vi } from "vitest";
+import { resetButtonHandler } from "../../src/simulation/app";
 
 const worldCanvas = {
   width: 900,
@@ -46,6 +47,8 @@ global.document = {
     })),
 };
 
+
+
 // Stub globals needed when app.js loads at import time
 globalThis.resetTime = () => { };
 globalThis.initGrass = () => { };
@@ -85,3 +88,7 @@ globalThis.p5 = function p5Mock(sketch) {
 
   return instance;
 };
+
+resetButtonHandlerMock = vi.fn();
+globalThis.resetButtonHandler = resetButtonHandlerMock;
+

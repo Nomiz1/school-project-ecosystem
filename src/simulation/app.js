@@ -97,10 +97,12 @@ export function updateSimulation(timestamp = Date.now()) {
 
   window.requestAnimationFrame(updateSimulation);
 }
-
+export function resetButtonHandler() {
 resetBtn.addEventListener("click", () => {
   initWorld();
 });
+}
 
+resetButtonHandler();
 initWorld();
 window.requestAnimationFrame(updateSimulation);
