@@ -173,7 +173,3 @@ Object.assign(globalThis, {
     rabbitEatDarkGrass,
     drawRabbits,
 });
-// For the future:
-// If 500 grass or more exist then rabbits eat with randomly 
-// If 500 or less grass exist then the rabbits will look for grass and eat it if they find it
-//Next step: When a rabbit eats a grassstraw, the grass will become half its size and start regrowing. 
