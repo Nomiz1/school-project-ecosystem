@@ -103,6 +103,3 @@ resetBtn.addEventListener("click", () => {
 });
 }
 
-resetButtonHandler();
-initWorld();
-window.requestAnimationFrame(updateSimulation);
