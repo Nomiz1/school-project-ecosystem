@@ -40,6 +40,9 @@ let lastRabbitCount = -1;
 
 export function initWorld() {
   globalThis.resetTime();
+  if (typeof globalThis.resetWeather === "function") {
+    globalThis.resetWeather();
+  }
   if (typeof globalThis.initTerrain === "function") {
     globalThis.initTerrain();
   }
