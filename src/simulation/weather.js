@@ -2,18 +2,18 @@ const MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 const MONTHLY_WEATHER_PROFILES = [
 
-	{ name: "Jan", monthlyTargetMm: 45, rainyDaysShare: 0.45, intensityMinMm: 0.6, intensityMaxMm: 5.0 },
-	{ name: "Feb", monthlyTargetMm: 35, rainyDaysShare: 0.42, intensityMinMm: 0.6, intensityMaxMm: 4.5 },
-	{ name: "Mar", monthlyTargetMm: 38, rainyDaysShare: 0.40, intensityMinMm: 0.6, intensityMaxMm: 4.8 },
-	{ name: "Apr", monthlyTargetMm: 35, rainyDaysShare: 0.38, intensityMinMm: 0.6, intensityMaxMm: 4.5 },
-	{ name: "Maj", monthlyTargetMm: 45, rainyDaysShare: 0.40, intensityMinMm: 0.7, intensityMaxMm: 5.5 },
-	{ name: "Jun", monthlyTargetMm: 60, rainyDaysShare: 0.43, intensityMinMm: 0.8, intensityMaxMm: 7.0 },
-	{ name: "Jul", monthlyTargetMm: 72, rainyDaysShare: 0.45, intensityMinMm: 0.9, intensityMaxMm: 8.0 },
-	{ name: "Aug", monthlyTargetMm: 75, rainyDaysShare: 0.46, intensityMinMm: 0.9, intensityMaxMm: 8.0 },
-	{ name: "Sep", monthlyTargetMm: 60, rainyDaysShare: 0.43, intensityMinMm: 0.8, intensityMaxMm: 7.0 },
-	{ name: "Okt", monthlyTargetMm: 58, rainyDaysShare: 0.44, intensityMinMm: 0.7, intensityMaxMm: 6.5 },
-	{ name: "Nov", monthlyTargetMm: 57, rainyDaysShare: 0.47, intensityMinMm: 0.7, intensityMaxMm: 6.0 },
-	{ name: "Dec", monthlyTargetMm: 52, rainyDaysShare: 0.48, intensityMinMm: 0.6, intensityMaxMm: 5.5 }
+	{ name: "Jan", monthlyTargetMm: 45, rainyDaysShare: 0.45, intensityMinMm: 0.6, intensityMaxMm: 5.0, wetSpellDays: 2.0 },
+	{ name: "Feb", monthlyTargetMm: 35, rainyDaysShare: 0.42, intensityMinMm: 0.6, intensityMaxMm: 4.5, wetSpellDays: 2.0 },
+	{ name: "Mar", monthlyTargetMm: 38, rainyDaysShare: 0.40, intensityMinMm: 0.6, intensityMaxMm: 4.8, wetSpellDays: 2.5 },
+	{ name: "Apr", monthlyTargetMm: 35, rainyDaysShare: 0.38, intensityMinMm: 0.6, intensityMaxMm: 4.5, wetSpellDays: 2.5 },
+	{ name: "Maj", monthlyTargetMm: 45, rainyDaysShare: 0.40, intensityMinMm: 0.7, intensityMaxMm: 5.5, wetSpellDays: 2.5 },
+	{ name: "Jun", monthlyTargetMm: 60, rainyDaysShare: 0.43, intensityMinMm: 0.8, intensityMaxMm: 7.0, wetSpellDays: 2.0 },
+	{ name: "Jul", monthlyTargetMm: 72, rainyDaysShare: 0.45, intensityMinMm: 0.9, intensityMaxMm: 8.0, wetSpellDays: 2.0 },
+	{ name: "Aug", monthlyTargetMm: 75, rainyDaysShare: 0.46, intensityMinMm: 0.9, intensityMaxMm: 8.0, wetSpellDays: 2.0 },
+	{ name: "Sep", monthlyTargetMm: 60, rainyDaysShare: 0.43, intensityMinMm: 0.8, intensityMaxMm: 7.0, wetSpellDays: 2.5 },
+	{ name: "Okt", monthlyTargetMm: 58, rainyDaysShare: 0.44, intensityMinMm: 0.7, intensityMaxMm: 6.5, wetSpellDays: 2.5 },
+	{ name: "Nov", monthlyTargetMm: 57, rainyDaysShare: 0.47, intensityMinMm: 0.7, intensityMaxMm: 6.0, wetSpellDays: 2.5 },
+	{ name: "Dec", monthlyTargetMm: 52, rainyDaysShare: 0.48, intensityMinMm: 0.6, intensityMaxMm: 5.5, wetSpellDays: 2.0 }
 	//Värdena ovan är placeholders tills data från SMHI kan användas i koden.
 ];
 
@@ -40,6 +40,8 @@ function convertDayToMonth(dayOfYear) {
 	return 0;
 }
 
+
+
 function createDefaultWeatherState() {
 	return {
 		currentMonthIndex: 0,
@@ -55,6 +57,14 @@ function createDefaultWeatherState() {
 }
 
 let weatherState = createDefaultWeatherState();
+
+
+function computeTransitionProbability(profile) {
+	const pRainToRain = (profile.wetSpellDays - 1) / profile.wetSpellDays;
+	const pDryToRain = profile.rainyDaysShare / profile.wetSpellDays;
+	return { pRainToRain, pDryToRain };
+}
+
 
 function resetWeather() {
 	weatherState = createDefaultWeatherState();
@@ -94,6 +104,15 @@ function updateWeather(input = {}) {
 		currentProfile.monthlyTargetMm - weatherState.monthlyAccumulatedMm;
 
 	weatherState.lastEvaluatedDay = normalizedDay;
+
+	const { pRainToRain, pDryToRain } = computeTransitionProbability(currentProfile);
+
+	const transitionProbability = weatherState.isRaining
+  	? pRainToRain
+  	: pDryToRain;
+
+	weatherState.isRaining = Math.random() < transitionProbability;
+
 	return getCurrentWeather();
 }
 
