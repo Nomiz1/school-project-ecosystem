@@ -57,7 +57,7 @@ function lightGrassBecomesDarkGrass(x, y) {
 
     if (raw > DARK_GRASS_MAX && isLightGrassNearWater(x, y)) {
         heightMap[y][x] = DARK_GRASS_MAX - 0.01;
-        redrawTerrainPixel(x, y);
+        globalThis.redrawTerrainPixel(x, y);
     }
 }
 globalThis.lightGrassBecomesDarkGrass = lightGrassBecomesDarkGrass;

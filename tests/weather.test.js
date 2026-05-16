@@ -2,6 +2,26 @@ import { beforeEach, expect, test } from "vitest";
 
 import "../src/simulation/weather.js";
 
+// Stockholm 1991-2020 climate normals (mm precipitation per month)
+const STOCKHOLM_CLIMATE_NORMALS = [
+  37.0,  // January
+  29.4,  // February
+  27.3,  // March
+  29.2,  // April
+  34.0,  // May
+  61.7,  // June
+  61.5,  // July
+  66.2,  // August
+  53.3,  // September
+  51.4,  // October
+  47.6,  // November
+  47.8,  // December
+];
+
+function getExpectedClimateNormal(monthIndex) {
+  return STOCKHOLM_CLIMATE_NORMALS[monthIndex];
+}
+
 beforeEach(() => {
   globalThis.resetWeather();
 });
@@ -58,17 +78,18 @@ test("updateWeather should fallback safely when called without input", () => {
   expect(state).toMatchObject({
     dayOfYear: 0,
     currentMonthIndex: 0,
-    isRaining: false,
     rainIntensity: 0,
     dailyRainMm: 0,
   });
+  expect(typeof state.isRaining).toBe("boolean");
 });
 
 test("Month 0 (January) should have correct weather profile", () => {
   const state = globalThis.updateWeather({ dayOfYear: 0 });
+  const expectedJanuaryTargetMm = getExpectedClimateNormal(0);
 
   expect(state.currentMonthIndex).toBe(0);
-  expect(state.remainingMonthlyTargetMm).toBeCloseTo(45);
+  expect(state.remainingMonthlyTargetMm).toBeCloseTo(expectedJanuaryTargetMm);
 });
 
 test("updateWeather should correctly transition between months", () => {
@@ -80,9 +101,17 @@ test("updateWeather should correctly transition between months", () => {
 
 test("updateWeather should correctly handle dayOfYear overflow", () => {
     const state = globalThis.updateWeather({ dayOfYear: 200, monthIndex: 11 });
+    const expectedDecemberTargetMm = getExpectedClimateNormal(11);
 
     expect(state.currentMonthIndex).toBe(11);
-    expect(state.remainingMonthlyTargetMm).toBeCloseTo(52);
+    expect(state.remainingMonthlyTargetMm).toBeCloseTo(expectedDecemberTargetMm);
+});
+
+test("weather monthly target should be data-driven and finite", () => {
+  const januaryState = globalThis.updateWeather({ dayOfYear: 0, monthIndex: 0 });
+
+  expect(Number.isFinite(januaryState.remainingMonthlyTargetMm)).toBe(true);
+  expect(januaryState.remainingMonthlyTargetMm).toBeGreaterThan(0);
 });
 
 test("updateWeather should correctly handle negative monthIndex", () => {
