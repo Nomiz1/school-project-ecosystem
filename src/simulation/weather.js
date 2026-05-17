@@ -1,20 +1,20 @@
-// Stockholm 1991-2020 climate normals (mm precipitation per month)
+
 const MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 const BASE_MONTHLY_WEATHER_PROFILES = [
 
-	{ name: "Jan", monthlyTargetMm: 37.0, rainyDaysShare: 0.45, intensityMinMm: 0.6, intensityMaxMm: 5.0, wetSpellDays: 2.0 },
-	{ name: "Feb", monthlyTargetMm: 29.4, rainyDaysShare: 0.42, intensityMinMm: 0.6, intensityMaxMm: 4.5, wetSpellDays: 2.0 },
-	{ name: "Mar", monthlyTargetMm: 27.3, rainyDaysShare: 0.40, intensityMinMm: 0.6, intensityMaxMm: 4.8, wetSpellDays: 2.5 },
-	{ name: "Apr", monthlyTargetMm: 29.2, rainyDaysShare: 0.38, intensityMinMm: 0.6, intensityMaxMm: 4.5, wetSpellDays: 2.5 },
-	{ name: "Maj", monthlyTargetMm: 34.0, rainyDaysShare: 0.40, intensityMinMm: 0.7, intensityMaxMm: 5.5, wetSpellDays: 2.5 },
-	{ name: "Jun", monthlyTargetMm: 61.7, rainyDaysShare: 0.43, intensityMinMm: 0.8, intensityMaxMm: 7.0, wetSpellDays: 2.0 },
-	{ name: "Jul", monthlyTargetMm: 61.5, rainyDaysShare: 0.45, intensityMinMm: 0.9, intensityMaxMm: 8.0, wetSpellDays: 2.0 },
-	{ name: "Aug", monthlyTargetMm: 66.2, rainyDaysShare: 0.46, intensityMinMm: 0.9, intensityMaxMm: 8.0, wetSpellDays: 2.0 },
-	{ name: "Sep", monthlyTargetMm: 53.3, rainyDaysShare: 0.43, intensityMinMm: 0.8, intensityMaxMm: 7.0, wetSpellDays: 2.5 },
-	{ name: "Okt", monthlyTargetMm: 51.4, rainyDaysShare: 0.44, intensityMinMm: 0.7, intensityMaxMm: 6.5, wetSpellDays: 2.5 },
-	{ name: "Nov", monthlyTargetMm: 47.6, rainyDaysShare: 0.47, intensityMinMm: 0.7, intensityMaxMm: 6.0, wetSpellDays: 2.5 },
-	{ name: "Dec", monthlyTargetMm: 47.8, rainyDaysShare: 0.48, intensityMinMm: 0.6, intensityMaxMm: 5.5, wetSpellDays: 2.0 }
+	{ name: "Jan", monthlyTargetMm: 37.0, rainyDaysShare: 0.473, intensityMinMm: 0.2, intensityMaxMm: 7.7, wetSpellDays: 2.9 },
+	{ name: "Feb", monthlyTargetMm: 29.4, rainyDaysShare: 0.439, intensityMinMm: 0.2, intensityMaxMm: 6.6, wetSpellDays: 2.5 },
+	{ name: "Mar", monthlyTargetMm: 27.3, rainyDaysShare: 0.343, intensityMinMm: 0.2, intensityMaxMm: 6.0, wetSpellDays: 2.2 },
+	{ name: "Apr", monthlyTargetMm: 29.2, rainyDaysShare: 0.310, intensityMinMm: 0.2, intensityMaxMm: 8.2, wetSpellDays: 2.1 },
+	{ name: "Maj", monthlyTargetMm: 34.0, rainyDaysShare: 0.334, intensityMinMm: 0.2, intensityMaxMm: 8.3, wetSpellDays: 2.2 },
+	{ name: "Jun", monthlyTargetMm: 61.7, rainyDaysShare: 0.402, intensityMinMm: 0.2, intensityMaxMm: 12.0, wetSpellDays: 2.4 },
+	{ name: "Jul", monthlyTargetMm: 61.5, rainyDaysShare: 0.382, intensityMinMm: 0.3, intensityMaxMm: 12.3, wetSpellDays: 2.4 },
+	{ name: "Aug", monthlyTargetMm: 66.2, rainyDaysShare: 0.422, intensityMinMm: 0.2, intensityMaxMm: 13.9, wetSpellDays: 2.3 },
+	{ name: "Sep", monthlyTargetMm: 53.3, rainyDaysShare: 0.378, intensityMinMm: 0.2, intensityMaxMm: 12.1, wetSpellDays: 2.7 },
+	{ name: "Okt", monthlyTargetMm: 51.4, rainyDaysShare: 0.441, intensityMinMm: 0.3, intensityMaxMm: 10.0, wetSpellDays: 2.6 },
+	{ name: "Nov", monthlyTargetMm: 47.6, rainyDaysShare: 0.517, intensityMinMm: 0.2, intensityMaxMm: 8.0, wetSpellDays: 3.0 },
+	{ name: "Dec", monthlyTargetMm: 47.8, rainyDaysShare: 0.527, intensityMinMm: 0.2, intensityMaxMm: 7.3, wetSpellDays: 3.0 }
 ];
 
 function createActiveMonthlyWeatherProfiles() {
