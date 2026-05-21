@@ -46,6 +46,17 @@ function convertDayToMonth(dayOfYear) {
 	return 0;
 }
 
+function getDayInMonth(dayOfYear, monthIndex) {
+	const normalizedDay = ((Math.floor(dayOfYear) % 365) + 365) % 365;
+	let dayOffSet = normalizedDay;
+
+	for (let i = 0; i < monthIndex; i++) {
+		dayOffSet -= MONTH_DAYS[i];
+		}
+	return dayOffSet + 1;
+}
+
+
 
 
 function createDefaultWeatherState() {
@@ -69,6 +80,21 @@ function computeTransitionProbability(profile) {
 	const pRainToRain = (profile.consecutiveRainyDaysAvg - 1) / profile.consecutiveRainyDaysAvg;
 	const pDryToRain = profile.rainyDaysShare / profile.consecutiveRainyDaysAvg;
 	return { pRainToRain, pDryToRain };
+}
+
+
+function computeDailyRainMm(profile) {
+	if (weatherState.isRaining === true) {
+	const monthIndex = weatherState.currentMonthIndex;
+	const dayInMonth = getDayInMonth(weatherState.dayOfYear, monthIndex);
+	const base = profile.intensityMinMm + Math.random() * (profile.intensityMaxMm - profile.intensityMinMm);
+	const daysLeftInMonth = MONTH_DAYS[monthIndex] - dayInMonth + 1;
+	const expectedLeft = Math.max(0.1, daysLeftInMonth * profile.rainyDaysShare);
+	const neededPerRainDay = weatherState.remainingMonthlyTargetMm / expectedLeft;
+	const factor = clamp(neededPerRainDay / base, 0.5, 2);
+	const dailyRainMm = clamp(base * factor , profile.intensityMinMm, Math.min(profile.intensityMaxMm * 1.4, weatherState.remainingMonthlyTargetMm));
+	return dailyRainMm;
+	}
 }
 
 
@@ -119,6 +145,18 @@ function updateWeather(input = {}) {
 		: pDryToRain;
 
 	weatherState.isRaining = Math.random() < transitionProbability;
+
+	weatherState.dailyRainMm = weatherState.isRaining 
+	? computeDailyRainMm(currentProfile) 
+	: 0;
+
+	if (weatherState.isRaining) {
+		weatherState.monthlyAccumulatedMm += weatherState.dailyRainMm;
+		weatherState.remainingMonthlyTargetMm = Math.max(0, currentProfile.monthlyTargetMm - weatherState.monthlyAccumulatedMm);
+	}
+	else {
+		weatherState.dailyRainMm = 0;
+	}
 
 	return getCurrentWeather();
 }
