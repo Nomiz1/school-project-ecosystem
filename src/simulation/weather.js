@@ -17,15 +17,9 @@ const BASE_MONTHLY_WEATHER_PROFILES = [
 	{ name: "Dec", monthlyTargetMm: 48.1, rainyDaysShare: 0.527, intensityMinMm: 0.2, intensityMaxMm: 7.3, consecutiveRainyDaysAvg: 3.0 }
 ];
 
-function createActiveMonthlyWeatherProfiles() {
-	return BASE_MONTHLY_WEATHER_PROFILES.map((profile) => ({ ...profile }));
-}
-
-let ACTIVE_MONTHLY_WEATHER_PROFILES = createActiveMonthlyWeatherProfiles();
-
 function getMonthlyWeatherProfile(monthIndex) {
 	const safeIndex = clamp(Math.floor(monthIndex), 0, 11);
-	return ACTIVE_MONTHLY_WEATHER_PROFILES[safeIndex];
+	return BASE_MONTHLY_WEATHER_PROFILES[safeIndex];
 }
 
 function clamp(value, min, max) {
@@ -48,16 +42,13 @@ function convertDayToMonth(dayOfYear) {
 
 function getDayInMonth(dayOfYear, monthIndex) {
 	const normalizedDay = ((Math.floor(dayOfYear) % 365) + 365) % 365;
-	let dayOffSet = normalizedDay;
+	let dayOffset = normalizedDay;
 
 	for (let i = 0; i < monthIndex; i++) {
-		dayOffSet -= MONTH_DAYS[i];
+		dayOffset -= MONTH_DAYS[i];
 		}
-	return dayOffSet + 1;
+	return dayOffset + 1;
 }
-
-
-
 
 function createDefaultWeatherState() {
 	return {
@@ -69,7 +60,6 @@ function createDefaultWeatherState() {
 		monthlyAccumulatedMm: 0,
 		remainingMonthlyTargetMm: 0,
 		lastEvaluatedDay: -1,
-		transitionLockUntilDay: -1,
 	};
 }
 
@@ -88,7 +78,8 @@ function computeDailyRainMm(profile) {
 		return 0;
 	}
 	const monthIndex = weatherState.currentMonthIndex;
-	const dayInMonth = getDayInMonth(weatherState.dayOfYear, monthIndex);
+	const rawDayInMonth = getDayInMonth(weatherState.dayOfYear, monthIndex);
+	const dayInMonth = clamp(rawDayInMonth, 1, MONTH_DAYS[monthIndex]);
 	const base = profile.intensityMinMm + Math.random() * (profile.intensityMaxMm - profile.intensityMinMm);
 	const daysLeftInMonth = MONTH_DAYS[monthIndex] - dayInMonth + 1;
 	const expectedLeft = Math.max(0.1, daysLeftInMonth * profile.rainyDaysShare);
@@ -99,7 +90,6 @@ function computeDailyRainMm(profile) {
 
 
 function resetWeather() {
-	ACTIVE_MONTHLY_WEATHER_PROFILES = createActiveMonthlyWeatherProfiles();
 	weatherState = createDefaultWeatherState();
 	return getCurrentWeather();
 }
@@ -114,9 +104,7 @@ function updateWeather(input = {}) {
 		? Math.floor(input.dayOfYear)
 		: weatherState.dayOfYear;
 	const normalizedDay = ((parsedDay % 365) + 365) % 365;
-	const monthIndex = Number.isFinite(input.monthIndex)
-		? clamp(Math.floor(input.monthIndex), 0, 11)
-		: convertDayToMonth(normalizedDay);
+	const monthIndex = convertDayToMonth(normalizedDay);
 
 	const currentProfile = getMonthlyWeatherProfile(monthIndex);
 
