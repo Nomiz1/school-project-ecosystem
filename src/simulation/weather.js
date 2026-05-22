@@ -84,7 +84,9 @@ function computeTransitionProbability(profile) {
 
 
 function computeDailyRainMm(profile) {
-	if (weatherState.isRaining === true) {
+	if (weatherState.remainingMonthlyTargetMm <= 0) {
+		return 0;
+	}
 	const monthIndex = weatherState.currentMonthIndex;
 	const dayInMonth = getDayInMonth(weatherState.dayOfYear, monthIndex);
 	const base = profile.intensityMinMm + Math.random() * (profile.intensityMaxMm - profile.intensityMinMm);
@@ -92,9 +94,7 @@ function computeDailyRainMm(profile) {
 	const expectedLeft = Math.max(0.1, daysLeftInMonth * profile.rainyDaysShare);
 	const neededPerRainDay = weatherState.remainingMonthlyTargetMm / expectedLeft;
 	const factor = clamp(neededPerRainDay / base, 0.5, 2);
-	const dailyRainMm = clamp(base * factor , profile.intensityMinMm, Math.min(profile.intensityMaxMm * 1.4, weatherState.remainingMonthlyTargetMm));
-	return dailyRainMm;
-	}
+	return clamp(base * factor , profile.intensityMinMm, Math.min(profile.intensityMaxMm * 1.4, weatherState.remainingMonthlyTargetMm));
 }
 
 
@@ -134,7 +134,7 @@ function updateWeather(input = {}) {
 	weatherState.currentMonthIndex = monthIndex;
 
 	weatherState.remainingMonthlyTargetMm =
-		currentProfile.monthlyTargetMm - weatherState.monthlyAccumulatedMm;
+		Math.max(0, currentProfile.monthlyTargetMm - weatherState.monthlyAccumulatedMm);
 
 	weatherState.lastEvaluatedDay = normalizedDay;
 
@@ -146,17 +146,12 @@ function updateWeather(input = {}) {
 
 	weatherState.isRaining = Math.random() < transitionProbability;
 
-	weatherState.dailyRainMm = weatherState.isRaining 
+	weatherState.dailyRainMm = weatherState.isRaining
 	? computeDailyRainMm(currentProfile) 
-	: 0;
-
-	if (weatherState.isRaining) {
-		weatherState.monthlyAccumulatedMm += weatherState.dailyRainMm;
-		weatherState.remainingMonthlyTargetMm = Math.max(0, currentProfile.monthlyTargetMm - weatherState.monthlyAccumulatedMm);
-	}
-	else {
-		weatherState.dailyRainMm = 0;
-	}
+		: 0;
+	weatherState.rainIntensity = weatherState.dailyRainMm;
+	weatherState.monthlyAccumulatedMm += weatherState.dailyRainMm;
+	weatherState.remainingMonthlyTargetMm = Math.max(0, currentProfile.monthlyTargetMm - weatherState.monthlyAccumulatedMm);
 
 	return getCurrentWeather();
 }
