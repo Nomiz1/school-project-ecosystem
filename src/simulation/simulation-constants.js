@@ -30,6 +30,11 @@ const SIM = {
         eatHungerGain: 10,
         hungerLossPerFrame: 0.5,
     },
+    weather: {
+        intensityBurstAllowance: 1.4, // Allows rain intensity to temporarily exceed profile max to meet monthly targets
+        minIntensityAdjustmentFactor: 0.5, // Minimum factor to adjust rain intensity
+        maxIntensityAdjustmentFactor: 2, // Maximum factor to adjust rain intensity
+    },
     background: {
         pixelSize: 8,
         colors: [ 

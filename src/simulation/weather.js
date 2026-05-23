@@ -84,8 +84,13 @@ function computeDailyRainMm(profile) {
 	const daysLeftInMonth = MONTH_DAYS[monthIndex] - dayInMonth + 1;
 	const expectedLeft = Math.max(0.1, daysLeftInMonth * profile.rainyDaysShare);
 	const neededPerRainDay = weatherState.remainingMonthlyTargetMm / expectedLeft;
-	const factor = clamp(neededPerRainDay / base, 0.5, 2);
-	return clamp(base * factor , profile.intensityMinMm, Math.min(profile.intensityMaxMm * 1.4, weatherState.remainingMonthlyTargetMm));
+	const factor = clamp(neededPerRainDay / base, globalThis.SIM.weather.minIntensityAdjustmentFactor, globalThis.SIM.weather.maxIntensityAdjustmentFactor);
+	const maxAllowed = Math.min(profile.intensityMaxMm * globalThis.SIM.weather.intensityBurstAllowance, weatherState.remainingMonthlyTargetMm);
+	if (maxAllowed <= 0) {
+		return 0;
+	}
+	const minAllowed = Math.min(profile.intensityMinMm, maxAllowed);
+	return clamp(base * factor , minAllowed, maxAllowed);
 }
 
 
@@ -136,7 +141,7 @@ function updateWeather(input = {}) {
 
 	weatherState.dailyRainMm = weatherState.isRaining
 	? computeDailyRainMm(currentProfile) 
-		: 0;
+	: 0;
 	weatherState.rainIntensity = weatherState.dailyRainMm;
 	weatherState.monthlyAccumulatedMm += weatherState.dailyRainMm;
 	weatherState.remainingMonthlyTargetMm = Math.max(0, currentProfile.monthlyTargetMm - weatherState.monthlyAccumulatedMm);
