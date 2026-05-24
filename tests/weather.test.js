@@ -1,4 +1,4 @@
-import { beforeEach, expect, test } from "vitest";
+import { beforeEach, expect, test, vi } from "vitest";
 
 import "../src/simulation/simulation-constants.js";
 import "../src/simulation/weather.js";
@@ -94,9 +94,9 @@ test("Month 0 (January) should have correct weather profile", () => {
 });
 
 test("updateWeather should correctly transition between months", () => {
-    const state = globalThis.updateWeather({ dayOfYear: 31 });
+  const state = globalThis.updateWeather({ dayOfYear: 31 });
 
-    expect(state.currentMonthIndex).toBe(1);
+  expect(state.currentMonthIndex).toBe(1);
 
 });
 
@@ -128,7 +128,7 @@ test("updateWeather should correctly handle dayOfYear overflow to next year", ()
 test("updateWeather should not change month if dayOfYear is the same", () => {
   const state = globalThis.updateWeather({ dayOfYear: 42 });
   const secondState = globalThis.updateWeather({ dayOfYear: 42 });
-    
+
   expect(state.currentMonthIndex).toBe(1);
   expect(secondState.currentMonthIndex).toBe(1);
 });
@@ -180,8 +180,8 @@ test("remainingMonthlyTargetMm should decrease by dailyRainMm when it rains", ()
 
   if (state.isRaining) {
     const initialTarget = state.remainingMonthlyTargetMm + state.dailyRainMm;
-    
-    expect(state.remainingMonthlyTargetMm).toBeCloseTo(initialTarget - state.dailyRainMm); 
+
+    expect(state.remainingMonthlyTargetMm).toBeCloseTo(initialTarget - state.dailyRainMm);
   }
 });
 
@@ -195,4 +195,37 @@ test("remainingMonthlyTargetMm should not go below zero", () => {
   }
 
   expect(state.remainingMonthlyTargetMm).toBeGreaterThanOrEqual(0);
+});
+
+test("simulate a full year of weather and check monthly targets are met", () => {
+  const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.1);
+  globalThis.resetWeather();
+
+  const accumulatedMonthlyRain = new Array(12).fill(0);
+
+  try {
+    for (let day = 0; day < 365; day++) {
+      const state = globalThis.updateWeather({ dayOfYear: day });
+      accumulatedMonthlyRain[state.currentMonthIndex] += state.dailyRainMm;
+    }
+
+    console.table(
+      accumulatedMonthlyRain.map((actualRain, monthIndex) => ({
+        month: monthIndex + 1,
+        expectedMm: getExpectedClimateNormal(monthIndex),
+        actualMm: Number(actualRain.toFixed(2)),
+      }))
+    );
+
+    for (let monthIndex = 0; monthIndex < 12; monthIndex++) {
+      const expectedTarget = getExpectedClimateNormal(monthIndex);
+      const actualRain = accumulatedMonthlyRain[monthIndex];
+      const tolerance = Math.max(5, expectedTarget * 0.35); // Allow 35% deviation or at least 5mm
+
+      expect(actualRain).toBeGreaterThanOrEqual(expectedTarget - tolerance);
+      expect(actualRain).toBeLessThanOrEqual(expectedTarget + tolerance);
+    }
+  } finally {
+    randomSpy.mockRestore();
+  }
 });
