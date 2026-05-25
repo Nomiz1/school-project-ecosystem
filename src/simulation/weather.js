@@ -7,12 +7,12 @@ const BASE_MONTHLY_WEATHER_PROFILES = [
 	{ name: "Feb", monthlyTargetMm: 29.2, rainyDaysShare: 0.439, intensityMinMm: 0.2, intensityMaxMm: 6.6, consecutiveRainyDaysAvg: 2.5 },
 	{ name: "Mar", monthlyTargetMm: 27.9, rainyDaysShare: 0.343, intensityMinMm: 0.2, intensityMaxMm: 6.0, consecutiveRainyDaysAvg: 2.2 },
 	{ name: "Apr", monthlyTargetMm: 29.5, rainyDaysShare: 0.310, intensityMinMm: 0.2, intensityMaxMm: 8.2, consecutiveRainyDaysAvg: 2.1 },
-	{ name: "Maj", monthlyTargetMm: 34.1, rainyDaysShare: 0.334, intensityMinMm: 0.2, intensityMaxMm: 8.3, consecutiveRainyDaysAvg: 2.2 },
+	{ name: "May", monthlyTargetMm: 34.1, rainyDaysShare: 0.334, intensityMinMm: 0.2, intensityMaxMm: 8.3, consecutiveRainyDaysAvg: 2.2 },
 	{ name: "Jun", monthlyTargetMm: 58.8, rainyDaysShare: 0.402, intensityMinMm: 0.2, intensityMaxMm: 12.0, consecutiveRainyDaysAvg: 2.4 },
 	{ name: "Jul", monthlyTargetMm: 63.2, rainyDaysShare: 0.382, intensityMinMm: 0.3, intensityMaxMm: 12.3, consecutiveRainyDaysAvg: 2.4 },
 	{ name: "Aug", monthlyTargetMm: 67.2, rainyDaysShare: 0.422, intensityMinMm: 0.2, intensityMaxMm: 13.9, consecutiveRainyDaysAvg: 2.3 },
 	{ name: "Sep", monthlyTargetMm: 50.8, rainyDaysShare: 0.378, intensityMinMm: 0.2, intensityMaxMm: 12.1, consecutiveRainyDaysAvg: 2.7 },
-	{ name: "Okt", monthlyTargetMm: 50.4, rainyDaysShare: 0.441, intensityMinMm: 0.3, intensityMaxMm: 10.0, consecutiveRainyDaysAvg: 2.6 },
+	{ name: "Oct", monthlyTargetMm: 50.4, rainyDaysShare: 0.441, intensityMinMm: 0.3, intensityMaxMm: 10.0, consecutiveRainyDaysAvg: 2.6 },
 	{ name: "Nov", monthlyTargetMm: 47.8, rainyDaysShare: 0.517, intensityMinMm: 0.2, intensityMaxMm: 8.0, consecutiveRainyDaysAvg: 3.0 },
 	{ name: "Dec", monthlyTargetMm: 48.1, rainyDaysShare: 0.527, intensityMinMm: 0.2, intensityMaxMm: 7.3, consecutiveRainyDaysAvg: 3.0 }
 ];
@@ -40,16 +40,6 @@ function convertDayToMonth(dayOfYear) {
 	return 0;
 }
 
-function getDayInMonth(dayOfYear, monthIndex) {
-	const normalizedDay = ((Math.floor(dayOfYear) % 365) + 365) % 365;
-	let dayOffset = normalizedDay;
-
-	for (let i = 0; i < monthIndex; i++) {
-		dayOffset -= MONTH_DAYS[i];
-		}
-	return dayOffset + 1;
-}
-
 function createDefaultWeatherState() {
 	return {
 		currentMonthIndex: 0,
@@ -64,6 +54,7 @@ function createDefaultWeatherState() {
 }
 
 let weatherState = createDefaultWeatherState();
+let weatherRng = Math.random;
 
 
 function computeTransitionProbability(profile) {
@@ -75,11 +66,22 @@ function computeTransitionProbability(profile) {
 
 function computeDailyRainMm(profile) {
 	
-	const base = profile.intensityMinMm + Math.random() * (profile.intensityMaxMm - profile.intensityMinMm);
-	const deficitFactor = (profile.monthlyTargetMm - weatherState.monthlyAccumulatedMm) / profile.monthlyTargetMm;
+	const base = profile.intensityMinMm + weatherRng() * (profile.intensityMaxMm - profile.intensityMinMm);
+	const safeMontlyTarget = Math.max(0.1, Number(profile.monthlyTargetMm) || 0);
+	const deficitFactor = (safeMontlyTarget - weatherState.monthlyAccumulatedMm) / safeMontlyTarget;
 	const correction = clamp( 1 + deficitFactor * 0.25, 0.8, 1.25);
 	const maxAllowed = profile.intensityMaxMm * globalThis.SIM.weather.intensityBurstAllowance;
 	return clamp(base * correction, profile.intensityMinMm, maxAllowed);
+}
+
+function setWeatherRng(rngFn) {
+	if (typeof rngFn === "function") {
+		weatherRng = rngFn;
+	}
+}
+
+function resetWeatherRng() {
+	weatherRng = Math.random;
 }
 
 
@@ -126,7 +128,7 @@ function updateWeather(input = {}) {
 		? pRainToRain
 		: pDryToRain;
 
-	weatherState.isRaining = Math.random() < transitionProbability;
+	weatherState.isRaining = weatherRng() < transitionProbability;
 
 	weatherState.dailyRainMm = weatherState.isRaining
 	? computeDailyRainMm(currentProfile) 
@@ -147,4 +149,6 @@ Object.assign(globalThis, {
 	resetWeather,
 	updateWeather,
 	getCurrentWeather,
+	setWeatherRng,
+	resetWeatherRng,
 });

@@ -188,7 +188,7 @@ test("remainingMonthlyTargetMm should decrease by dailyRainMm when it rains", ()
 });
 
 test("remainingMonthlyTargetMm should stay finite during extended simulation", () => {
-  const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.1);
+  globalThis.setWeatherRng(() => 0.1);
   let state = globalThis.resetWeather();
 
   try {
@@ -197,13 +197,13 @@ test("remainingMonthlyTargetMm should stay finite during extended simulation", (
       expect(Number.isFinite(state.remainingMonthlyTargetMm)).toBe(true);
     }
   } finally {
-    randomSpy.mockRestore();
+    globalThis.resetWeatherRng();
   }
 });
 
 test("simulate a full year of weather and check monthly targets are met", () => {
   let seed = 123456789;
-  const randomSpy = vi.spyOn(Math, "random").mockImplementation(() => {
+  globalThis.setWeatherRng(() => {
     seed = (1664525 * seed + 1013904223) % 4294967296;
     return seed / 4294967296;
   });
@@ -246,6 +246,6 @@ test("simulate a full year of weather and check monthly targets are met", () => 
     expect(annualActualMm).toBeGreaterThanOrEqual(annualExpectedMm * 0.75);
     expect(annualActualMm).toBeLessThanOrEqual(annualExpectedMm * 3.0);
   } finally {
-    randomSpy.mockRestore();
+    globalThis.resetWeatherRng();
   }
 });
