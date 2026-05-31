@@ -7,12 +7,12 @@ const BASE_MONTHLY_WEATHER_PROFILES = [
 	{ name: "Feb", monthlyTargetMm: 29.2, rainyDaysShare: 0.439, intensityMinMm: 0.2, intensityMaxMm: 6.6, consecutiveRainyDaysAvg: 2.5 },
 	{ name: "Mar", monthlyTargetMm: 27.9, rainyDaysShare: 0.343, intensityMinMm: 0.2, intensityMaxMm: 6.0, consecutiveRainyDaysAvg: 2.2 },
 	{ name: "Apr", monthlyTargetMm: 29.5, rainyDaysShare: 0.310, intensityMinMm: 0.2, intensityMaxMm: 8.2, consecutiveRainyDaysAvg: 2.1 },
-	{ name: "May", monthlyTargetMm: 34.1, rainyDaysShare: 0.334, intensityMinMm: 0.2, intensityMaxMm: 8.3, consecutiveRainyDaysAvg: 2.2 },
+	{ name: "Maj", monthlyTargetMm: 34.1, rainyDaysShare: 0.334, intensityMinMm: 0.2, intensityMaxMm: 8.3, consecutiveRainyDaysAvg: 2.2 },
 	{ name: "Jun", monthlyTargetMm: 58.8, rainyDaysShare: 0.402, intensityMinMm: 0.2, intensityMaxMm: 12.0, consecutiveRainyDaysAvg: 2.4 },
 	{ name: "Jul", monthlyTargetMm: 63.2, rainyDaysShare: 0.382, intensityMinMm: 0.3, intensityMaxMm: 12.3, consecutiveRainyDaysAvg: 2.4 },
 	{ name: "Aug", monthlyTargetMm: 67.2, rainyDaysShare: 0.422, intensityMinMm: 0.2, intensityMaxMm: 13.9, consecutiveRainyDaysAvg: 2.3 },
 	{ name: "Sep", monthlyTargetMm: 50.8, rainyDaysShare: 0.378, intensityMinMm: 0.2, intensityMaxMm: 12.1, consecutiveRainyDaysAvg: 2.7 },
-	{ name: "Oct", monthlyTargetMm: 50.4, rainyDaysShare: 0.441, intensityMinMm: 0.3, intensityMaxMm: 10.0, consecutiveRainyDaysAvg: 2.6 },
+	{ name: "Okt", monthlyTargetMm: 50.4, rainyDaysShare: 0.441, intensityMinMm: 0.3, intensityMaxMm: 10.0, consecutiveRainyDaysAvg: 2.6 },
 	{ name: "Nov", monthlyTargetMm: 47.8, rainyDaysShare: 0.517, intensityMinMm: 0.2, intensityMaxMm: 8.0, consecutiveRainyDaysAvg: 3.0 },
 	{ name: "Dec", monthlyTargetMm: 48.1, rainyDaysShare: 0.527, intensityMinMm: 0.2, intensityMaxMm: 7.3, consecutiveRainyDaysAvg: 3.0 }
 ];

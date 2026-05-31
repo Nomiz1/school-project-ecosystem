@@ -28,6 +28,7 @@ canvas.addEventListener("mouseleave", () => {
 const rabbitCountEl = document.getElementById("rabbitCount");
 const timeOfDayEl = document.getElementById("timeOfDay");
 const dayOfYearEl = document.getElementById("dayOfYear");
+const rainStatusEl = document.getElementById("rainStatus");
 const resetBtn = document.getElementById("resetBtn");
 
 const TARGET_FPS = globalThis.SIM.render.targetFps;
@@ -47,6 +48,9 @@ export function initWorld() {
     globalThis.initTerrain();
   }
   globalThis.initRabbits();
+  if (rainStatusEl) {
+    rainStatusEl.textContent = "Is it raining? No";
+  }
   lastUpdateTime = 0;
   lastCountersUpdateTime = 0;
   lastRabbitCount = -1;
@@ -79,6 +83,7 @@ function drawWorld(now) {
 }
 
 export function updateSimulation(timestamp = Date.now()) {
+
   if (lastUpdateTime === 0) {
     lastUpdateTime = timestamp;
   }
@@ -93,6 +98,18 @@ export function updateSimulation(timestamp = Date.now()) {
 
   if (elapsed >= FRAME_MS) {
     globalThis.tickTime();
+
+    if (typeof globalThis.updateWeather === "function") {
+      globalThis.updateWeather({ dayOfYear: globalThis.getDayOfYear() });
+    }
+
+    const rainChecker = globalThis.getCurrentWeather?.();
+    if (rainStatusEl && rainChecker) {
+      rainStatusEl.textContent = rainChecker.isRaining
+        ? "Is it raining? Yes"
+        : "Is it raining? No";
+    }
+
     globalThis.rabbitNormalWalk();
     drawWorld(timestamp);
     lastUpdateTime = timestamp;

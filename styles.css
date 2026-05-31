@@ -30,15 +30,34 @@ body {
   background: #ffffff;
 }
 
+.top-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.title-group {
+  min-width: 0;
+}
+
 h1 {
   margin: 0 0 0.25rem;
   font-size: 1.6rem;
 }
 
 .subtitle {
-  margin: 0 0 0.8rem;
+  margin: 0;
   font-size: 17px;
   color: #000000;
+}
+
+.rain-status {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 canvas {
@@ -84,4 +103,15 @@ button:hover {
 #timeOfDay {
   font-size: 1.15rem;
   opacity: 0.9;
+}
+
+@media (max-width: 700px) {
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .rain-status {
+    white-space: normal;
+  }
 }
