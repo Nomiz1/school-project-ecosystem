@@ -5,9 +5,26 @@ const DEFAULT_LOCALE = "sv-SE";
 
 let monthFormatter;
 let monthFormatterLocale;
+let dateFormatter;
+let dateFormatterLocale;
+let timeFormatter;
+let timeFormatterLocale;
 
 function getLocale() {
-    return globalThis.SIM?.i18n?.locale || DEFAULT_LOCALE;
+    const configuredLocale = globalThis.SIM?.i18n?.locale || DEFAULT_LOCALE;
+    const language = String(configuredLocale).toLowerCase().split("-")[0];
+    const texts = globalThis.SIM?.i18n?.texts || {};
+
+    // Keep date/time language in sync with the selected UI text language.
+    if (texts[language]) {
+        return configuredLocale;
+    }
+
+    if (texts.en) {
+        return "en-US";
+    }
+
+    return DEFAULT_LOCALE;
 }
 
 function getMonthFormatter() {
@@ -17,6 +34,32 @@ function getMonthFormatter() {
         monthFormatterLocale = locale;
     }
     return monthFormatter;
+}
+
+function getDateFormatter() {
+    const locale = getLocale();
+    if (!dateFormatter || dateFormatterLocale !== locale) {
+        dateFormatter = new Intl.DateTimeFormat(locale, {
+            year: "numeric",
+            month: "long",
+            day: "2-digit",
+        });
+        dateFormatterLocale = locale;
+    }
+    return dateFormatter;
+}
+
+function getTimeFormatter() {
+    const locale = getLocale();
+    if (!timeFormatter || timeFormatterLocale !== locale) {
+        timeFormatter = new Intl.DateTimeFormat(locale, {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        });
+        timeFormatterLocale = locale;
+    }
+    return timeFormatter;
 }
 
 function getSimulationDate() {
@@ -61,11 +104,9 @@ function getDayOfYearString() {
 
 function getDateTimeString() {
     const date = getSimulationDate();
-    const year = date.getFullYear();
-    const monthName = getMonthFormatter().format(date).replace(".", "");
-    const day = String(date.getDate()).padStart(2, "0");
-    const time = getClockStringFromDate(date);
-    return `${year}/${monthName}/${day} ${time}`;
+    const datePart = getDateFormatter().format(date).replace(".", "");
+    const timePart = getTimeFormatter().format(date).replace(".", "");
+    return `${datePart} ${timePart}`;
 }
 
  function resetTime() {
