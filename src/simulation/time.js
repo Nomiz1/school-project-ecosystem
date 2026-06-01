@@ -1,5 +1,36 @@
 
 let tick = 0;
+const BASE_YEAR = 2025; // Non-leap year keeps a stable 365-day cycle.
+const DEFAULT_LOCALE = "sv-SE";
+
+let monthFormatter;
+let monthFormatterLocale;
+
+function getLocale() {
+    return globalThis.SIM?.i18n?.locale || DEFAULT_LOCALE;
+}
+
+function getMonthFormatter() {
+    const locale = getLocale();
+    if (!monthFormatter || monthFormatterLocale !== locale) {
+        monthFormatter = new Intl.DateTimeFormat(locale, { month: "long" });
+        monthFormatterLocale = locale;
+    }
+    return monthFormatter;
+}
+
+function getSimulationDate() {
+    const date = new Date(BASE_YEAR, 0, 1, 0, 0, 0, 0);
+    date.setDate(date.getDate() + getDayOfYear());
+    date.setMinutes(Math.floor(getTimeOfDay() * 1440));
+    return date;
+}
+
+function getClockStringFromDate(date) {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+}
 
 function tickTime() {
     tick += 1;
@@ -11,29 +42,30 @@ function getTimeOfDay() {
 }
 
 function getClockString() {
-    const totalMinutes = Math.floor(getTimeOfDay() * 1440); // 1440 = 24 * 60
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    return getClockStringFromDate(getSimulationDate());
 }
-
-const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'];
-const MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 function getDayOfYear() {
     return Math.floor(tick / SIM.time.framesPerDay);
 }
 
 function getDayOfYearString() {
-    const dayIndex = getDayOfYear() % 365;
-    let remaining = dayIndex;
-    for (let i = 0; i < MONTH_DAYS.length; i++) {
-        if (remaining < MONTH_DAYS[i]) {
-            return `${remaining + 1} ${MONTH_NAMES[i]}`;
-        }
-        remaining -= MONTH_DAYS[i];
-    }
-    return `1 Jan`;
+    const date = getSimulationDate();
+
+    const day = date.getDate();
+    const monthShort = getMonthFormatter().format(date);
+    const month = monthShort.charAt(0).toUpperCase() + monthShort.slice(1).replace(".", "");
+
+    return `${day} ${month}`;
+}
+
+function getDateTimeString() {
+    const date = getSimulationDate();
+    const year = date.getFullYear();
+    const monthName = getMonthFormatter().format(date).replace(".", "");
+    const day = String(date.getDate()).padStart(2, "0");
+    const time = getClockStringFromDate(date);
+    return `${year}/${monthName}/${day} ${time}`;
 }
 
  function resetTime() {
@@ -47,4 +79,6 @@ function getDayOfYearString() {
     getClockString,
     getDayOfYear,
     getDayOfYearString,
+    getDateTimeString,
 });
+

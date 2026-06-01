@@ -10,6 +10,17 @@ let updateSimulation;
 let getTerrainType;
 let resetButtonHandler;
 
+function getLanguage() {
+    const locale = (globalThis.SIM?.i18n?.locale || "sv-SE").toLowerCase();
+    return locale.split("-")[0];
+}
+
+function getTexts() {
+    const language = getLanguage();
+    const texts = globalThis.SIM?.i18n?.texts || {};
+    return texts[language] || texts.en || {};
+}
+
 
 beforeAll(async () => {
     const app = await import("../src/simulation/app.js");
@@ -115,15 +126,16 @@ test("updateSimulation should call all the necessary functions", () => {
 });
 
 test("getTerrainType should return correct terrain types", () => {
+    const texts = getTexts();
     globalThis.heightMap = [
         [0.1, 0.2, 0.3],
         [0.4, 0.5, 0.55, 0.6],
         [0.7, 0.8, 0.9],
     ];
 
-    expect(getTerrainType(0, 0)).toBe("Vatten");
-    expect(getTerrainType(0, 1)).toBe("Gräs");
-    expect(getTerrainType(3, 1)).toBe("Torrt gräs");
+    expect(getTerrainType(0, 0)).toBe(texts.terrainWater);
+    expect(getTerrainType(0, 1)).toBe(texts.terrainGrass);
+    expect(getTerrainType(3, 1)).toBe(texts.terrainDryGrass);
 });
 
 test("getTerrainType should return '?' for out-of-bounds coordinates", () => {
@@ -169,6 +181,7 @@ test("resetButtonHandler should call initWorld when reset button is clicked", ()
 });
 
 test("mouse move event should update mouse coordinates and terrain type", () => {
+    const texts = getTexts();
     const getElementByIdMock = document.getElementById;
 
     const worldCallIndex = getElementByIdMock.mock.calls.findIndex(([id]) => id === "world");
@@ -197,10 +210,11 @@ test("mouse move event should update mouse coordinates and terrain type", () => 
     mouseMoveHandler({ clientX: 0, clientY: 0 });
 
     expect(worldCanvas.getBoundingClientRect).toHaveBeenCalledTimes(1);
-    expect(mouseCoordsEl.textContent).toBe("X: 0 Y: 0 — Vatten");
+    expect(mouseCoordsEl.textContent).toBe(`${texts.xLabel}: 0 ${texts.yLabel}: 0 — ${texts.terrainWater}`);
 });
 
 test("drawWorld should update after countersUpdateMs and skip unchanged rabbit count", () => {
+    const texts = getTexts();
     const getElementByIdMock = document.getElementById;
     function getImportedElementById(id) {
         const callIndex = getElementByIdMock.mock.calls.findIndex(([calledId]) => calledId === id);
@@ -209,35 +223,29 @@ test("drawWorld should update after countersUpdateMs and skip unchanged rabbit c
     }
 
     const rabbitCountEl = getImportedElementById("rabbitCount");
-    const timeOfDayEl = getImportedElementById("timeOfDay");
     const dayOfYearEl = getImportedElementById("dayOfYear");
 
     expect(rabbitCountEl).toBeDefined();
-    expect(timeOfDayEl).toBeDefined();
     expect(dayOfYearEl).toBeDefined();
 
     const getRabbitCountMock = vi
         .fn()
         .mockReturnValueOnce(0)
+        .mockReturnValueOnce(0)
         .mockReturnValueOnce(0);
-    const getClockStringMock = vi
+    const getDateTimeStringMock = vi
         .fn()
-        .mockReturnValueOnce("00:00")
-        .mockReturnValueOnce("01:00");
-    const getDayOfYearStringMock = vi
-        .fn()
-        .mockReturnValueOnce("1 Jan")
-        .mockReturnValueOnce("2 Jan");
+        .mockReturnValueOnce("2025/January/01 00:00")
+        .mockReturnValueOnce("2025/January/01 00:00")
+        .mockReturnValueOnce("2025/January/02 01:00");
 
     globalThis.getRabbitCount = getRabbitCountMock;
-    globalThis.getClockString = getClockStringMock;
-    globalThis.getDayOfYearString = getDayOfYearStringMock;
+    globalThis.getDateTimeString = getDateTimeStringMock;
 
     initWorld();
 
-    expect(rabbitCountEl.textContent).toBe("Rabbits: 0");
-    expect(timeOfDayEl.textContent).toBe("Time: 00:00");
-    expect(dayOfYearEl.textContent).toBe("Day: 1 Jan");
+    expect(rabbitCountEl.textContent).toBe(`${texts.rabbitCountLabel}: 0`);
+    expect(dayOfYearEl.textContent).toBe(`${texts.dateTimeLabel}: 2025/January/01 00:00`);
 
     let rabbitWrites = 0;
     let rabbitValue = rabbitCountEl.textContent;
@@ -276,14 +284,12 @@ test("drawWorld should update after countersUpdateMs and skip unchanged rabbit c
     updateSimulation(countersMs + frameMs + 1);
 
     expect(rabbitWrites).toBe(1);
-    expect(rabbitCountEl.textContent).toBe("Rabbits: 0");
-    expect(timeOfDayEl.textContent).toBe("Time: 00:00");
-    expect(dayOfYearEl.textContent).toBe("Day: 1 Jan");
+    expect(rabbitCountEl.textContent).toBe(`${texts.rabbitCountLabel}: 0`);
+    expect(dayOfYearEl.textContent).toBe(`${texts.dateTimeLabel}: 2025/January/01 00:00`);
 
     updateSimulation((2 * countersMs) + frameMs + 2);
 
     expect(rabbitWrites).toBe(1);
-    expect(rabbitCountEl.textContent).toBe("Rabbits: 0");
-    expect(timeOfDayEl.textContent).toBe("Time: 01:00");
-    expect(dayOfYearEl.textContent).toBe("Day: 2 Jan");
+    expect(rabbitCountEl.textContent).toBe(`${texts.rabbitCountLabel}: 0`);
+    expect(dayOfYearEl.textContent).toBe(`${texts.dateTimeLabel}: 2025/January/02 01:00`);
 });

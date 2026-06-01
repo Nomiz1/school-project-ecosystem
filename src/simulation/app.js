@@ -3,13 +3,54 @@ const ctx = canvas.getContext("2d");
 globalThis.ctx = ctx;
 const mouseCoordsEl = document.getElementById("mouseCoords");
 
+function getLanguage() {
+  const locale = (globalThis.SIM?.i18n?.locale || "sv-SE").toLowerCase();
+  return locale.split("-")[0];
+}
+
+function getTexts() {
+  const texts = globalThis.SIM?.i18n?.texts || {};
+  const language = getLanguage();
+  return texts[language] || texts.en || {};
+}
+
+function t(key, fallback) {
+  const texts = getTexts();
+  return texts[key] || fallback;
+}
+
 export function getTerrainType(x, y) {
   const hm = globalThis.heightMap;
-  if (!hm || !hm[y] || hm[y][x] === undefined) return "?";
+  if (!hm || !hm[y] || hm[y][x] === undefined) return t("terrainUnknown", "?");
   const v = hm[y][x];
-  if (v <= 0.30) return "Vatten";
-  if (v <= 0.55) return "Gräs";
-  return "Torrt gräs";
+  if (v <= 0.30) return t("terrainWater", "Water");
+  if (v <= 0.55) return t("terrainGrass", "Grass");
+  return t("terrainDryGrass", "Dry grass");
+}
+
+function localizeStaticUi() {
+  if (typeof document !== "undefined") {
+    document.title = t("pageTitle", "School Ecosystem Simulation");
+    if (document.documentElement) {
+      document.documentElement.lang = globalThis.SIM?.i18n?.locale || "sv-SE";
+    }
+  }
+
+  if (typeof document.querySelector === "function") {
+    const titleEl = document.querySelector(".title-group h1");
+    if (titleEl) {
+      titleEl.textContent = t("appTitle", "Ecosystem Simulation");
+    }
+
+    const subtitleEl = document.querySelector(".title-group .subtitle");
+    if (subtitleEl) {
+      subtitleEl.textContent = t("subtitle", "By: Zimon Roos");
+    }
+  }
+
+  if (typeof canvas.setAttribute === "function") {
+    canvas.setAttribute("aria-label", t("canvasAria", "Ecosystem simulation canvas"));
+  }
 }
 
 canvas.addEventListener("mousemove", (e) => {
@@ -19,14 +60,13 @@ canvas.addEventListener("mousemove", (e) => {
   const x = Math.floor((e.clientX - rect.left) * scaleX);
   const y = Math.floor((e.clientY - rect.top) * scaleY);
   const terrain = getTerrainType(x, y);
-  mouseCoordsEl.textContent = `X: ${x} Y: ${y} — ${terrain}`;
+  mouseCoordsEl.textContent = `${t("xLabel", "X")}: ${x} ${t("yLabel", "Y")}: ${y} — ${terrain}`;
 });
 
 canvas.addEventListener("mouseleave", () => {
-  mouseCoordsEl.textContent = "X: - Y: -";
+  mouseCoordsEl.textContent = `${t("xLabel", "X")}: - ${t("yLabel", "Y")}: -`;
 });
 const rabbitCountEl = document.getElementById("rabbitCount");
-const timeOfDayEl = document.getElementById("timeOfDay");
 const dayOfYearEl = document.getElementById("dayOfYear");
 const rainStatusEl = document.getElementById("rainStatus");
 const resetBtn = document.getElementById("resetBtn");
@@ -40,6 +80,7 @@ let lastCountersUpdateTime = 0;
 let lastRabbitCount = -1;
 
 export function initWorld() {
+  localizeStaticUi();
   globalThis.resetTime();
   if (typeof globalThis.resetWeather === "function") {
     globalThis.resetWeather();
@@ -49,7 +90,16 @@ export function initWorld() {
   }
   globalThis.initRabbits();
   if (rainStatusEl) {
-    rainStatusEl.textContent = "Is it raining? No";
+    rainStatusEl.textContent = t("rainNo", "Is it raining? No");
+  }
+  if (rabbitCountEl) {
+    rabbitCountEl.textContent = `${t("rabbitCountLabel", "Rabbits")}: ${globalThis.getRabbitCount?.() ?? 0}`;
+  }
+  if (dayOfYearEl) {
+    dayOfYearEl.textContent = `${t("dateTimeLabel", "Date")}: ${globalThis.getDateTimeString?.() ?? "2025/January/01 00:00"}`;
+  }
+  if (resetBtn) {
+    resetBtn.textContent = t("resetButton", "Reset");
   }
   lastUpdateTime = 0;
   lastCountersUpdateTime = 0;
@@ -71,12 +121,11 @@ function drawWorld(now) {
     const rabbitCount = globalThis.getRabbitCount();
 
     if (rabbitCount !== lastRabbitCount) {
-      rabbitCountEl.textContent = `Rabbits: ${rabbitCount}`;
+      rabbitCountEl.textContent = `${t("rabbitCountLabel", "Rabbits")}: ${rabbitCount}`;
       lastRabbitCount = rabbitCount;
     }
 
-    timeOfDayEl.textContent = `Time: ${globalThis.getClockString()}`;
-    dayOfYearEl.textContent = `Day: ${globalThis.getDayOfYearString()}`;
+    dayOfYearEl.textContent = `${t("dateTimeLabel", "Date")}: ${globalThis.getDateTimeString()}`;
 
     lastCountersUpdateTime = now;
   }
@@ -108,8 +157,8 @@ export function updateSimulation(timestamp = Date.now()) {
     const rainAmount = rainChecker ? rainChecker.rainIntensity : 0;
     if (rainStatusEl && rainChecker) {
       rainStatusEl.textContent = rainChecker.isRaining
-        ? "Is it raining? Yes"
-        : "Is it raining? No";
+        ? t("rainYes", "Is it raining? Yes")
+        : t("rainNo", "Is it raining? No");
     }
 
     if (
