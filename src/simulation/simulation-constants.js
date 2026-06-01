@@ -10,7 +10,7 @@ const SIM = {
         lightGrassMax: 1.00,
         steps: 16,
         grassNearWater: 20,
-        sampleSize: 100
+        sampleSize: 200
     },
     render: {
         targetFps: 60,
@@ -32,6 +32,9 @@ const SIM = {
     },
     weather: {
         intensityBurstAllowance: 1.4, // Allows rain intensity to temporarily exceed profile max to meet monthly targets
+        lightRainMaxMm: 6.0,
+        middleRainMaxMm: 13.0,
+        darkRainMaxMm: 20.0,
     },
     background: {
         pixelSize: 8,

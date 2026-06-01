@@ -49,6 +49,30 @@ function isLightGrassNearWater(x, y) {
 
 globalThis.isLightGrassNearWater = isLightGrassNearWater;
 
+function rainAffectsTerrain(x, y, rainAmount = 0) {
+    const DARK_GRASS_MAX = globalThis.SIM.terrain.darkGrassMax;
+    const floor = DARK_GRASS_MAX - 0.01;
+    const heightMap = globalThis.heightMap;
+    const raw = heightMap[y][x];
+
+    if (raw > DARK_GRASS_MAX && rainAmount > 0 && rainAmount <= globalThis.SIM.weather.lightRainMaxMm) {
+        const delta = (rainAmount / globalThis.SIM.weather.lightRainMaxMm) * 0.002;
+        heightMap[y][x] = Math.max(floor, raw - delta);
+        globalThis.redrawTerrainPixel(x, y);
+    }
+    if (raw > DARK_GRASS_MAX && rainAmount > globalThis.SIM.weather.lightRainMaxMm && rainAmount <= globalThis.SIM.weather.middleRainMaxMm) {
+        const delta = (rainAmount / globalThis.SIM.weather.middleRainMaxMm) * 0.004;
+        heightMap[y][x] = Math.max(floor, raw - delta);
+        globalThis.redrawTerrainPixel(x, y);
+    }
+    if (raw > DARK_GRASS_MAX && rainAmount > globalThis.SIM.weather.middleRainMaxMm) {
+        const delta = (rainAmount / globalThis.SIM.weather.darkRainMaxMm) * 0.006;
+        heightMap[y][x] = Math.max(floor, raw - delta);
+        globalThis.redrawTerrainPixel(x, y);
+    }
+}
+globalThis.rainAffectsTerrain = rainAffectsTerrain;
+
 function lightGrassBecomesDarkGrass(x, y) {
     const heightMap = globalThis.heightMap;
     const WATER_MAX = globalThis.SIM.terrain.waterMax;

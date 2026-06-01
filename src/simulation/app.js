@@ -87,6 +87,7 @@ export function updateSimulation(timestamp = Date.now()) {
   if (lastUpdateTime === 0) {
     lastUpdateTime = timestamp;
   }
+
   const SAMPLE_SIZE = globalThis.SIM.terrain.sampleSize;
   for (let i = 0; i < SAMPLE_SIZE; i++) {
     const x = Math.floor(Math.random() * globalThis.WIDTH);
@@ -104,10 +105,25 @@ export function updateSimulation(timestamp = Date.now()) {
     }
 
     const rainChecker = globalThis.getCurrentWeather?.();
+    const rainAmount = rainChecker ? rainChecker.rainIntensity : 0;
     if (rainStatusEl && rainChecker) {
       rainStatusEl.textContent = rainChecker.isRaining
         ? "Is it raining? Yes"
         : "Is it raining? No";
+    }
+
+    if (
+      typeof globalThis.rainAffectsTerrain === "function" &&
+      globalThis.heightMap &&
+      globalThis.heightMap.length > 0
+    ) {
+      const mapHeight = globalThis.heightMap.length;
+      const mapWidth = globalThis.heightMap[0].length;
+      for (let i = 0; i < SAMPLE_SIZE; i++) {
+        const x = Math.floor(Math.random() * mapWidth);
+        const y = Math.floor(Math.random() * mapHeight);
+        globalThis.rainAffectsTerrain(x, y, rainAmount);
+      }
     }
 
     globalThis.rabbitNormalWalk();
