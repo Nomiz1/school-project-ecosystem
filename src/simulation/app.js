@@ -1,23 +1,9 @@
+import { t } from "./language.js";
+
 const canvas = document.getElementById("world");
 const ctx = canvas.getContext("2d");
 globalThis.ctx = ctx;
 const mouseCoordsEl = document.getElementById("mouseCoords");
-
-function getLanguage() {
-  const locale = (globalThis.SIM?.i18n?.locale || "sv-SE").toLowerCase();
-  return locale.split("-")[0];
-}
-
-function getTexts() {
-  const texts = globalThis.SIM?.i18n?.texts || {};
-  const language = getLanguage();
-  return texts[language] || texts.en || {};
-}
-
-function t(key, fallback) {
-  const texts = getTexts();
-  return texts[key] || fallback;
-}
 
 export function getTerrainType(x, y) {
   const hm = globalThis.heightMap;
