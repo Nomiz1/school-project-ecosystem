@@ -2,6 +2,7 @@ import { beforeAll, beforeEach, test, expect, vi } from "vitest";
 
 import "../src/simulation/simulation-constants.js";
 import "../src/simulation/terrain.js";
+import "../src/simulation/grass.js";
 
 function createRecordingContext() {
     const drawCalls = [];
