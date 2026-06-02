@@ -3,18 +3,18 @@ const MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 const BASE_MONTHLY_WEATHER_PROFILES = [
 
-	{ name: "Jan", monthlyTargetMm: 38.5, rainyDaysShare: 0.473, intensityMinMm: 0.2, intensityMaxMm: 7.7, consecutiveRainyDaysAvg: 2.9 },
-	{ name: "Feb", monthlyTargetMm: 29.2, rainyDaysShare: 0.439, intensityMinMm: 0.2, intensityMaxMm: 6.6, consecutiveRainyDaysAvg: 2.5 },
-	{ name: "Mar", monthlyTargetMm: 27.9, rainyDaysShare: 0.343, intensityMinMm: 0.2, intensityMaxMm: 6.0, consecutiveRainyDaysAvg: 2.2 },
-	{ name: "Apr", monthlyTargetMm: 29.5, rainyDaysShare: 0.310, intensityMinMm: 0.2, intensityMaxMm: 8.2, consecutiveRainyDaysAvg: 2.1 },
-	{ name: "Maj", monthlyTargetMm: 34.1, rainyDaysShare: 0.334, intensityMinMm: 0.2, intensityMaxMm: 8.3, consecutiveRainyDaysAvg: 2.2 },
-	{ name: "Jun", monthlyTargetMm: 58.8, rainyDaysShare: 0.402, intensityMinMm: 0.2, intensityMaxMm: 12.0, consecutiveRainyDaysAvg: 2.4 },
-	{ name: "Jul", monthlyTargetMm: 63.2, rainyDaysShare: 0.382, intensityMinMm: 0.3, intensityMaxMm: 12.3, consecutiveRainyDaysAvg: 2.4 },
-	{ name: "Aug", monthlyTargetMm: 67.2, rainyDaysShare: 0.422, intensityMinMm: 0.2, intensityMaxMm: 13.9, consecutiveRainyDaysAvg: 2.3 },
-	{ name: "Sep", monthlyTargetMm: 50.8, rainyDaysShare: 0.378, intensityMinMm: 0.2, intensityMaxMm: 12.1, consecutiveRainyDaysAvg: 2.7 },
-	{ name: "Okt", monthlyTargetMm: 50.4, rainyDaysShare: 0.441, intensityMinMm: 0.3, intensityMaxMm: 10.0, consecutiveRainyDaysAvg: 2.6 },
-	{ name: "Nov", monthlyTargetMm: 47.8, rainyDaysShare: 0.517, intensityMinMm: 0.2, intensityMaxMm: 8.0, consecutiveRainyDaysAvg: 3.0 },
-	{ name: "Dec", monthlyTargetMm: 48.1, rainyDaysShare: 0.527, intensityMinMm: 0.2, intensityMaxMm: 7.3, consecutiveRainyDaysAvg: 3.0 }
+	{ name: "Jan", monthlyTargetMm: 38.5, rainyDaysShare: 0.473, intensityMinMm: 0.2, intensityMaxMm: 7.7, consecutiveRainyDaysAvg: 2.9, normalTempC: -1.0 },
+	{ name: "Feb", monthlyTargetMm: 29.2, rainyDaysShare: 0.439, intensityMinMm: 0.2, intensityMaxMm: 6.6, consecutiveRainyDaysAvg: 2.5, normalTempC: -1.0 },
+	{ name: "Mar", monthlyTargetMm: 27.9, rainyDaysShare: 0.343, intensityMinMm: 0.2, intensityMaxMm: 6.0, consecutiveRainyDaysAvg: 2.2, normalTempC: 1.6 },
+	{ name: "Apr", monthlyTargetMm: 29.5, rainyDaysShare: 0.310, intensityMinMm: 0.2, intensityMaxMm: 8.2, consecutiveRainyDaysAvg: 2.1, normalTempC: 6.3 },
+	{ name: "Maj", monthlyTargetMm: 34.1, rainyDaysShare: 0.334, intensityMinMm: 0.2, intensityMaxMm: 8.3, consecutiveRainyDaysAvg: 2.2, normalTempC: 11.4 },
+	{ name: "Jun", monthlyTargetMm: 58.8, rainyDaysShare: 0.402, intensityMinMm: 0.2, intensityMaxMm: 12.0, consecutiveRainyDaysAvg: 2.4, normalTempC: 15.7 },
+	{ name: "Jul", monthlyTargetMm: 63.2, rainyDaysShare: 0.382, intensityMinMm: 0.3, intensityMaxMm: 12.3, consecutiveRainyDaysAvg: 2.4, normalTempC: 18.7 },
+	{ name: "Aug", monthlyTargetMm: 67.2, rainyDaysShare: 0.422, intensityMinMm: 0.2, intensityMaxMm: 13.9, consecutiveRainyDaysAvg: 2.3, normalTempC: 17.7 },
+	{ name: "Sep", monthlyTargetMm: 50.8, rainyDaysShare: 0.378, intensityMinMm: 0.2, intensityMaxMm: 12.1, consecutiveRainyDaysAvg: 2.7, normalTempC: 13.1 },
+	{ name: "Okt", monthlyTargetMm: 50.4, rainyDaysShare: 0.441, intensityMinMm: 0.3, intensityMaxMm: 10.0, consecutiveRainyDaysAvg: 2.6, normalTempC: 7.7 },
+	{ name: "Nov", monthlyTargetMm: 47.8, rainyDaysShare: 0.517, intensityMinMm: 0.2, intensityMaxMm: 8.0, consecutiveRainyDaysAvg: 3.0, normalTempC: 3.6 },
+	{ name: "Dec", monthlyTargetMm: 48.1, rainyDaysShare: 0.527, intensityMinMm: 0.2, intensityMaxMm: 7.3, consecutiveRainyDaysAvg: 3.0, normalTempC: 0.6 },
 ];
 
 function getMonthlyWeatherProfile(monthIndex) {
@@ -50,6 +50,7 @@ function createDefaultWeatherState() {
 		monthlyAccumulatedMm: 0,
 		remainingMonthlyTargetMm: 0,
 		lastEvaluatedDay: -1,
+		temperatureC: BASE_MONTHLY_WEATHER_PROFILES[0].normalTempC,
 	};
 }
 
@@ -65,13 +66,23 @@ function computeTransitionProbability(profile) {
 
 
 function computeDailyRainMm(profile) {
-	
 	const base = profile.intensityMinMm + weatherRng() * (profile.intensityMaxMm - profile.intensityMinMm);
-	const safeMontlyTarget = Math.max(0.1, Number(profile.monthlyTargetMm) || 0);
-	const deficitFactor = (safeMontlyTarget - weatherState.monthlyAccumulatedMm) / safeMontlyTarget;
+	const safeMonthlyTarget = Math.max(0.1, Number(profile.monthlyTargetMm) || 0);
+	const deficitFactor = (safeMonthlyTarget - weatherState.monthlyAccumulatedMm) / safeMonthlyTarget;
 	const correction = clamp( 1 + deficitFactor * 0.25, 0.8, 1.25);
 	const maxAllowed = profile.intensityMaxMm * globalThis.SIM.weather.intensityBurstAllowance;
 	return clamp(base * correction, profile.intensityMinMm, maxAllowed);
+}
+
+function computeDailyTempC(profile) {
+	const yesterdayTemp = weatherState.temperatureC;
+	const variation = (weatherRng() * 4) - 2;
+	const smoothTempTransitionFactor = globalThis.SIM.weather.smoothTempTransitionFactor;
+	let targetTemp = profile.normalTempC + variation;
+	if (weatherState.isRaining === true) {
+		targetTemp -= globalThis.SIM.weather.rainTempCoolingEffect;
+	}
+	return yesterdayTemp + smoothTempTransitionFactor * (targetTemp - yesterdayTemp);
 }
 
 function setWeatherRng(rngFn) {
@@ -134,6 +145,7 @@ function updateWeather(input = {}) {
 	? computeDailyRainMm(currentProfile) 
 	: 0;
 	weatherState.rainIntensity = weatherState.dailyRainMm;
+	weatherState.temperatureC = computeDailyTempC(currentProfile);
 	weatherState.monthlyAccumulatedMm += weatherState.dailyRainMm;
 	weatherState.remainingMonthlyTargetMm = currentProfile.monthlyTargetMm - weatherState.monthlyAccumulatedMm;
 
