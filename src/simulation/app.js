@@ -141,6 +141,7 @@ export function updateSimulation(timestamp = Date.now()) {
 
     const rainChecker = globalThis.getCurrentWeather?.();
     const rainAmount = rainChecker ? rainChecker.rainIntensity : 0;
+    const tempC = rainChecker ? rainChecker.temperatureC : 0;
     if (rainStatusEl && rainChecker) {
       rainStatusEl.textContent = rainChecker.isRaining
         ? t("rainYes", "Is it raining? Yes")
@@ -148,9 +149,7 @@ export function updateSimulation(timestamp = Date.now()) {
     }
 
     if (
-      typeof globalThis.rainAffectsTerrain === "function" &&
-      globalThis.heightMap &&
-      globalThis.heightMap.length > 0
+      typeof globalThis.rainAffectsTerrain === "function" && globalThis.heightMap && globalThis.heightMap.length > 0
     ) {
       const mapHeight = globalThis.heightMap.length;
       const mapWidth = globalThis.heightMap[0].length;
@@ -158,6 +157,8 @@ export function updateSimulation(timestamp = Date.now()) {
         const x = Math.floor(Math.random() * mapWidth);
         const y = Math.floor(Math.random() * mapHeight);
         globalThis.rainAffectsTerrain(x, y, rainAmount);
+        globalThis.temperatureAffectsTerrain(x, y, tempC);
+
       }
     }
 
@@ -169,8 +170,8 @@ export function updateSimulation(timestamp = Date.now()) {
   window.requestAnimationFrame(updateSimulation);
 }
 export function resetButtonHandler() {
-resetBtn.addEventListener("click", () => {
-  initWorld();
-});
+  resetBtn.addEventListener("click", () => {
+    initWorld();
+  });
 }
 

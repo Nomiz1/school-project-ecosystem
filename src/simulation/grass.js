@@ -39,6 +39,27 @@ function rainAffectsTerrain(x, y, rainAmount = 0) {
 	}
 }
 
+function temperatureGrowthFactor(tempC = 0) {
+	return Math.max(0, Math.pow(2, 0.05 * tempC)-1); // y=(2^0.05x)-1 
+}
+
+function temperatureAffectsTerrain (x, y, tempC) {
+	const heightMap = globalThis.heightMap;
+    const WATER_MAX = globalThis.SIM.terrain.waterMax;
+    const DARK_GRASS_MAX = globalThis.SIM.terrain.darkGrassMax;
+    const floor = DARK_GRASS_MAX - 0.01;
+
+	const raw = heightMap[y][x];
+	if (raw <= WATER_MAX) return;
+
+	const growthFactor = temperatureGrowthFactor(tempC);
+
+	const delta = Math.min(0.002, growthFactor * 0.0012);
+
+	heightMap[y][x] = Math.max(floor, raw - delta);
+	globalThis.redrawTerrainPixel(x, y);
+}
+
 function lightGrassBecomesDarkGrass(x, y) {
 	const heightMap = globalThis.heightMap;
 	const DARK_GRASS_MAX = globalThis.SIM.terrain.darkGrassMax;
@@ -53,5 +74,6 @@ function lightGrassBecomesDarkGrass(x, y) {
 Object.assign(globalThis, {
 	isLightGrassNearWater,
 	rainAffectsTerrain,
+	temperatureAffectsTerrain,
 	lightGrassBecomesDarkGrass,
 });
