@@ -55,6 +55,7 @@ canvas.addEventListener("mouseleave", () => {
 const rabbitCountEl = document.getElementById("rabbitCount");
 const dayOfYearEl = document.getElementById("dayOfYear");
 const rainStatusEl = document.getElementById("rainStatus");
+const temperatureValueEl = document.getElementById("temperatureValue");
 const resetBtn = document.getElementById("resetBtn");
 
 const TARGET_FPS = globalThis.SIM.render.targetFps;
@@ -64,6 +65,14 @@ const COUNTERS_UPDATE_MS = globalThis.SIM.render.countersUpdateMs;
 let lastUpdateTime = 0;
 let lastCountersUpdateTime = 0;
 let lastRabbitCount = -1;
+
+function renderTemperatureText(tempC = 0) {
+  const value = Number.isFinite(tempC) ? tempC : 0;
+
+  if (temperatureValueEl) {
+    temperatureValueEl.textContent = `${t("temperatureLabel", "Temperature")}: ${value.toFixed(1)}°C`;
+  }
+}
 
 export function initWorld() {
   localizeStaticUi();
@@ -78,6 +87,7 @@ export function initWorld() {
   if (rainStatusEl) {
     rainStatusEl.textContent = t("rainNo", "Is it raining? No");
   }
+  renderTemperatureText(0);
   if (rabbitCountEl) {
     rabbitCountEl.textContent = `${t("rabbitCountLabel", "Rabbits")}: ${globalThis.getRabbitCount?.() ?? 0}`;
   }
@@ -152,6 +162,7 @@ export function updateSimulation(timestamp = Date.now()) {
         ? t("rainYes", "Is it raining? Yes")
         : t("rainNo", "Is it raining? No");
     }
+    renderTemperatureText(tempC);
 
     if (canGrassGrow && typeof globalThis.rainAffectsTerrain === "function" && globalThis.heightMap && globalThis.heightMap.length > 0) {
       const mapHeight = globalThis.heightMap.length;
