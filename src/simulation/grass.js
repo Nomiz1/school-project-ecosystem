@@ -43,12 +43,11 @@ function temperatureGrowthFactor(tempC = 0) {
 
 function temperatureAffectsTerrain(x, y, tempC) {
 	const heightMap = globalThis.heightMap;
-	const WATER_MAX = globalThis.SIM.terrain.waterMax;
 	const DARK_GRASS_MAX = globalThis.SIM.terrain.darkGrassMax;
 	const floor = DARK_GRASS_MAX - 0.01;
 
 	const raw = heightMap[y][x];
-	if (raw <= WATER_MAX) return;
+	if (raw <= DARK_GRASS_MAX || tempC <= 0) return;
 
 	const growthFactor = temperatureGrowthFactor(tempC);
 
