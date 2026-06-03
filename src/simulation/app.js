@@ -124,10 +124,14 @@ export function updateSimulation(timestamp = Date.now()) {
   }
 
   const SAMPLE_SIZE = globalThis.SIM.terrain.sampleSize;
-  for (let i = 0; i < SAMPLE_SIZE; i++) {
-    const x = Math.floor(Math.random() * globalThis.WIDTH);
-    const y = Math.floor(Math.random() * globalThis.HEIGHT);
-    globalThis.lightGrassBecomesDarkGrass(x, y);
+  const latestWeather = globalThis.getCurrentWeather?.();
+  const canGrassGrowNow = (latestWeather?.temperatureC ?? 1) > 0;
+  if (canGrassGrowNow && typeof globalThis.lightGrassBecomesDarkGrass === "function") {
+    for (let i = 0; i < SAMPLE_SIZE; i++) {
+      const x = Math.floor(Math.random() * globalThis.WIDTH);
+      const y = Math.floor(Math.random() * globalThis.HEIGHT);
+      globalThis.lightGrassBecomesDarkGrass(x, y);
+    }
   }
 
   const elapsed = timestamp - lastUpdateTime;
@@ -141,14 +145,15 @@ export function updateSimulation(timestamp = Date.now()) {
 
     const rainChecker = globalThis.getCurrentWeather?.();
     const rainAmount = rainChecker ? rainChecker.rainIntensity : 0;
-    const tempC = rainChecker ? rainChecker.temperatureC : 0;
+    const tempC = rainChecker ? rainChecker.temperatureC : 1;
+    const canGrassGrow = tempC > 0;
     if (rainStatusEl && rainChecker) {
       rainStatusEl.textContent = rainChecker.isRaining
         ? t("rainYes", "Is it raining? Yes")
         : t("rainNo", "Is it raining? No");
     }
 
-    if (typeof globalThis.rainAffectsTerrain === "function" && globalThis.heightMap && globalThis.heightMap.length > 0) {
+    if (canGrassGrow && typeof globalThis.rainAffectsTerrain === "function" && globalThis.heightMap && globalThis.heightMap.length > 0) {
       const mapHeight = globalThis.heightMap.length;
       const mapWidth = globalThis.heightMap[0].length;
       for (let i = 0; i < SAMPLE_SIZE; i++) {
