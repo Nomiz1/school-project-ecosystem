@@ -67,14 +67,14 @@ function isNewRabbitOverlapping(newRabbit) {
 
 // --- Movement ---
 
-function isWaterAt(x, y, rabbit) {
+function isWaterAt(x, y, rabbit, heightMap, waterMax) {
     const cx = Math.floor(x + rabbit.w / 2);
     const cy = Math.floor(y + rabbit.h / 2);
-    const heightValue = globalThis.heightMap?.[cy]?.[cx];
-    return heightValue !== undefined && heightValue <= globalThis.SIM.terrain.waterMax;
+    const heightValue = heightMap?.[cy]?.[cx];
+    return heightValue !== undefined && heightValue <= waterMax;
 }
 
-function findLandEscapeAngle(rabbit, fromX, fromY, fallbackAngle) {
+function findLandEscapeAngle(rabbit, fromX, fromY, fallbackAngle, heightMap, waterMax) {
     const scanDistance = Math.max(rabbit.speed * 1.5, 2);
 
     for (let offset = 0; offset <= 180; offset += 20) {
@@ -87,7 +87,7 @@ function findLandEscapeAngle(rabbit, fromX, fromY, fallbackAngle) {
             const testX = Math.max(0, Math.min(rabbitWorldWidth - rabbit.w, fromX + Math.cos(radians) * scanDistance));
             const testY = Math.max(0, Math.min(rabbitWorldHeight - rabbit.h, fromY + Math.sin(radians) * scanDistance));
 
-            if (!isWaterAt(testX, testY, rabbit)) {
+            if (!isWaterAt(testX, testY, rabbit, heightMap, waterMax)) {
                 return candidateAngle;
             }
         }
@@ -96,6 +96,8 @@ function findLandEscapeAngle(rabbit, fromX, fromY, fallbackAngle) {
 }
 
 function updateRabbitOneFrame(rabbit) {
+    const heightMap = globalThis.heightMap;
+    const waterMax = globalThis.SIM.terrain.waterMax;
     const prevX = rabbit.x;
     const prevY = rabbit.y;
     rabbit.angle += rabbitRandomBetween(-90, 90) * 0.35;
@@ -107,10 +109,10 @@ function updateRabbitOneFrame(rabbit) {
     rabbit.x = Math.max(0, Math.min(rabbitWorldWidth - rabbit.w, rabbit.x));
     rabbit.y = Math.max(0, Math.min(rabbitWorldHeight - rabbit.h, rabbit.y));
 
-    if (isWaterAt(rabbit.x, rabbit.y, rabbit)) {
+    if (isWaterAt(rabbit.x, rabbit.y, rabbit, heightMap, waterMax)) {
         rabbit.x = prevX;
         rabbit.y = prevY;
-        rabbit.angle = findLandEscapeAngle(rabbit, prevX, prevY, rabbit.angle + 180);
+        rabbit.angle = findLandEscapeAngle(rabbit, prevX, prevY, rabbit.angle + 180, heightMap, waterMax);
     }
 
     rabbitEatDarkGrass(rabbit);
@@ -133,18 +135,21 @@ function rabbitNormalWalk() {
 
 // --- Eating / hunger / death ---
 
-function isRabbitOnDarkGrass(rabbit) {
+function isRabbitOnDarkGrass(rabbit, heightMap, waterMax, darkGrassMax) {
     const cx = Math.floor(rabbit.x + rabbit.w / 2);
     const cy = Math.floor(rabbit.y + rabbit.h / 2);
-    const heightValue = globalThis.heightMap?.[cy]?.[cx];
-    return heightValue !== undefined && globalThis.SIM.terrain.waterMax < heightValue && heightValue <= globalThis.SIM.terrain.darkGrassMax;
+    const heightValue = heightMap?.[cy]?.[cx];
+    return heightValue !== undefined && waterMax < heightValue && heightValue <= darkGrassMax;
 }
 
 function rabbitEatDarkGrass(rabbit) {
+    const heightMap = globalThis.heightMap;
+    const waterMax = globalThis.SIM.terrain.waterMax;
+    const darkGrassMax = globalThis.SIM.terrain.darkGrassMax;
     const cx = Math.floor(rabbit.x + rabbit.w / 2);
     const cy = Math.floor(rabbit.y + rabbit.h / 2);
-    if (isRabbitOnDarkGrass(rabbit) && Math.random() < rabbitSimConfig.rabbits.eatChance && rabbit.hunger < rabbitSimConfig.rabbits.hungerMax) {
-        globalThis.heightMap[cy][cx] = Math.min(1.0, globalThis.heightMap[cy][cx] + globalThis.SIM.rabbits.rabbitAffectEatenGrassFactor);
+    if (isRabbitOnDarkGrass(rabbit, heightMap, waterMax, darkGrassMax) && Math.random() < rabbitSimConfig.rabbits.eatChance && rabbit.hunger < rabbitSimConfig.rabbits.hungerMax) {
+        heightMap[cy][cx] = Math.min(1.0, heightMap[cy][cx] + globalThis.SIM.rabbits.rabbitAffectEatenGrassFactor);
         rabbit.hunger = Math.min(globalThis.SIM.rabbits.hungerMax, rabbit.hunger + globalThis.SIM.rabbits.eatHungerGain);
         globalThis.redrawTerrainPixel(cx, cy);
     }
