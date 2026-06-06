@@ -34,7 +34,11 @@ const SIM = {
         eatChance: 0.5,
         hungerMax: 100,
         eatHungerGain: 10,
+        rabbitAffectEatenGrassFactor: 0.05,
         hungerLossPerFrame: 0.5,
+        makehamBaselineMortality: 0.03,
+        gompertzInitialMortality: 0.104,
+        gompertzAgingRate: 0.103,
     },
     weather: {
         intensityBurstAllowance: 1.4, 

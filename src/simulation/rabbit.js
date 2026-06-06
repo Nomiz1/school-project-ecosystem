@@ -55,6 +55,7 @@ function createRabbit() {
         angle: rabbitRandomBetween(0, 359),
         energy: maxEnergyLevel,
         hunger: 0,
+        age: 0,
     };
 }
 
@@ -116,7 +117,7 @@ function rabbitEatDarkGrass(rabbit) {
     const cx = Math.floor(rabbit.x + rabbit.w / 2);
     const cy = Math.floor(rabbit.y + rabbit.h / 2);
     if (isRabbitOnDarkGrass(rabbit) && Math.random() < rabbitSimConfig.rabbits.eatChance && rabbit.hunger < rabbitSimConfig.rabbits.hungerMax) {
-        globalThis.heightMap[cy][cx] = Math.min(1.0, globalThis.heightMap[cy][cx] + 0.05);
+        globalThis.heightMap[cy][cx] = Math.min(1.0, globalThis.heightMap[cy][cx] + globalThis.SIM.rabbits.rabbitAffectEatenGrassFactor);
         rabbit.hunger = Math.min(globalThis.SIM.rabbits.hungerMax, rabbit.hunger + globalThis.SIM.rabbits.eatHungerGain);
         globalThis.redrawTerrainPixel(cx, cy);
     }
@@ -126,8 +127,30 @@ function rabbitLosesHunger(rabbit) {
 }
 globalThis.rabbitLosesHunger = rabbitLosesHunger;
 
+function rabbitAgesOneFrame(rabbit) {
+    const framesPerDay = globalThis.SIM.time.framesPerDay;
+    const daysPerYear = 365;
+    rabbit.age += 1 / (framesPerDay * daysPerYear);
+}
+
+function rabbitFatalityCheck(rabbit) {
+    // Gompertz-Makeham parameters calibrated for total rabbit population.
+    const A = globalThis.SIM.rabbits.makehamBaselineMortality;
+    const B = globalThis.SIM.rabbits.gompertzInitialMortality;
+    const C = globalThis.SIM.rabbits.gompertzAgingRate;
+    const daysPerYear = 365;
+    const framesPerDay = globalThis.SIM.time.framesPerDay;
+
+    const hazardPerYear = A + B * Math.exp(C * rabbit.age);
+    const hazardPerFrame = hazardPerYear / (daysPerYear * framesPerDay);
+    const deathProbability = 1 - Math.exp(-hazardPerFrame);
+
+    return Math.random() < deathProbability;
+}
+
 function rabbitNormalWalk() {
-    for (const rabbit of rabbits) {
+    for (let i = rabbits.length - 1; i >= 0; i--) {
+        const rabbit = rabbits[i];
         const prevX = rabbit.x;
         const prevY = rabbit.y;
         rabbit.angle += rabbitRandomBetween(-90, 90) * 0.35; // Adjust the multiplier for more or less erratic movement
@@ -149,6 +172,11 @@ function rabbitNormalWalk() {
 
         rabbitEatDarkGrass(rabbit);
         rabbitLosesHunger(rabbit);
+        rabbitAgesOneFrame(rabbit);
+
+        if (rabbitFatalityCheck(rabbit)) {
+            rabbits.splice(i, 1);
+        }
     }
 }
 
@@ -171,5 +199,7 @@ Object.assign(globalThis, {
     isNewRabbitOverlapping,
     rabbitNormalWalk,
     rabbitEatDarkGrass,
+    rabbitAgesOneFrame,
+    rabbitFatalityCheck,
     drawRabbits,
 });
