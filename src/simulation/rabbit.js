@@ -4,15 +4,11 @@ const rabbitWorldWidth = globalThis.WIDTH;
 const rabbitWorldHeight = globalThis.HEIGHT;
 
 const INITIAL_RABBITS = rabbitSimConfig.rabbits.initialCount;
-const maxEnergyLevel = rabbitSimConfig.rabbits.energyMax;
-
-
 
 let rabbits = [];
 
 // --- Setup / spawning ---
 
-// Initialize rabbits without overlapping existing rabbits.
 function initRabbits() {
     rabbits = [];
     let attempts = 0;
@@ -36,11 +32,6 @@ function getRabbitCount() {
     return rabbits.length;
 }
 
-function checkRabbitEnergyLevel(rabbit) {
-    return rabbit.energy > 0;
-}
-
-// Create a new rabbit with random position, size, and movement traits.
 function createRabbit() {
     const height = globalThis.SIM.rabbits.height;
     const width = globalThis.SIM.rabbits.width;
@@ -53,13 +44,11 @@ function createRabbit() {
         h: height,
         speed: speed,
         angle: rabbitRandomBetween(0, 359),
-        energy: maxEnergyLevel,
-        hunger: 0,
+        hunger: rabbitSimConfig.rabbits.hungerMax,
         age: 0,
     };
 }
 
-// Check if a new rabbit overlaps with any existing rabbit.
 function isNewRabbitOverlapping(newRabbit) {
     const gap = 2;
 
@@ -103,9 +92,47 @@ function findLandEscapeAngle(rabbit, fromX, fromY, fallbackAngle) {
             }
         }
     }
-
     return fallbackAngle + rabbitRandomBetween(-45, 45);
 }
+
+function updateRabbitOneFrame(rabbit) {
+    const prevX = rabbit.x;
+    const prevY = rabbit.y;
+    rabbit.angle += rabbitRandomBetween(-90, 90) * 0.35;
+
+    const radians = rabbit.angle * (Math.PI / 180);
+    rabbit.x += Math.cos(radians) * rabbit.speed;
+    rabbit.y += Math.sin(radians) * rabbit.speed;
+
+    rabbit.x = Math.max(0, Math.min(rabbitWorldWidth - rabbit.w, rabbit.x));
+    rabbit.y = Math.max(0, Math.min(rabbitWorldHeight - rabbit.h, rabbit.y));
+
+    if (isWaterAt(rabbit.x, rabbit.y, rabbit)) {
+        rabbit.x = prevX;
+        rabbit.y = prevY;
+        rabbit.angle = findLandEscapeAngle(rabbit, prevX, prevY, rabbit.angle + 180);
+    }
+
+    rabbitEatDarkGrass(rabbit);
+    rabbitLosesHunger(rabbit);
+    rabbitAgesOneFrame(rabbit);
+
+    return rabbitDies(rabbit);
+}
+
+function rabbitNormalWalk() {
+    for (let i = rabbits.length - 1; i >= 0; i--) {
+        const rabbit = rabbits[i];
+        if (updateRabbitOneFrame(rabbit)) {
+            rabbits.splice(i, 1);
+            continue;
+        }
+
+    }
+}
+
+// --- Eating / hunger / death ---
+
 function isRabbitOnDarkGrass(rabbit) {
     const cx = Math.floor(rabbit.x + rabbit.w / 2);
     const cy = Math.floor(rabbit.y + rabbit.h / 2);
@@ -134,7 +161,6 @@ function rabbitAgesOneFrame(rabbit) {
 }
 
 function rabbitFatalityCheck(rabbit) {
-    // Gompertz-Makeham parameters calibrated for total rabbit population.
     const A = globalThis.SIM.rabbits.makehamBaselineMortality;
     const B = globalThis.SIM.rabbits.gompertzInitialMortality;
     const C = globalThis.SIM.rabbits.gompertzAgingRate;
@@ -147,42 +173,12 @@ function rabbitFatalityCheck(rabbit) {
 
     return Math.random() < deathProbability;
 }
-
-function rabbitNormalWalk() {
-    for (let i = rabbits.length - 1; i >= 0; i--) {
-        const rabbit = rabbits[i];
-        const prevX = rabbit.x;
-        const prevY = rabbit.y;
-        rabbit.angle += rabbitRandomBetween(-90, 90) * 0.35; // Adjust the multiplier for more or less erratic movement
-
-        const radians = rabbit.angle * (Math.PI / 180);
-        rabbit.x += Math.cos(radians) * rabbit.speed;
-        rabbit.y += Math.sin(radians) * rabbit.speed;
-
-        // Keep rabbit within canvas bounds
-        rabbit.x = Math.max(0, Math.min(rabbitWorldWidth - rabbit.w, rabbit.x));
-        rabbit.y = Math.max(0, Math.min(rabbitWorldHeight - rabbit.h, rabbit.y));
-
-        if (isWaterAt(rabbit.x, rabbit.y, rabbit)) {
-            // Revert invalid movement so rabbits never settle on water pixels.
-            rabbit.x = prevX;
-            rabbit.y = prevY;
-            rabbit.angle = findLandEscapeAngle(rabbit, prevX, prevY, rabbit.angle + 180);
-        }
-
-        rabbitEatDarkGrass(rabbit);
-        rabbitLosesHunger(rabbit);
-        rabbitAgesOneFrame(rabbit);
-
-        if (rabbitFatalityCheck(rabbit)) {
-            rabbits.splice(i, 1);
-        }
-    }
+function rabbitDies(rabbit) {
+    return rabbitFatalityCheck(rabbit) || rabbit.hunger <= 0;
 }
 
-// --- Rendering ---
 
-// Draw rabbits as white rectangles
+// --- Rendering ---
 function drawRabbits() {
     const ctx = globalThis.ctx;
     ctx.fillStyle = 'white';
@@ -201,5 +197,6 @@ Object.assign(globalThis, {
     rabbitEatDarkGrass,
     rabbitAgesOneFrame,
     rabbitFatalityCheck,
+    rabbitDies,
     drawRabbits,
 });
