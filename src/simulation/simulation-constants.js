@@ -39,7 +39,8 @@ const SIM = {
         makehamBaselineMortality: 0.03,
         gompertzInitialMortality: 0.104,
         gompertzAgingRate: 0.103,
-        matureAge: 5040, // 3.5 months in frames (48 frames/day * 30 days/month * 3.5 months) 
+        matureAge: 5040, // 3.5 months in frames (48 frames/day * 30 days/month * 3.5 months)
+        gestationPeriodFrames: 1440, // 30 days in frames (48 frames/day * 30 days) 
     },
     weather: {
         intensityBurstAllowance: 1.4, 
