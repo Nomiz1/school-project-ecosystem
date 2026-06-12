@@ -17,27 +17,29 @@ function rabbitTouching(rabbit1, rabbit2, gap = 2) {
 
 function rabbitReproduction() {
     const rabbits = globalThis.getRabbits();
-    
-    for (let i = 0; i < rabbits.length; i++) {
-        const rabbitA = rabbits[i];
-        if (!rabbitA.mature) continue;
 
-        for (let j = i + 1; j < rabbits.length; j++) {
-            const rabbitB = rabbits[j];
-            if (!rabbitB.mature) continue;
+    if (getMonthOfYear() >= 1 && getMonthOfYear() <= 7) {
+        for (let i = 0; i < rabbits.length; i++) {
+            const rabbitA = rabbits[i];
+            if (!rabbitA.mature) continue;
 
-            if (rabbitA.gender !== rabbitB.gender) continue;
-            if(!rabbitTouching(rabbitA, rabbitB)) continue;
+            for (let j = i + 1; j < rabbits.length; j++) {
+                const rabbitB = rabbits[j];
+                if (!rabbitB.mature) continue;
 
-            const femaleRabbit = rabbitA.gender === "female" ? rabbitA : rabbitB;
-            femaleRabbit.pregnant = true;
-            femaleRabbit.pregnancyTimer = globalThis.SIM.rabbits.gestationPeriodFrames;
-            break; // Each rabbit can only reproduce once per frame
+                if (rabbitA.gender !== rabbitB.gender) continue;
+                if (!rabbitTouching(rabbitA, rabbitB)) continue;
+
+                const femaleRabbit = rabbitA.gender === "female" ? rabbitA : rabbitB;
+                femaleRabbit.pregnant = true;
+                femaleRabbit.pregnancyTimer = globalThis.SIM.rabbits.gestationPeriodFrames;
+                break; // Each rabbit can only reproduce once per frame
+            }
         }
     }
 }
 
-Object.assign(globalThis, {
-    rabbitMatureCheck,
-    rabbitReproduction,
-});
+    Object.assign(globalThis, {
+        rabbitMatureCheck,
+        rabbitReproduction,
+    });

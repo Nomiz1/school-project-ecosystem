@@ -1,6 +1,6 @@
 
 let tick = 0;
-const BASE_YEAR = 2025; // Non-leap year keeps a stable 365-day cycle.
+const BASE_YEAR = 2025;
 const DEFAULT_LOCALE = "sv-SE";
 
 let monthFormatter;
@@ -92,6 +92,10 @@ function getDayOfYear() {
     return Math.floor(tick / SIM.time.framesPerDay);
 }
 
+function getMonthOfYear() {
+    return getSimulationDate().getMonth();
+}
+
 function getDayOfYearString() {
     const date = getSimulationDate();
 
@@ -119,6 +123,7 @@ function getDateTimeString() {
     getTimeOfDay,
     getClockString,
     getDayOfYear,
+    getMonthOfYear,
     getDayOfYearString,
     getDateTimeString,
 });
