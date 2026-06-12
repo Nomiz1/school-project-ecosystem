@@ -1,4 +1,5 @@
 import "./state.js";
+import "./aging.js";
 
 function isRabbitOnDarkGrass(rabbit, heightMap, waterMax, darkGrassMax) {
     const cx = Math.floor(rabbit.x + rabbit.w / 2);
@@ -24,34 +25,12 @@ function rabbitLosesHunger(rabbit) {
     rabbit.hunger = Math.max(0, rabbit.hunger - globalThis.SIM.rabbits.hungerLossPerFrame);
 }
 
-function rabbitAgesOneFrame(rabbit) {
-    const framesPerDay = globalThis.SIM.time.framesPerDay;
-    const daysPerYear = 365;
-    rabbit.age += 1 / (framesPerDay * daysPerYear);
-}
-
-function rabbitFatalityCheck(rabbit) {
-    const A = globalThis.SIM.rabbits.makehamBaselineMortality;
-    const B = globalThis.SIM.rabbits.gompertzInitialMortality;
-    const C = globalThis.SIM.rabbits.gompertzAgingRate;
-    const daysPerYear = 365;
-    const framesPerDay = globalThis.SIM.time.framesPerDay;
-
-    const hazardPerYear = A + B * Math.exp(C * rabbit.age);
-    const hazardPerFrame = hazardPerYear / (daysPerYear * framesPerDay);
-    const deathProbability = 1 - Math.exp(-hazardPerFrame);
-
-    return Math.random() < deathProbability;
-}
-
 function rabbitDies(rabbit) {
-    return rabbitFatalityCheck(rabbit) || rabbit.hunger <= 0;
+    return globalThis.rabbitFatalityCheck(rabbit) || rabbit.hunger <= 0;
 }
 
 Object.assign(globalThis, {
     rabbitEatDarkGrass,
     rabbitLosesHunger,
-    rabbitAgesOneFrame,
-    rabbitFatalityCheck,
     rabbitDies,
 });

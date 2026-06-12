@@ -66,7 +66,9 @@ function rabbitNormalWalk() {
             rabbits.splice(i, 1);
             continue;
         }
-        globalThis.rabbitMatureCheck(rabbit);
+        if (typeof globalThis.rabbitGrowsUp === "function") {
+            globalThis.rabbitGrowsUp(rabbit);
+        }
     }
 
     if (typeof globalThis.rabbitReproduction === "function") {

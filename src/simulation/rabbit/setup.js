@@ -37,7 +37,7 @@ function createRabbit() {
         angle: globalThis.rabbitRandomBetween(0, 359),
         hunger: globalThis.rabbitSimConfig.rabbits.hungerMax,
         age: 0,
-        mature: false,
+        mature: true,
         gender: Math.random() < 0.5 ? "male" : "female",
     };
 }
