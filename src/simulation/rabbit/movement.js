@@ -68,6 +68,14 @@ function rabbitNormalWalk() {
         }
         globalThis.rabbitMatureCheck(rabbit);
     }
+
+    if (typeof globalThis.rabbitReproduction === "function") {
+        globalThis.rabbitReproduction();
+    }
+
+    if (typeof globalThis.rabbitBirth === "function") {
+        globalThis.rabbitBirth();
+    }
 }
 
 Object.assign(globalThis, {
