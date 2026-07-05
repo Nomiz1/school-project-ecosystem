@@ -75,8 +75,8 @@ function createBabyRabbit(parentRabbit) {
                 (parentRabbit?.y ?? 0) + globalThis.rabbitRandomBetween(-1, 1)
             )
         ),
-        w: width,
-        h: height,
+        w: globalthis.SIM.rabbits.babywidth,
+        h: globalthis.SIM.rabbits.height,
         speed: globalThis.randomFloat(speedMin, speedMax),
         angle: globalThis.rabbitRandomBetween(0, 359),
         hunger: globalThis.SIM.rabbits.hungerMax,

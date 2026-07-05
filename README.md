@@ -4,13 +4,13 @@
 
 ### Core Simulation
 - [x] Växter växer
-- [ ] Ett djur dör om den inte äter tillräckligt mycket (om organsimen inte ätar -> mer hunger -> svält -> hälsa minskas konstant -> död )
+- [x] Ett djur dör om den inte äter tillräckligt mycket (om organsimen inte ätar -> mer hunger -> svält -> död )
 - [ ] Varje organism behöver en viss typ av näring för att överleva, varje organsim har också en viss typ av näring (exempel: gräs behöver jord och vatten och solljus)
-- [ ] Organsimer kan bli mätta -> de slutar äta 
+- [x] Organsimer kan bli mätta -> de slutar äta 
 - [ ] Energinivå (för att springa)
-- [ ] Ålder 
-- [ ] Förökning
-- [ ] Kön
+- [x] Ålder 
+- [x] Förökning
+- [x] Kön
 - [ ] Sjukdomar (ärftligt)
 
 
@@ -27,7 +27,7 @@
 
 ### World Systems
 - [ ] Vatten som djur kan dricka ur
-- [ ] Temperatur
+- [x] Temperatur
 - [ ] Väder (regn, sol, dimma)
 - [x] Tid 
 - [ ] Olika klimat (öken, regnskog, osv)
