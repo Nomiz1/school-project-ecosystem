@@ -39,6 +39,8 @@ function createRabbit() {
         age: 0,
         mature: true,
         gender: Math.random() < 0.5 ? "male" : "female",
+        pregnant: false,
+        maxTimesPregnantPerYear: globalThis.rabbitRandomBetween(3, 5),
     };
 }
 
