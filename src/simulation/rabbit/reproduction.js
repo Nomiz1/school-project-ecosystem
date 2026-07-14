@@ -15,6 +15,28 @@ function rabbitTouching(rabbit1, rabbit2, gap = 2) {
     );
 }
 
+function getSimulationYearIndex() {
+    const dayOfYear = typeof globalThis.getDayOfYear === "function"
+        ? globalThis.getDayOfYear()
+        : 0;
+    return Math.floor(dayOfYear / 365);
+}
+
+function canRabbitBecomePregnantThisYear(rabbit) {
+    const currentYearIndex = getSimulationYearIndex();
+
+    if (rabbit.pregnancyYearIndex !== currentYearIndex) {
+        rabbit.pregnancyYearIndex = currentYearIndex;
+        rabbit.timesPregnantThisYear = 0;
+    }
+
+    if (!Number.isFinite(rabbit.maxTimesPregnantPerYear)) {
+        return true;
+    }
+
+    return rabbit.timesPregnantThisYear < rabbit.maxTimesPregnantPerYear;
+}
+
 function rabbitReproduction() {
     const rabbits = globalThis.getRabbits();
 
@@ -32,7 +54,9 @@ function rabbitReproduction() {
 
                 const femaleRabbit = rabbitA.gender === "female" ? rabbitA : rabbitB;
                 if (femaleRabbit.pregnant) continue;
+                if (!canRabbitBecomePregnantThisYear(femaleRabbit)) continue;
                 femaleRabbit.pregnant = true;
+                femaleRabbit.timesPregnantThisYear += 1;
                 femaleRabbit.pregnancyTimer = globalThis.SIM.rabbits.gestationPeriodFrames;
                 femaleRabbit.pregnancyLitterSize = globalThis.rabbitRandomBetween(4, 6);
                 femaleRabbit.pregnancySpeedMin = Math.min(rabbitA.speed, rabbitB.speed);
@@ -43,6 +67,7 @@ function rabbitReproduction() {
                     litterSize: femaleRabbit.pregnancyLitterSize,
                     speedMin: femaleRabbit.pregnancySpeedMin,
                     speedMax: femaleRabbit.pregnancySpeedMax,
+                    maxTimesPregnantPerYear: femaleRabbit.maxTimesPregnantPerYear
                 });
                 break; 
             }
@@ -83,6 +108,10 @@ function createBabyRabbit(parentRabbit) {
         age: 0,
         mature: false,
         gender: Math.random() < 0.5 ? "male" : "female",
+        pregnant: false,
+        maxTimesPregnantPerYear: globalThis.rabbitRandomBetween(3, 5),
+        timesPregnantThisYear: 0,
+        pregnancyYearIndex: getSimulationYearIndex(),
     };
 }
 
