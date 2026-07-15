@@ -38,9 +38,9 @@ const SIM = {
         eatHungerGain: 10,
         rabbitAffectEatenGrassFactor: 0.05,
         hungerLossPerFrame: 0.1,
-        makehamBaselineMortality: 0.03,
-        gompertzInitialMortality: 0.104,
-        gompertzAgingRate: 0.103,
+        makehamBaselineMortality: 1.5,
+        gompertzInitialMortality: 0.6186,
+        gompertzAgingRate: 0.5,
         matureAge: 5040, // 3.5 months in frames (48 frames/day * 30 days/month * 3.5 months)
         gestationPeriodFrames: 1440, // 30 days in frames (48 frames/day * 30 days) 
     },
