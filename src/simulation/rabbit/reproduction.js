@@ -1,11 +1,5 @@
 import "./state.js";
 
-function rabbitMatureCheck(rabbit) {
-    if (!rabbit.mature && rabbit.age >= globalThis.SIM.rabbits.matureAge) {
-        rabbit.mature = true;
-    }
-}
-
 function rabbitTouching(rabbit1, rabbit2, gap = 2) {
     return (
         rabbit1.x < rabbit2.x + rabbit2.w + gap &&
@@ -61,14 +55,6 @@ function rabbitReproduction() {
                 femaleRabbit.pregnancyLitterSize = globalThis.rabbitRandomBetween(4, 6);
                 femaleRabbit.pregnancySpeedMin = Math.min(rabbitA.speed, rabbitB.speed);
                 femaleRabbit.pregnancySpeedMax = Math.max(rabbitA.speed, rabbitB.speed);
-                console.log("Rabbit became pregnant", {
-                    x: femaleRabbit.x,
-                    y: femaleRabbit.y,
-                    litterSize: femaleRabbit.pregnancyLitterSize,
-                    speedMin: femaleRabbit.pregnancySpeedMin,
-                    speedMax: femaleRabbit.pregnancySpeedMax,
-                    maxTimesPregnantPerYear: femaleRabbit.maxTimesPregnantPerYear
-                });
                 break; 
             }
         }
@@ -145,7 +131,6 @@ function rabbitBirth() {
 }
 
 Object.assign(globalThis, {
-    rabbitMatureCheck,
     rabbitReproduction,
     rabbitBirth,
     createBabyRabbit,

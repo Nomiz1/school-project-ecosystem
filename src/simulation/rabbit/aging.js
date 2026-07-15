@@ -21,7 +21,8 @@ function rabbitFatalityCheck(rabbit) {
 }
 
 function rabbitGrowsUp(rabbit) {
-    if (!rabbit.mature && rabbit.age >= globalThis.SIM.rabbits.matureAge) {
+    const matureAgeYears = globalThis.SIM.rabbits.matureAge / (globalThis.SIM.time.framesPerDay * 365);
+    if (!rabbit.mature && rabbit.age >= matureAgeYears) {
         rabbit.mature = true;
         rabbit.w = globalThis.SIM.rabbits.width;
         rabbit.h = globalThis.SIM.rabbits.height;
