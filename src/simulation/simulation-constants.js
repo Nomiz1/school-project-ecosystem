@@ -25,6 +25,25 @@ const SIM = {
         locale: browserLocale,
         texts: i18nTexts,
     },
+    // All the values in the following section are fillers that will be overridden by spific spieces values in their respective files (e.g., src/simulation/rabbit/state.js)
+    mammals: {
+        witdh: 4,
+        height: 4,
+        babywidth: 2,
+        babyheight: 2,
+        speedMin: 1,
+        speedMax: 3,
+        eatChance: 0.5,
+        hungerMax: 100,
+        eatHungerGain: 10,
+        hungerLossPerFrame: 0.1,
+        mortality: {
+            makehamBaselineMortality: 0.8,
+            gompertzInitialMortality: 0.4,
+            gompertzAgingRate: 0.7, 
+        },
+        matureAge: 10,
+    },
     rabbits: {
         initialCount: 100,
         width: 2,
@@ -38,23 +57,25 @@ const SIM = {
         eatHungerGain: 10,
         rabbitAffectEatenGrassFactor: 0.05,
         hungerLossPerFrame: 0.1,
-        makehamBaselineMortality: 1.5,
-        gompertzInitialMortality: 0.6186,
-        gompertzAgingRate: 0.5,
+        mortality: {
+            makehamBaselineMortality: 1.5,
+            gompertzInitialMortality: 0.6186,
+            gompertzAgingRate: 0.5,
+        },
         matureAge: 5040, // 3.5 months in frames (48 frames/day * 30 days/month * 3.5 months)
         gestationPeriodFrames: 1440, // 30 days in frames (48 frames/day * 30 days) 
     },
     weather: {
-        intensityBurstAllowance: 1.4, 
+        intensityBurstAllowance: 1.4,
         lightRainMaxMm: 6.0,
         middleRainMaxMm: 13.0,
         darkRainMaxMm: 20.0,
-        smoothTempTransitionFactor: 0.15, 
+        smoothTempTransitionFactor: 0.15,
         rainTempCoolingEffect: 0.8,
     },
     background: {
         pixelSize: 8,
-        colors: [ 
+        colors: [
             "rgb(38, 7, 1)",
             "rgb(47, 14, 7)",
             "rgb(56, 22, 13)"
