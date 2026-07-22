@@ -1,5 +1,6 @@
 import "./state.js";
 import "./aging.js";
+import { mammalLosesHunger, mammalDies } from "../mammals/eating.js";
 
 function isRabbitOnDarkGrass(rabbit, heightMap, waterMax, darkGrassMax) {
     const cx = Math.floor(rabbit.x + rabbit.w / 2);
@@ -22,11 +23,11 @@ function rabbitEatDarkGrass(rabbit) {
 }
 
 function rabbitLosesHunger(rabbit) {
-    rabbit.hunger = Math.max(0, rabbit.hunger - globalThis.SIM.rabbits.hungerLossPerFrame);
+    mammalLosesHunger(rabbit, globalThis.SIM.rabbits);
 }
 
 function rabbitDies(rabbit) {
-    return globalThis.rabbitFatalityCheck(rabbit) || rabbit.hunger <= 0;
+    return mammalDies(rabbit, globalThis.rabbitFatalityCheck);
 }
 
 Object.assign(globalThis, {

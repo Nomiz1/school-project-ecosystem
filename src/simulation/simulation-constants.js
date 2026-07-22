@@ -1,18 +1,23 @@
 import { browserLocale, i18nTexts } from "./language.js";
 
+const world = {
+    width: 800,
+    height: 800,
+};
+
 const SIM = {
-    world: {
-        width: 800,
-        height: 800,
-    },
+    world,
     terrain: {
         zoomfactor: 200, // Controls the scale of the Perlin noise for terrain generation
         waterMax: 0.30,
         darkGrassMax: 0.55,
         lightGrassMax: 1.00,
-        steps: 16,
         grassNearWater: 20,
         sampleSize: 200
+    },
+    movement: {
+        world,
+        waterMax: 0.30,
     },
     render: {
         targetFps: 60,
