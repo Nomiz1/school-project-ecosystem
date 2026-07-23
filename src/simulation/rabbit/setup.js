@@ -24,6 +24,7 @@ function getRabbitCount() {
 }
 
 function createRabbit() {
+    const rabbitReproductionConfig = globalThis.SIM.rabbits.reproduction;
     const height = globalThis.SIM.rabbits.height;
     const width = globalThis.SIM.rabbits.width;
     const speed = globalThis.rabbitRandomBetween(globalThis.rabbitSimConfig.rabbits.speedMin, globalThis.rabbitSimConfig.rabbits.speedMax);
@@ -40,7 +41,10 @@ function createRabbit() {
         mature: true,
         gender: Math.random() < 0.5 ? "male" : "female",
         pregnant: false,
-        maxTimesPregnantPerYear: globalThis.rabbitRandomBetween(3, 5),
+        maxTimesPregnantPerYear: globalThis.rabbitRandomBetween(
+            rabbitReproductionConfig.maxTimesPregnantPerYearMin,
+            rabbitReproductionConfig.maxTimesPregnantPerYearMax
+        ),
     };
 }
 

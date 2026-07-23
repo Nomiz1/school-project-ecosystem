@@ -92,6 +92,10 @@ function getDayOfYear() {
     return Math.floor(tick / SIM.time.framesPerDay);
 }
 
+function getSimulationYearIndex() {
+    return Math.floor(getDayOfYear() / 365);
+}
+
 function getMonthOfYear() {
     return getSimulationDate().getMonth();
 }
@@ -123,6 +127,7 @@ function getDateTimeString() {
     getTimeOfDay,
     getClockString,
     getDayOfYear,
+    getSimulationYearIndex,
     getMonthOfYear,
     getDayOfYearString,
     getDateTimeString,

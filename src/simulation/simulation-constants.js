@@ -47,6 +47,13 @@ const SIM = {
             gompertzInitialMortality: 0.4,
             gompertzAgingRate: 0.7, 
         },
+        reproduction: {
+            gestationPeriodFrames: 1440,
+            litterSizeMin: 2,
+            litterSizeMax: 4,
+            maxTimesPregnantPerYearMin: 1,
+            maxTimesPregnantPerYearMax: 3,
+        },
         matureAge: 10,
     },
     rabbits: {
@@ -67,8 +74,14 @@ const SIM = {
             gompertzInitialMortality: 0.6186,
             gompertzAgingRate: 0.5,
         },
+        reproduction: {
+            gestationPeriodFrames: 1440, // 30 days in frames (48 frames/day * 30 days)
+            litterSizeMin: 4,
+            litterSizeMax: 6,
+            maxTimesPregnantPerYearMin: 3,
+            maxTimesPregnantPerYearMax: 5,
+        },
         matureAge: 5040, // 3.5 months in frames (48 frames/day * 30 days/month * 3.5 months)
-        gestationPeriodFrames: 1440, // 30 days in frames (48 frames/day * 30 days) 
     },
     weather: {
         intensityBurstAllowance: 1.4,
