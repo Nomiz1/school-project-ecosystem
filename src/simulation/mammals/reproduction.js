@@ -55,3 +55,49 @@ export function canMammalBecomePregnantThisYear(mammal, currentYearIndex) {
         }
     }
 }
+
+export function createBabyMammal(parentMammal, babyWidth, babyHeight, birthConfig, currentYearIndex) {
+    const baseSpeed = Number.isFinite(parentMammal?.speed) ? parentMammal.speed : 0;
+    const speedMin = Number.isFinite(parentMammal?.pregnancySpeedMin)
+        ? parentMammal.pregnancySpeedMin
+        : baseSpeed;
+    const speedMax = Number.isFinite(parentMammal?.pregnancySpeedMax)
+        ? parentMammal.pregnancySpeedMax
+        : baseSpeed;
+    const worldWidth = birthConfig?.world?.width ?? globalThis.SIM?.world?.width ?? globalThis.WIDTH;
+    const worldHeight = birthConfig?.world?.height ?? globalThis.SIM?.world?.height ?? globalThis.HEIGHT;
+    const hungerMax = birthConfig?.hungerMax ?? globalThis.SIM?.mammals?.hungerMax ?? 100;
+    const reproductionConfig = birthConfig?.reproduction ?? globalThis.SIM?.mammals?.reproduction;
+
+    return {
+        x: Math.max(
+            0,
+            Math.min(
+                worldWidth - babyWidth,
+                (parentMammal?.x ?? 0) + globalThis.randomInt(-1, 1)
+            )
+        ),
+        y: Math.max(
+            0,
+            Math.min(
+                worldHeight - babyHeight,
+                (parentMammal?.y ?? 0) + globalThis.randomInt(-1, 1)
+            )
+        ),
+        w: babyWidth,
+        h: babyHeight,
+        speed: globalThis.randomFloat(speedMin, speedMax),
+        angle: globalThis.randomInt(0, 359),
+        hunger: hungerMax,
+        age: 0,
+        mature: false,
+        gender: Math.random() < 0.5 ? "male" : "female",
+        pregnant: false,
+        maxTimesPregnantPerYear: globalThis.randomInt(
+            reproductionConfig.maxTimesPregnantPerYearMin,
+            reproductionConfig.maxTimesPregnantPerYearMax
+        ),
+        timesPregnantThisYear: 0,
+        pregnancyYearIndex: currentYearIndex,
+    };
+}

@@ -1,6 +1,6 @@
 import "./state.js";
 import "../time.js";
-import { mammalReproduction } from "../mammals/reproduction.js";
+import { mammalReproduction, createBabyMammal } from "../mammals/reproduction.js";
 
 function getRabbitReproductionConfig() {
     return {
@@ -28,46 +28,23 @@ function rabbitReproduction() {
 
 function createBabyRabbit(parentRabbit) {
     const rabbitReproductionConfig = getRabbitReproductionConfig();
-    const height = globalThis.SIM.rabbits.babyheight;
-    const width = globalThis.SIM.rabbits.babywidth;
-    const speedMin = Number.isFinite(parentRabbit?.pregnancySpeedMin)
-        ? parentRabbit.pregnancySpeedMin
-        : parentRabbit.speed;
-    const speedMax = Number.isFinite(parentRabbit?.pregnancySpeedMax)
-        ? parentRabbit.pregnancySpeedMax
-        : parentRabbit.speed;
-
-    return {
-        x: Math.max(
-            0,
-            Math.min(
-                globalThis.rabbitWorldWidth - width,
-                (parentRabbit?.x ?? 0) + globalThis.rabbitRandomBetween(-1, 1)
-            )
-        ),
-        y: Math.max(
-            0,
-            Math.min(
-                globalThis.rabbitWorldHeight - height,
-                (parentRabbit?.y ?? 0) + globalThis.rabbitRandomBetween(-1, 1)
-            )
-        ),
-        w: globalThis.SIM.rabbits.babywidth,
-        h: globalThis.SIM.rabbits.babyheight,
-        speed: globalThis.randomFloat(speedMin, speedMax),
-        angle: globalThis.rabbitRandomBetween(0, 359),
-        hunger: globalThis.SIM.rabbits.hungerMax,
-        age: 0,
-        mature: false,
-        gender: Math.random() < 0.5 ? "male" : "female",
-        pregnant: false,
-        maxTimesPregnantPerYear: globalThis.rabbitRandomBetween(
-            rabbitReproductionConfig.maxTimesPregnantPerYearMin,
-            rabbitReproductionConfig.maxTimesPregnantPerYearMax
-        ),
-        timesPregnantThisYear: 0,
-        pregnancyYearIndex: globalThis.getSimulationYearIndex(),
+    const currentYearIndex = globalThis.getSimulationYearIndex();
+    const birthConfig = {
+        world: globalThis.SIM.world,
+        hungerMax: globalThis.SIM.rabbits.hungerMax,
+        reproduction: {
+            maxTimesPregnantPerYearMin: rabbitReproductionConfig.maxTimesPregnantPerYearMin,
+            maxTimesPregnantPerYearMax: rabbitReproductionConfig.maxTimesPregnantPerYearMax,
+        },
     };
+
+    return createBabyMammal(
+        parentRabbit,
+        globalThis.SIM.rabbits.babywidth,
+        globalThis.SIM.rabbits.babyheight,
+        birthConfig,
+        currentYearIndex
+    );
 }
 
 function rabbitBirth() {
