@@ -1,6 +1,6 @@
 import "./state.js";
 import "../time.js";
-import { mammalReproduction, createBabyMammal } from "../mammals/reproduction.js";
+import { mammalReproduction, createBabyMammal, mammalBirth } from "../mammals/reproduction.js";
 
 function getRabbitReproductionConfig() {
     return {
@@ -49,31 +49,7 @@ function createBabyRabbit(parentRabbit) {
 
 function rabbitBirth() {
     const rabbits = globalThis.getRabbits();
-    const newbornRabbits = [];
-
-    for (const rabbit of rabbits) {
-        if (!rabbit.pregnant) continue;
-
-        rabbit.pregnancyTimer -= 1;
-        if (rabbit.pregnancyTimer <= 0) {
-            rabbit.pregnant = false;
-            rabbit.pregnancyTimer = 0;
-
-            const litterSize = Number.isFinite(rabbit.pregnancyLitterSize)
-                ? rabbit.pregnancyLitterSize
-                : 1;
-
-            for (let i = 0; i < litterSize; i++) {
-                newbornRabbits.push(createBabyRabbit(rabbit));
-            }
-
-            rabbit.pregnancyLitterSize = 0;
-        }
-    }
-
-    if (newbornRabbits.length > 0) {
-        rabbits.push(...newbornRabbits);
-    }
+    mammalBirth(rabbits, createBabyRabbit);
 }
 
 Object.assign(globalThis, {

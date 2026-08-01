@@ -101,3 +101,31 @@ export function createBabyMammal(parentMammal, babyWidth, babyHeight, birthConfi
         pregnancyYearIndex: currentYearIndex,
     };
 }
+
+export function mammalBirth(mammals, createBabyFn) {
+    const newborns = [];
+
+    for (const mammal of mammals) {
+        if (!mammal.pregnant) continue;
+
+        mammal.pregnancyTimer -= 1;
+        if (mammal.pregnancyTimer <= 0) {
+            mammal.pregnant = false;
+            mammal.pregnancyTimer = 0;
+
+            const litterSize = Number.isFinite(mammal.pregnancyLitterSize)
+                ? mammal.pregnancyLitterSize
+                : 1;
+
+            for (let i = 0; i < litterSize; i++) {
+                newborns.push(createBabyFn(mammal));
+            }
+
+            mammal.pregnancyLitterSize = 0;
+        }
+    }
+
+    if (newborns.length > 0) {
+        mammals.push(...newborns);
+    }
+}
