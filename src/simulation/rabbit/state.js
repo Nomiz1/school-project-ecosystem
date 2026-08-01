@@ -1,9 +1,4 @@
-const rabbitSimConfig = globalThis.SIM;
-const rabbitRandomBetween = globalThis.randomInt;
-const rabbitWorldWidth = globalThis.WIDTH;
-const rabbitWorldHeight = globalThis.HEIGHT;
-
-const INITIAL_RABBITS = rabbitSimConfig.rabbits.initialCount;
+const INITIAL_RABBITS = globalThis.SIM.rabbits.initialCount;
 
 let rabbits = [];
 
@@ -16,10 +11,6 @@ function setRabbits(nextRabbits) {
 }
 
 Object.assign(globalThis, {
-    rabbitSimConfig,
-    rabbitRandomBetween,
-    rabbitWorldWidth,
-    rabbitWorldHeight,
     INITIAL_RABBITS,
     getRabbits,
     setRabbits,

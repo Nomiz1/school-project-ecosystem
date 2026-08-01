@@ -83,6 +83,32 @@ const SIM = {
         },
         matureAge: 5040, // 3.5 months in frames (48 frames/day * 30 days/month * 3.5 months)
     },
+    foxes: {
+        initialCount: 20,
+        width: 3,
+        height: 3,
+        babywidth: 2,
+        babyheight: 2,
+        speedMin: 1,
+        speedMax: 4,
+        eatChance: 0.7,
+        hungerMax: 100,
+        eatHungerGain: 20,
+        hungerLossPerFrame: 0.15,
+        mortality: {
+            makehamBaselineMortality: 1.2,
+            gompertzInitialMortality: 0.5,
+            gompertzAgingRate: 0.6, 
+        },
+        reproduction: {
+            gestationPeriodFrames: 1440, // 30 days in frames (48 frames/day * 30 days)
+            litterSizeMin: 2,
+            litterSizeMax: 5,
+            maxTimesPregnantPerYearMin: 1,
+            maxTimesPregnantPerYearMax: 3,
+        },
+        matureAge: 7200, // 5 months in frames (48 frames/day * 30 days/month * 5 months)
+    },
     weather: {
         intensityBurstAllowance: 1.4,
         lightRainMaxMm: 6.0,

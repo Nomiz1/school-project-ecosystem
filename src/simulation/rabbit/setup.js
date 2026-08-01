@@ -1,22 +1,13 @@
 import "./state.js";
+import { initMammals } from "../mammals/setup.js";
 
 function initRabbits() {
-    globalThis.setRabbits([]);
-    let attempts = 0;
-    const maxAttempts = globalThis.INITIAL_RABBITS * 20;
-
-    while (globalThis.getRabbits().length < globalThis.INITIAL_RABBITS && attempts < maxAttempts) {
-        attempts += 1;
-        const rabbit = createRabbit();
-        const cx = Math.floor(rabbit.x + rabbit.w / 2);
-        const cy = Math.floor(rabbit.y + rabbit.h / 2);
-        const heightValue = globalThis.heightMap?.[cy]?.[cx];
-        const isOnLand = heightValue !== undefined && heightValue > globalThis.SIM.terrain.waterMax;
-
-        if (isOnLand && !isNewRabbitOverlapping(rabbit)) {
-            globalThis.getRabbits().push(rabbit);
-        }
-    }
+    initMammals(
+        globalThis.getRabbits,
+        globalThis.setRabbits,
+        globalThis.INITIAL_RABBITS,
+        createRabbit
+    );
 }
 
 function getRabbitCount() {
@@ -27,46 +18,29 @@ function createRabbit() {
     const rabbitReproductionConfig = globalThis.SIM.rabbits.reproduction;
     const height = globalThis.SIM.rabbits.height;
     const width = globalThis.SIM.rabbits.width;
-    const speed = globalThis.rabbitRandomBetween(globalThis.rabbitSimConfig.rabbits.speedMin, globalThis.rabbitSimConfig.rabbits.speedMax);
+    const speed = globalThis.randomInt(globalThis.SIM.rabbits.speedMin, globalThis.SIM.rabbits.speedMax);
 
     return {
-        x: globalThis.rabbitRandomBetween(0, globalThis.rabbitWorldWidth - width),
-        y: globalThis.rabbitRandomBetween(0, globalThis.rabbitWorldHeight - height),
+        x: globalThis.randomInt(0, globalThis.SIM.world.width - width),
+        y: globalThis.randomInt(0, globalThis.SIM.world.height - height),
         w: width,
         h: height,
         speed: speed,
-        angle: globalThis.rabbitRandomBetween(0, 359),
-        hunger: globalThis.rabbitSimConfig.rabbits.hungerMax,
+        angle: globalThis.randomInt(0, 359),
+        hunger: globalThis.SIM.rabbits.hungerMax,
         age: 0,
-        mature: true,
+        mature: false,
         gender: Math.random() < 0.5 ? "male" : "female",
         pregnant: false,
-        maxTimesPregnantPerYear: globalThis.rabbitRandomBetween(
+        maxTimesPregnantPerYear: globalThis.randomInt(
             rabbitReproductionConfig.maxTimesPregnantPerYearMin,
             rabbitReproductionConfig.maxTimesPregnantPerYearMax
         ),
     };
 }
 
-function isNewRabbitOverlapping(newRabbit) {
-    const gap = 2;
-
-    for (const existingRabbit of globalThis.getRabbits()) {
-        if (newRabbit.x < existingRabbit.x + existingRabbit.w + gap &&
-            newRabbit.x + newRabbit.w + gap > existingRabbit.x &&
-            newRabbit.y < existingRabbit.y + existingRabbit.h + gap &&
-            newRabbit.y + newRabbit.h + gap > existingRabbit.y) {
-
-            return true;
-        }
-    }
-
-    return false;
-}
-
 Object.assign(globalThis, {
     initRabbits,
     getRabbitCount,
     createRabbit,
-    isNewRabbitOverlapping,
 });
