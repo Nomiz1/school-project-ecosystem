@@ -74,6 +74,11 @@ const SIM = {
             gompertzInitialMortality: 0.6186,
             gompertzAgingRate: 0.5,
         },
+        adultMortality: { // Calibrated to about 50% mortality between age 1 and 2 years
+            makehamBaselineMortality: 0.20,
+            gompertzInitialMortality: 0.2269,
+            gompertzAgingRate: 0.5,
+        },
         reproduction: {
             gestationPeriodFrames: 1440, // 30 days in frames (48 frames/day * 30 days)
             litterSizeMin: 4,
