@@ -69,7 +69,7 @@ const SIM = {
         eatHungerGain: 10,
         rabbitAffectEatenGrassFactor: 0.05,
         hungerLossPerFrame: 0.1,
-        mortality: {
+        firstYearMortality: { // Mortality is 90% in the first year
             makehamBaselineMortality: 1.5,
             gompertzInitialMortality: 0.6186,
             gompertzAgingRate: 0.5,

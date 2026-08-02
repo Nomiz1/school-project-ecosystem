@@ -7,7 +7,7 @@ function rabbitAgesOneFrame(rabbit) {
 }
 
 function rabbitFatalityCheck(rabbit) {
-    return fatalityCheck(rabbit, globalThis.SIM.rabbits.mortality, globalThis.SIM.time);
+    return fatalityCheck(rabbit, globalThis.SIM.rabbits.firstYearMortality, globalThis.SIM.time);
 }
 
 function rabbitGrowsUp(rabbit) {
